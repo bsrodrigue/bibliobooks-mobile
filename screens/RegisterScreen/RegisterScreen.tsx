@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
 import { CheckBox } from "@rneui/base";
+import { StyleSheet, Text, TouchableWithoutFeedback } from "react-native";
 import { AuthForm, Button, TextInput } from "../../components";
 import { RootStackParamList } from "../../types";
 
@@ -31,18 +31,21 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
                     color="black"
                     size="lg"
                     radius={5}
+                    onPress={() => {
+                        navigation.navigate("Success", {
+                            title: "Parfait",
+                            subtitle: "Merci d’avoir choisi de rejoindre notre plateforme, mais avant de commencer, veuillez à présent configurer votre compte",
+                            confirm: "Poursuivre",
+                            onConfirm: () => {
+                                navigation.navigate("Login");
+                            }
+                        })
+                    }}
                 />
                 <Text style={styles.register}>Vous avez déjà un compte?
                     {" "}
-                    <TouchableWithoutFeedback
-                        onPress={() => {
-                            navigation.navigate("Login");
-                        }}
-                    >
-                        <Text style={{
-                            color: "#22A39F",
-                        }}
-                        >
+                    <TouchableWithoutFeedback onPress={() => { navigation.navigate("Login"); }}>
+                        <Text style={{ color: "#22A39F" }}>
                             Connectez-vous!
                         </Text>
                     </TouchableWithoutFeedback>

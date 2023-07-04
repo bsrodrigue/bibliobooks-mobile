@@ -3,4 +3,10 @@ export type RootStackParamList = {
     Login;
     Register;
     ForgotPassword;
+    Success: {
+        title: string,
+        subtitle: string,
+        confirm: string,
+        onConfirm: () => void,
+    };
 };
