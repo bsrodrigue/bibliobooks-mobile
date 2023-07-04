@@ -70,6 +70,10 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
 
     const isLastSlide = index === slides.length - 1;
 
+    const goToLoginScreen = () => {
+        navigation.navigate("Login")
+    }
+
     const scrollToNext = () => {
         if (!isLastSlide) {
             slideRef.current.scrollToIndex({
@@ -79,7 +83,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
             return;
         }
 
-        navigation.navigate("Login")
+        goToLoginScreen();
     }
 
     const viewableItemsChanged = useRef(({ viewableItems }) => {
@@ -110,6 +114,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
                 />
                 <Button title="Ignorer"
                     titleStyle={styles.skip}
+                    onPress={goToLoginScreen}
                     type="clear" />
             </View>
         </View>

@@ -3,7 +3,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useCachedResources } from "./hooks";
 import OnboardingScreen from './screens/OnboardingScreen/OnboardingScreen';
 import { ThemeProvider, createTheme } from "@rneui/themed";
-import { LoginScreen } from "./screens";
+import { LoginScreen, RegisterScreen } from "./screens";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const theme = createTheme({
   components: {
@@ -32,12 +33,15 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name='Onboarding' component={OnboardingScreen} />
-          <Stack.Screen name='Login' component={LoginScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <SafeAreaView style={{ flex: 1 }}>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name='Onboarding' component={OnboardingScreen} />
+            <Stack.Screen name='Login' component={LoginScreen} />
+            <Stack.Screen name='Register' component={RegisterScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
     </ThemeProvider>
   );
 }
