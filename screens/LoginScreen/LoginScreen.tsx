@@ -48,7 +48,11 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
             <TextInput label="Adresse email" placeholder="Veuillez saisir votre adresse email" />
             <TextInput label="Mot de passe" placeholder="Veuillez saisir votre mot de passe" />
 
-            <TouchableWithoutFeedback>
+            <TouchableWithoutFeedback
+                onPress={() => {
+                    navigation.navigate("ForgotPassword")
+                }}
+            >
                 <Text style={{
                     color: "#22A39F",
                     textAlign: "right",
