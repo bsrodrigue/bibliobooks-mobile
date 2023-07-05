@@ -38,7 +38,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
                             title: "Parfait",
                             subtitle: "Merci d’avoir choisi de rejoindre notre plateforme, mais avant de commencer, veuillez à présent configurer votre compte",
                             confirm: "Poursuivre",
-                            destination: "Login"
+                            destination: "SetupAccount"
                         })
                     }}
                 />
