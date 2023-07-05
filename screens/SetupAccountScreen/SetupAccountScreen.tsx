@@ -5,6 +5,7 @@ import { RootStackParamList } from "../../types";
 import { CheckBox } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { useEffect, useState } from "react";
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
 const styles = StyleSheet.create({
     next: {
@@ -88,11 +89,11 @@ function RadioInputGroup({ label, name, onChange }: RadioInputGroupProps) {
                     onPress={setSelected}
                     imgSrc={require("../../assets/illustrations/male.png")} />
                 <RadioInput
-                    label="Homme"
+                    label="Femme"
                     value="female"
                     selected={selected}
                     onPress={setSelected}
-                    imgSrc={require("../../assets/illustrations/male.png")} />
+                    imgSrc={require("../../assets/illustrations/female.png")} />
             </View>
         </>
     )
@@ -101,6 +102,17 @@ function RadioInputGroup({ label, name, onChange }: RadioInputGroupProps) {
 type SetupAccountScreenProps = NativeStackScreenProps<RootStackParamList, 'SetupAccount'>;
 
 export default function SetupAccountScreen({ navigation }: SetupAccountScreenProps) {
+    const [birthdate, setBirthdate] = useState(new Date());
+
+    const onOpenDatePicker = () => {
+        DateTimePickerAndroid.open({
+            mode: "date",
+            value: birthdate, onChange: (_e, date) => {
+                setBirthdate(date);
+            }
+        });
+    }
+
 
     return (
         <AuthForm
@@ -118,6 +130,19 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
             <TextInput label="Nom de famille" placeholder="Veuillez saisir votre nom de famille" />
             <TextInput label="Prénom" placeholder="Veuillez saisir votre prénom" />
             <RadioInputGroup label="Votre genre" name="gender" />
+
+            <TouchableOpacity
+                onPress={onOpenDatePicker}
+                style={{ marginVertical: 10 }}>
+                <TextInput
+                    label="Date de naissance"
+                    disabled
+                    placeholder="Veuillez choisir votre date de naissance"
+                    errorMessage={birthdate > new Date() ? "Vous ne pouvez pas venir du futur" : ""}
+                    value={birthdate.toDateString()}
+                />
+            </TouchableOpacity>
+
         </AuthForm>
     )
 }

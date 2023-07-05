@@ -1,8 +1,10 @@
 import { Input, InputProps } from "@rneui/base";
+import { useTheme } from "@rneui/themed";
 
 type TextInputProps = InputProps & { name?: string };
 
 export default function TextInput(props: TextInputProps) {
+    const { theme: { colors: { error } } } = useTheme();
     return (
         <Input
             errorStyle={{
@@ -16,7 +18,13 @@ export default function TextInput(props: TextInputProps) {
                 marginVertical: 10,
             }}
             inputStyle={{
-                fontSize: 14
+                fontSize: 14,
+                fontFamily: "Quicksand-600",
+            }}
+            disabledInputStyle={{
+                fontSize: 14,
+                fontFamily: "Quicksand-600",
+                opacity: 1
             }}
             labelStyle={{
                 color: "black",
@@ -27,10 +35,11 @@ export default function TextInput(props: TextInputProps) {
                 zIndex: 1,
                 paddingHorizontal: 5,
                 fontFamily: "Quicksand-700",
+                fontWeight: "normal",
                 fontSize: 12
             }}
             inputContainerStyle={{
-                borderColor: "#CCCCCC",
+                borderColor: props.errorMessage ? error : "#CCCCCC",
                 borderWidth: 1,
                 borderRadius: 10,
                 paddingVertical: 5,
