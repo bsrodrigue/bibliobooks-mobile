@@ -20,6 +20,7 @@ type RegisterScreenProps = NativeStackScreenProps<RootStackParamList, 'Register'
 
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
 
+
     return (
         <AuthForm
             title="Inscription"
@@ -32,13 +33,12 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
                     size="lg"
                     radius={5}
                     onPress={() => {
+                        navigation.setOptions({})
                         navigation.navigate("Success", {
                             title: "Parfait",
                             subtitle: "Merci d’avoir choisi de rejoindre notre plateforme, mais avant de commencer, veuillez à présent configurer votre compte",
                             confirm: "Poursuivre",
-                            onConfirm: () => {
-                                navigation.navigate("Login");
-                            }
+                            destination: "Login"
                         })
                     }}
                 />

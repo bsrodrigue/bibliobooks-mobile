@@ -4,9 +4,9 @@ export type RootStackParamList = {
     Register;
     ForgotPassword;
     Success: {
-        title: string,
-        subtitle: string,
-        confirm: string,
-        onConfirm: () => void,
+        title: string;
+        subtitle: string;
+        confirm: string;
+        destination: "Login";
     };
 };

@@ -36,9 +36,9 @@ const styles = StyleSheet.create({
 
 type SuccessScreenProps = NativeStackScreenProps<RootStackParamList, 'Success'>;
 
-export default function SuccessScreen({ route }: SuccessScreenProps) {
+export default function SuccessScreen({ navigation, route }: SuccessScreenProps) {
     const dimension = 165
-    const { title, subtitle, confirm, onConfirm } = route.params;
+    const { title, subtitle, confirm, destination } = route.params;
 
     return (
         <View style={styles.container}>
@@ -50,7 +50,9 @@ export default function SuccessScreen({ route }: SuccessScreenProps) {
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.subtitle}>{subtitle}</Text>
             </View>
-            <TouchableOpacity onPress={onConfirm}>
+            <TouchableOpacity onPress={()=>{
+                navigation.navigate(destination)
+            }}>
                 <Text style={styles.confirm}>{confirm}</Text>
             </TouchableOpacity>
         </View>
