@@ -43,9 +43,9 @@ export default function DiscoverScreen({ navigation }: DiscoverScreenProps) {
                         </View>
                     )
                 }}>
-                <Tab.Screen component={HomeScreen} name="Home" />
-                <Tab.Screen component={HomeScreen} name="Nouveaux" />
-                <Tab.Screen component={HomeScreen} name="Genres" />
+                <Tab.Screen component={HomeScreen} name="Home" options={{ title: "Découverte" }} />
+                <Tab.Screen component={HomeScreen} name="Nouveaux" options={{ title: "Nouveautés" }} />
+                <Tab.Screen component={HomeScreen} name="Genres" options={{ title: "Catégories" }} />
             </Tab.Navigator>
         </View>
     )
