@@ -1,10 +1,10 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useCachedResources } from "./hooks";
-import OnboardingScreen from './screens/OnboardingScreen/OnboardingScreen';
 import { ThemeProvider, createTheme } from "@rneui/themed";
-import { ForgotPasswordScreen, HomeScreen, LoginScreen, RegisterScreen, SetupAccountScreen, SuccessScreen } from "./screens";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useCachedResources } from "./hooks";
+import { ForgotPasswordScreen, LoginScreen, MainScreen, RegisterScreen, SetupAccountScreen, SuccessScreen } from "./screens";
+import OnboardingScreen from './screens/OnboardingScreen/OnboardingScreen';
 
 const lightTheme = createTheme({
   lightColors: {
@@ -60,7 +60,7 @@ export default function App() {
                         {
                           isSetup ? (
                             <>
-                              <Stack.Screen name='Home' component={HomeScreen} />
+                              <Stack.Screen name='Main' component={MainScreen} />
                             </>
                           ) : (
                             <>

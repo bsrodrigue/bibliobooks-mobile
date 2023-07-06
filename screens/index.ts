@@ -1,8 +1,9 @@
-export { LoginScreen } from "./LoginScreen";
-export { RegisterScreen } from "./RegisterScreen";
-export { OnboardingScreen } from "./OnboardingScreen";
-export { ForgotPasswordScreen } from "./ForgotPasswordScreen";
-export { SuccessScreen } from "./SuccessScreen";
-export { SetupAccountScreen } from "./SetupAccountScreen";
-export { HomeScreen } from "./HomeScreen";
 export { DiscoverScreen } from "./DiscoverScreen";
+export { ForgotPasswordScreen } from "./ForgotPasswordScreen";
+export { HomeScreen } from "./HomeScreen";
+export { LoginScreen } from "./LoginScreen";
+export { MainScreen } from "./MainScreen";
+export { OnboardingScreen } from "./OnboardingScreen";
+export { RegisterScreen } from "./RegisterScreen";
+export { SetupAccountScreen } from "./SetupAccountScreen";
+export { SuccessScreen } from "./SuccessScreen";

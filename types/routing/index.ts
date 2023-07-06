@@ -6,6 +6,7 @@ export type RootStackParamList = {
     ForgotPassword;
     SetupAccount;
     Discover;
+    Main;
     Success: {
         title: string;
         subtitle: string;
