@@ -8,3 +8,8 @@ export type Slide = {
     image: ImageSourcePropType;
     nextTitle?: string
 }
+
+export type RadioInputOption = {
+    label: string;
+    value: string;
+}
