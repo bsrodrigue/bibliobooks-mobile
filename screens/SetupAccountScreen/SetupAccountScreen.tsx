@@ -1,9 +1,11 @@
+import { Form } from "@n7studio/react-original-form-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useState } from "react";
+import React, { useRef, useState } from "react";
 import { StyleSheet } from "react-native";
-import { AuthForm, Button, DateTimePicker, RadioInputGroup, TextInput } from "../../components";
-import { config } from "../../config";
+import { AuthForm, Button } from "../../components";
 import { RootStackParamList } from "../../types";
+import AccountStep from "./steps/AccountStep";
+import InformationsStep from "./steps/InformationsStep";
 
 const styles = StyleSheet.create({
     next: {
@@ -19,17 +21,51 @@ const styles = StyleSheet.create({
 
 type SetupAccountScreenProps = NativeStackScreenProps<RootStackParamList, 'SetupAccount'>;
 
+const steps = [
+    {
+        title: "Informations",
+        subtitle: "Configurez vos informations personelles",
+        component: <InformationsStep />
+    },
+    {
+        title: "Compte",
+        subtitle: "Configurez votre compte",
+        component: <AccountStep />
+    },
+    {
+        title: "Préférences",
+        subtitle: "Choisissez vos genres favoris",
+        component: <InformationsStep />
+    },
+]
+
 export default function SetupAccountScreen({ navigation }: SetupAccountScreenProps) {
-    const [birthdate, setBirthdate] = useState(new Date());
+    const [currentStepIndex, setCurrentStepIndex] = useState(0);
+    const formRef = useRef(null);
 
+    const next = () => {
+        currentStepIndex !== steps.length - 1 &&
+            setCurrentStepIndex(currentStepIndex + 1)
+    };
+    const previous = () => {
+        currentStepIndex !== 0 &&
+            setCurrentStepIndex(currentStepIndex - 1)
+    };
 
+    navigation.addListener("beforeRemove", (e) => {
+        e.preventDefault();
+        previous();
+    })
 
     return (
         <AuthForm
-            title="Informations"
-            subtitle="Configurez vos informations personelles"
+            title={steps[currentStepIndex].title}
+            subtitle={steps[currentStepIndex].subtitle}
             footer={<>
                 <Button
+                    onPress={() => {
+                        formRef.current.submit();
+                    }}
                     title={"Suivant"}
                     titleStyle={styles.next}
                     color="black"
@@ -37,10 +73,11 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
                     radius={5}
                 />
             </>}>
-            <TextInput label="Nom de famille" placeholder="Veuillez saisir votre nom de famille" />
-            <TextInput label="Prénom" placeholder="Veuillez saisir votre prénom" />
-            <RadioInputGroup label="Votre genre" name="gender" options={config.genderOptions} />
-            <DateTimePicker date={birthdate} mode="date" onChange={setBirthdate} />
+            <Form onSubmit={(values) => {
+                next();
+            }} ref={formRef}>
+                {steps[currentStepIndex].component}
+            </Form>
         </AuthForm>
     )
 }

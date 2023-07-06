@@ -55,7 +55,7 @@ export default function AuthForm({ children, footer, title, subtitle }: AuthForm
                 <Text style={styles.subtitle}>{subtitle}</Text>
             </View>
             <KeyboardAwareScrollView style={styles.body}>
-                {children}
+                    {children}
             </KeyboardAwareScrollView>
             <View style={styles.footer}>
                 {footer}
