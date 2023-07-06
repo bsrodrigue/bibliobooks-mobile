@@ -24,6 +24,7 @@ export default function RadioInputGroup({ label, name: _name, onChange, options 
                 {
                     options.map((option) => (
                         <RadioInput
+                            key={option.value}
                             selected={selected}
                             onPress={setSelected}
                             imgSrc={require("../../assets/illustrations/male.png")}

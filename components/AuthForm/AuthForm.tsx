@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
     },
 
     header: {
-        flex: 0.2,
+        flex: 0.3,
     },
 
     title: {
@@ -21,12 +21,14 @@ const styles = StyleSheet.create({
     },
 
     subtitle: {
+        fontSize: 20,
         fontFamily: "Quicksand-500",
-        opacity: 0.75
+        fontStyle: "italic",
+        opacity: 0.5
     },
 
     body: {
-        flex: 0.6,
+        flex: 0.5,
         marginVertical: 15
     },
 
@@ -55,7 +57,7 @@ export default function AuthForm({ children, footer, title, subtitle }: AuthForm
                 <Text style={styles.subtitle}>{subtitle}</Text>
             </View>
             <KeyboardAwareScrollView style={styles.body}>
-                    {children}
+                {children}
             </KeyboardAwareScrollView>
             <View style={styles.footer}>
                 {footer}
