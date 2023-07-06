@@ -1,8 +1,8 @@
 import { RadioInputOption } from "../types";
 
 const genderOptions: RadioInputOption[] = [
-    { label: "Homme", value: "male" },
-    { label: "Femme", value: "female" },
+    { label: "Homme", value: "male", imgSrc: require("../assets/illustrations/male.png") },
+    { label: "Femme", value: "female", imgSrc: require("../assets/illustrations/female.png") },
 ]
 
 const genres = [

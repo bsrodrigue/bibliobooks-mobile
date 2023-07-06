@@ -12,6 +12,7 @@ export type Slide = {
 export type RadioInputOption = {
     label: string;
     value: string;
+    imgSrc: ImageSourcePropType;
 }
 
 export type Genre = {

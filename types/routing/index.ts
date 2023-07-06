@@ -1,4 +1,5 @@
 export type RootStackParamList = {
+    Home;
     Onboarding;
     Login;
     Register;
@@ -8,6 +9,6 @@ export type RootStackParamList = {
         title: string;
         subtitle: string;
         confirm: string;
-        destination: "Login" | "SetupAccount";
+        destination: "Login" | "SetupAccount" | "Home";
     };
 };

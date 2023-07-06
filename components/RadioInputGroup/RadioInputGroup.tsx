@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
-import { RadioInput } from "../RadioInput";
 import { RadioInputOption } from "../../types";
+import { RadioInput } from "../RadioInput";
 
 type RadioInputGroupProps = {
     label: string;
@@ -27,7 +27,7 @@ export default function RadioInputGroup({ label, name: _name, onChange, options 
                             key={option.value}
                             selected={selected}
                             onPress={setSelected}
-                            imgSrc={require("../../assets/illustrations/male.png")}
+                            imgSrc={option.imgSrc}
                             {...option}
                         />
                     ))

@@ -1,7 +1,8 @@
 import { Form } from "@n7studio/react-original-form-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useRef, useState } from "react";
-import { StyleSheet } from "react-native";
+import { BackHandler, StyleSheet } from "react-native";
 import { AuthForm, Button } from "../../components";
 import { RootStackParamList } from "../../types";
 import AccountStep from "./steps/AccountStep";
@@ -45,18 +46,35 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
     const formRef = useRef(null);
 
     const next = () => {
-        currentStepIndex !== steps.length - 1 &&
+        if (currentStepIndex < steps.length - 1) {
             setCurrentStepIndex(currentStepIndex + 1)
+            return;
+        }
+
+        navigation.navigate("Success", {
+            title: "Parfait",
+            subtitle: "Votre compte est finalement prêt. Vous pouvez commencer à explorer la plateforme",
+            confirm: "Poursuivre",
+            destination: "Home"
+        })
     };
     const previous = () => {
         currentStepIndex !== 0 &&
             setCurrentStepIndex(currentStepIndex - 1)
     };
 
-    navigation.addListener("beforeRemove", (e) => {
-        e.preventDefault();
-        previous();
-    })
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                previous();
+                return true;
+            };
+
+            const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () => subscription.remove();
+        }, [currentStepIndex])
+    );
 
     return (
         <AuthForm
