@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useCachedResources } from "./hooks";
 import OnboardingScreen from './screens/OnboardingScreen/OnboardingScreen';
 import { ThemeProvider, createTheme } from "@rneui/themed";
-import { ForgotPasswordScreen, LoginScreen, RegisterScreen, SetupAccountScreen, SuccessScreen } from "./screens";
+import { ForgotPasswordScreen, HomeScreen, LoginScreen, RegisterScreen, SetupAccountScreen, SuccessScreen } from "./screens";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const lightTheme = createTheme({
@@ -36,6 +36,9 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   const { isLoadingComplete } = useCachedResources();
+  const isFirstBoot = false;
+  const isAuth = true;
+  const isSetup = true;
 
   if (!isLoadingComplete) {
     return null;
@@ -46,12 +49,38 @@ export default function App() {
       <SafeAreaView style={{ flex: 1 }}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name='Onboarding' component={OnboardingScreen} />
-            <Stack.Screen name='Login' component={LoginScreen} />
-            <Stack.Screen name='Register' component={RegisterScreen} />
-            <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
-            <Stack.Screen name='Success' component={SuccessScreen} />
-            <Stack.Screen name='SetupAccount' component={SetupAccountScreen} />
+            {
+              isFirstBoot ? (
+                <Stack.Screen name='Onboarding' component={OnboardingScreen} />
+              ) : (
+                <>
+                  {
+                    isAuth ? (
+                      <>
+                        {
+                          isSetup ? (
+                            <>
+                              <Stack.Screen name='Home' component={HomeScreen} />
+                            </>
+                          ) : (
+                            <>
+                              <Stack.Screen name='SetupAccount' component={SetupAccountScreen} />
+                            </>
+                          )
+                        }
+                      </>
+                    ) : (
+                      <>
+                        <Stack.Screen name='Login' component={LoginScreen} />
+                        <Stack.Screen name='Register' component={RegisterScreen} />
+                        <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
+                        <Stack.Screen name='Success' component={SuccessScreen} />
+                      </>
+                    )
+                  }
+                </>
+              )
+            }
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>
