@@ -36,7 +36,7 @@ export default function AccountStep() {
                 <Avatar
                     size={180}
                     rounded
-                    containerStyle={{ backgroundColor: primary, marginBottom: 10 }}
+                    containerStyle={{ backgroundColor: primary, marginBottom: 10, padding: 5 }}
                     source={{ uri: image }}
                 />
             </View>

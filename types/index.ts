@@ -13,3 +13,9 @@ export type RadioInputOption = {
     label: string;
     value: string;
 }
+
+export type Genre = {
+    title: string;
+    description: string;
+    cover: ImageSourcePropType;
+}

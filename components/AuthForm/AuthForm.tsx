@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { StyleSheet, Text, View } from "react-native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const styles = StyleSheet.create({
     container: {
@@ -11,7 +10,8 @@ const styles = StyleSheet.create({
     },
 
     header: {
-        flex: 0.3,
+        flex: 0.1,
+        marginBottom: 25
     },
 
     title: {
@@ -28,8 +28,9 @@ const styles = StyleSheet.create({
     },
 
     body: {
-        flex: 0.5,
-        marginVertical: 15
+        flex: 0.7,
+        marginVertical: 15,
+        justifyContent: "center",
     },
 
     footer: {
@@ -56,9 +57,9 @@ export default function AuthForm({ children, footer, title, subtitle }: AuthForm
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.subtitle}>{subtitle}</Text>
             </View>
-            <KeyboardAwareScrollView style={styles.body}>
+            <View style={styles.body}>
                 {children}
-            </KeyboardAwareScrollView>
+            </View>
             <View style={styles.footer}>
                 {footer}
             </View>

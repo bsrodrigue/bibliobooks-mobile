@@ -6,6 +6,7 @@ import { AuthForm, Button } from "../../components";
 import { RootStackParamList } from "../../types";
 import AccountStep from "./steps/AccountStep";
 import InformationsStep from "./steps/InformationsStep";
+import PreferencesStep from "./steps/PreferencesStep";
 
 const styles = StyleSheet.create({
     next: {
@@ -35,7 +36,7 @@ const steps = [
     {
         title: "Préférences",
         subtitle: "Choisissez vos genres favoris",
-        component: <InformationsStep />
+        component: <PreferencesStep />
     },
 ]
 
