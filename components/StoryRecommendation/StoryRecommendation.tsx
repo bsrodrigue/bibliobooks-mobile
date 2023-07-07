@@ -19,7 +19,7 @@ export default function StoryRecommendations({ title, subtitle, novel }: StoryRe
 
     return (
         <View style={{ marginVertical: 10 }}>
-            <Card containerStyle={{ margin: 0, borderRadius: 10, backgroundColor: primary }}>
+            <Card containerStyle={{ margin: 0, borderRadius: 10, backgroundColor: primary, borderWidth: 0 }}>
                 <View>
                     <View style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}  >
                         <Text style={{ fontFamily: "Quicksand-700", fontSize: 16, color: "white" }}>{title}</Text>
