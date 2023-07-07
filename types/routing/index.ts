@@ -1,3 +1,5 @@
+import { Novel } from "..";
+
 export type RootStackParamList = {
     Home;
     Onboarding;
@@ -9,6 +11,9 @@ export type RootStackParamList = {
     Main;
     Novelty;
     Genre;
+    NovelDetails: {
+        novel: Novel;
+    };
     Success: {
         title: string;
         subtitle: string;

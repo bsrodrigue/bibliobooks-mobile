@@ -27,5 +27,7 @@ export type Novel = {
     chapterCount?: number;
     description?: string;
     imgSrc?: ImageSourcePropType;
-    mature?: boolean
+    mature?: boolean;
+    author?: string;
+    genre?: string;
 }

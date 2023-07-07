@@ -56,7 +56,7 @@ type LatestReadCardProps = {
         description: string;
         chapterCount: number;
         imgSrc: ImageSourcePropType;
-    }
+    },
 }
 
 

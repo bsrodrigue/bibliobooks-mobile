@@ -42,7 +42,15 @@ const novels = [
     },
 ];
 
-
+const novel = {
+    title: "Le légendaire chevalier africain par le mestre gims",
+    description: "Ce livre vaut vraiment la peine d’etre lu, je vous le promet, vous devez le lire, il est merveilleux, il vous fait croire en Dieu plus que qui d’autre. Je vous jure que c’est vrai. Ce livre vaut vraiment la peine d’etre lu, je vous le promet, vous devez le lire, il est merveilleux, il vous fait croire en Dieu plus que qui d’autre...",
+    mature: true,
+    genre: "Fantasy",
+    author: "LeMestre_Gims",
+    chapterCount: 35,
+    imgSrc: require("../../assets/images/noice_butt.jpg")
+};
 
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -51,7 +59,14 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
     return (
         <ScrollView style={styles.container}>
             <LatestReadCard title="Dernière lecture" time="Il y a trois (3) jours" novel={novels[1]} />
-            <StoryRecommendation title="Le jardin des plaisirs" subtitle="Laissez-vous charmer par les rondeurs de Sophia" novel={{ title: "", description: "", mature: true, chapterCount: 35, imgSrc: require("../../assets/images/noice_butt.jpg") }} />
+            <StoryRecommendation
+                title="Le jardin des plaisirs"
+                subtitle="Laissez-vous charmer par les rondeurs de Sophia"
+                novel={novel}
+                onPress={() => {
+                    navigation.navigate("NovelDetails", { novel });
+                }}
+            />
             <RecommendationCarousel title="Les histoires les plus populaires" novels={novels} />
             <StoryRecommendation title="Les totems des anciens" subtitle="Renouez avec vos racines" novel={{ title: "", description: "", mature: false, chapterCount: 35, imgSrc: require("../../assets/images/traditional.jpg") }} />
         </ScrollView>

@@ -11,10 +11,11 @@ type StoryRecommendationProps = {
         chapterCount: number;
         imgSrc: ImageSourcePropType;
         mature: boolean;
-    }
+    },
+    onPress?: () => void;
 }
 
-export default function StoryRecommendations({ title, subtitle, novel }: StoryRecommendationProps) {
+export default function StoryRecommendations({ title, subtitle, novel, onPress }: StoryRecommendationProps) {
     const { theme: { colors: { primary } } } = useTheme();
 
     return (
@@ -26,7 +27,7 @@ export default function StoryRecommendations({ title, subtitle, novel }: StoryRe
                         {novel.mature ? (<Chip color="error" size="sm" radius="md" title="18+" />) : null}
                     </View>
                     <Text style={{ fontFamily: "Quicksand-500", color: "white", opacity: 0.8, fontStyle: "italic" }}>{subtitle}</Text>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={onPress}>
                         <ImageBackground borderRadius={10} style={{ width: "100%", height: 100, marginVertical: 10 }} source={novel.imgSrc} >
                         </ImageBackground>
                     </TouchableOpacity>

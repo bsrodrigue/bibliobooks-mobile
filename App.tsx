@@ -4,11 +4,13 @@ import { ThemeProvider, createTheme } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCachedResources } from "./hooks";
 import { ForgotPasswordScreen, LoginScreen, MainScreen, RegisterScreen, SetupAccountScreen, SuccessScreen } from "./screens";
+import NovelDetailsScreen from "./screens/NovelDetails/NovelDetails";
 import OnboardingScreen from './screens/OnboardingScreen/OnboardingScreen';
 
 const lightTheme = createTheme({
   lightColors: {
     primary: "#22A39F",
+    black: "#0A514F",
     error: "#DF2E38",
     greyOutline: "#CCCCCC",
   },
@@ -46,7 +48,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={lightTheme}>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {
@@ -61,6 +63,7 @@ export default function App() {
                           isSetup ? (
                             <>
                               <Stack.Screen name='Main' component={MainScreen} />
+                              <Stack.Screen name='NovelDetails' component={NovelDetailsScreen} />
                             </>
                           ) : (
                             <>
