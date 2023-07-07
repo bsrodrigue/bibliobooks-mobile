@@ -1,81 +1,58 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { View, Text, StyleSheet, Image } from "react-native";
+import { ScrollView, StyleSheet } from "react-native";
+import { LatestReadCard, RecommendationCarousel, StoryRecommendation } from "../../components";
 import { RootStackParamList } from "../../types";
-import { Card } from "@rneui/base";
-import { Button } from "../../components";
 
 const styles = StyleSheet.create({
     container: {
         paddingHorizontal: 20,
+        paddingVertical: 15,
     },
-
-    header: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-
-    title: {
-        fontFamily: "Quicksand-700",
-        fontSize: 18
-    },
-
-    time: {
-        fontSize: 10,
-        opacity: 0.5,
-        fontStyle: "italic",
-    },
-
-    body: {
-        marginVertical: 10,
-        flexDirection: "row",
-        gap: 10
-    },
-
-    novelTitle: {
-        fontFamily: "Quicksand-700",
-    },
-    chapterCount: {
-        fontFamily: "Quicksand-300",
-        fontStyle: "italic",
-        opacity: 0.5,
-        marginVertical: 5
-    },
-    novelDescription: {
-        maxWidth: 200,
-        fontFamily: "Quicksand-600",
-        fontSize: 12
-    },
-
-    button: {
-        backgroundColor: "black",
-        borderRadius: 10
-    }
 });
+
+const description = "Il s’agit d’une histoire vraiment et franchement historique. Rien de plus vrai que l’histoire de l’histoire de vos meilleures histoires historiques. J’avais juste la flemme d’utiliser un lorem ipsum, ironique..."
+
+const novels = [
+    {
+        title: "La grande aventure - Tome 1",
+        description,
+        chapterCount: 26,
+        imgSrc: require("../../assets/images/dragon.jpg"),
+    }, {
+        title: "La grande aventure - Tome 2",
+        description,
+        chapterCount: 26,
+        imgSrc: require("../../assets/images/lizard.jpg"),
+    }, {
+        title: "La grande aventure - Tome 3",
+        description,
+        chapterCount: 26,
+        imgSrc: require("../../assets/images/traditional.jpg"),
+    }, {
+        title: "La grande aventure - Tome 4",
+        description,
+        chapterCount: 26,
+        imgSrc: require("../../assets/images/action.jpg"),
+    }, {
+        title: "La grande aventure - Tome 5",
+        description,
+        chapterCount: 26,
+        imgSrc: require("../../assets/images/fantasy.jpg"),
+    },
+];
+
+
 
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
 
     return (
-        <View style={styles.container}>
-            <Card containerStyle={{ margin: 0, borderRadius: 10 }}>
-                <View style={styles.header}>
-                    <Text style={styles.title}>Lecture récente</Text>
-                    <Text style={styles.time}>Il y a trois (3) jours</Text>
-                </View>
-                <View style={styles.body}>
-                    <Image resizeMode="cover" style={{ height: 120, width: 80, borderRadius: 10 }} source={require("../../assets/images/dragon.jpg")} />
-                    <View >
-                        <Text style={styles.novelTitle}>La grande aventure - Tome 1</Text>
-                        <Text style={styles.chapterCount}>26 chapitres</Text>
-                        <Text numberOfLines={5} style={styles.novelDescription}>Il s’agit d’une histoire vraiment et franchement historique. Rien de plus vrai que l’histoire de l’histoire de vos meilleures histoires historiques. J’avais juste la flemme d’utiliser un lorem ipsum, ironique...</Text>
-                    </View>
-                </View>
-                <View>
-                    <Button buttonStyle={styles.button}>Poursuivre</Button>
-                </View>
-            </Card>
-        </View>
+        <ScrollView style={styles.container}>
+            <LatestReadCard title="Dernière lecture" time="Il y a trois (3) jours" novel={novels[1]} />
+            <StoryRecommendation title="Le jardin des plaisirs" subtitle="Laissez-vous charmer par les rondeurs de Sophia" novel={{ title: "", description: "", mature: true, chapterCount: 35, imgSrc: require("../../assets/images/noice_butt.jpg") }} />
+            <RecommendationCarousel title="Les histoires les plus populaires" novels={novels} />
+            <StoryRecommendation title="Les totems des anciens" subtitle="Renouez avec vos racines" novel={{ title: "", description: "", mature: false, chapterCount: 35, imgSrc: require("../../assets/images/traditional.jpg") }} />
+        </ScrollView>
     )
 }

@@ -17,7 +17,7 @@ export default function DiscoverScreen({ navigation }: DiscoverScreenProps) {
         <View style={{ flex: 1 }}>
             <Tab.Navigator
                 sceneContainerStyle={{
-                    paddingTop: 50
+                    paddingTop: 30
                 }}
                 screenOptions={{
                     headerShown: false,
