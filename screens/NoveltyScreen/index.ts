@@ -1,0 +1,1 @@
+export { default as NoveltyScreen } from "./NoveltyScreen";

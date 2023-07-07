@@ -7,6 +7,8 @@ export type RootStackParamList = {
     SetupAccount;
     Discover;
     Main;
+    Novelty;
+    Genre;
     Success: {
         title: string;
         subtitle: string;

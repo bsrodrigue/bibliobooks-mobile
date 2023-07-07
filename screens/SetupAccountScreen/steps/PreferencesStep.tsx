@@ -11,7 +11,6 @@ export default function PreferencesStep() {
         selected: false, ...genre,
     })))
 
-
     const toggle = (value: string) => {
         setGenres((genres) => genres.map((genre) => {
             if (genre.value === value) {
@@ -22,10 +21,6 @@ export default function PreferencesStep() {
         }
         ));
     }
-
-
-
-    console.log(genres);
 
     return (
         <FormPartial>

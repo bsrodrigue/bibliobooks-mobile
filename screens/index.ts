@@ -7,3 +7,4 @@ export { OnboardingScreen } from "./OnboardingScreen";
 export { RegisterScreen } from "./RegisterScreen";
 export { SetupAccountScreen } from "./SetupAccountScreen";
 export { SuccessScreen } from "./SuccessScreen";
+export { NoveltyScreen } from "./NoveltyScreen";

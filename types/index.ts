@@ -20,3 +20,12 @@ export type Genre = {
     description: string;
     cover: ImageSourcePropType;
 }
+
+export type Novel = {
+    id?: string;
+    title?: string;
+    chapterCount?: number;
+    description?: string;
+    imgSrc?: ImageSourcePropType;
+    mature?: boolean
+}

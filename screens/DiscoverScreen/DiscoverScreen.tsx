@@ -1,10 +1,11 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useTheme } from "@rneui/themed";
 import { Text, View } from "react-native";
 import { RootStackParamList } from "../../types";
+import { GenreScreen } from "../GenreScreen";
 import { HomeScreen } from "../HomeScreen";
-import { useTheme } from "@rneui/themed";
-
+import { NoveltyScreen } from "../NoveltyScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -44,8 +45,8 @@ export default function DiscoverScreen({ navigation }: DiscoverScreenProps) {
                     )
                 }}>
                 <Tab.Screen component={HomeScreen} name="Home" options={{ title: "Découverte" }} />
-                <Tab.Screen component={HomeScreen} name="Nouveaux" options={{ title: "Nouveautés" }} />
-                <Tab.Screen component={HomeScreen} name="Genres" options={{ title: "Catégories" }} />
+                <Tab.Screen component={NoveltyScreen} name="Novelty" options={{ title: "Nouveautés" }} />
+                <Tab.Screen component={GenreScreen} name="Genres" options={{ title: "Catégories" }} />
             </Tab.Navigator>
         </View>
     )
