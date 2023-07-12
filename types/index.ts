@@ -30,4 +30,5 @@ export type Novel = {
     mature?: boolean;
     author?: string;
     genre?: string;
+    last?: boolean;
 }
