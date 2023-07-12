@@ -6,6 +6,7 @@ import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { TextInput } from "../../components";
 import { RootStackParamList } from "../../types";
 import { DiscoverScreen } from "../DiscoverScreen";
+import { LibraryScreen } from "../LibraryScreen";
 import { LoginScreen } from "../LoginScreen";
 
 const styles = StyleSheet.create({
@@ -80,7 +81,7 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                         headerTitle: "Bibliothèque"
                     }}
                     name="Library"
-                    component={LoginScreen} />
+                    component={LibraryScreen} />
                 <Tab.Screen
                     options={{
                         tabBarLabel: "Atelier",

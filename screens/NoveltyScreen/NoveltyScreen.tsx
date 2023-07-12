@@ -13,9 +13,9 @@ const styles = StyleSheet.create({
 });
 
 
-type NoveltyScreenProps = NativeStackScreenProps<RootStackParamList, 'Novelty'>;
+type LibraryScreenProps = NativeStackScreenProps<RootStackParamList, 'Library'>;
 
-export default function NoveltyScreen({ navigation }: NoveltyScreenProps) {
+export default function LibraryScreen({ navigation }: LibraryScreenProps) {
 
     return (
         <View style={styles.container}>

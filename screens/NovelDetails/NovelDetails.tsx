@@ -1,10 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Avatar, BottomSheet, Card, Divider, Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
+import { useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../../components";
 import { RootStackParamList } from "../../types";
-import { useState } from "react";
 
 const chapters = [
     { id: "1", title: "Chapter: The great adventure of the great boss" },
@@ -34,7 +35,7 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
     const dimension = 165
 
     return (
-        <View style={[styles.container, { backgroundColor: black }]}>
+        <SafeAreaView style={[styles.container, { backgroundColor: black }]}>
             <View style={{ flex: 0.25, paddingHorizontal: 40 }}>
                 <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
                     <View style={{ justifyContent: "space-between" }}>
@@ -116,18 +117,17 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
 
                 </Card>
             </View>
-            <BottomSheet onBackdropPress={() => setChapterListIsVisible(false)} isVisible={chapterListIsVisible} >
+            <BottomSheet onBackdropPress={() => setChapterListIsVisible(false)} isVisible={chapterListIsVisible}>
                 <Card containerStyle={{ margin: 0, borderTopStartRadius: 10, borderTopEndRadius: 10, flex: 1, paddingHorizontal: 40, }}>
-                    <View>
-                        <Text style={{ fontFamily: "Quicksand-700", fontSize: 18, marginVertical: 15 }}>{chapterCount}{" "}chapitres</Text>
-                    </View>
-                    <FlatList showsVerticalScrollIndicator={false} style={{ height: 300 }} data={chapters} renderItem={({ index, item: { id, title } }) => (
-                        <TouchableOpacity key={id} style={{ paddingVertical: 12 }}>
-                            <Text style={{ fontFamily: "Quicksand-600" }}>{title}</Text>
-                        </TouchableOpacity>)}
+                    <FlatList
+                        ListHeaderComponent={<Text style={{ fontFamily: "Quicksand-700", fontSize: 18, marginVertical: 15 }}>{chapterCount}{" "}chapitres</Text>}
+                        showsVerticalScrollIndicator={false} style={{ height: 300 }} data={chapters} renderItem={({ index, item: { id, title } }) => (
+                            <TouchableOpacity key={id} style={{ paddingVertical: 12 }}>
+                                <Text style={{ fontFamily: "Quicksand-600" }}>{title}</Text>
+                            </TouchableOpacity>)}
                     />
                 </Card>
             </BottomSheet>
-        </View>
+        </SafeAreaView>
     )
 }

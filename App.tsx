@@ -38,9 +38,10 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   const { isLoadingComplete } = useCachedResources();
+
   const isFirstBoot = false;
   const isAuth = true;
-  const isSetup = true;
+  const isAccountSetup = true;
 
   if (!isLoadingComplete) {
     return null;
@@ -51,39 +52,16 @@ export default function App() {
       <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
         <NavigationContainer>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {
-              isFirstBoot ? (
-                <Stack.Screen name='Onboarding' component={OnboardingScreen} />
-              ) : (
-                <>
-                  {
-                    isAuth ? (
-                      <>
-                        {
-                          isSetup ? (
-                            <>
-                              <Stack.Screen name='Main' component={MainScreen} />
-                              <Stack.Screen name='NovelDetails' component={NovelDetailsScreen} />
-                            </>
-                          ) : (
-                            <>
-                              <Stack.Screen name='SetupAccount' component={SetupAccountScreen} />
-                            </>
-                          )
-                        }
-                      </>
-                    ) : (
-                      <>
-                        <Stack.Screen name='Login' component={LoginScreen} />
-                        <Stack.Screen name='Register' component={RegisterScreen} />
-                        <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
-                        <Stack.Screen name='Success' component={SuccessScreen} />
-                      </>
-                    )
-                  }
-                </>
-              )
-            }
+            {isFirstBoot ? (<Stack.Screen name='Onboarding' component={OnboardingScreen} />) : null}
+            <Stack.Screen name='Main' component={MainScreen} />
+            <Stack.Screen name='NovelDetails' component={NovelDetailsScreen} />
+            {!isAccountSetup ? (<Stack.Screen name='SetupAccount' component={SetupAccountScreen} />) : null}
+            {!isAuth ? (<>
+              <Stack.Screen name='Login' component={LoginScreen} />
+              <Stack.Screen name='Register' component={RegisterScreen} />
+              <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
+            </>) : null}
+            <Stack.Screen name='Success' component={SuccessScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </SafeAreaView>

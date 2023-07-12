@@ -11,6 +11,7 @@ export type RootStackParamList = {
     Main;
     Novelty;
     Genre;
+    Library;
     NovelDetails: {
         novel: Novel;
     };
