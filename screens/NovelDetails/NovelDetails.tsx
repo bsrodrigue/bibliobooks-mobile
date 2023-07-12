@@ -1,9 +1,22 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Avatar, Card } from "@rneui/base";
+import { Avatar, BottomSheet, Card, Divider, Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Button } from "../../components";
 import { RootStackParamList } from "../../types";
+import { useState } from "react";
+
+const chapters = [
+    { id: "1", title: "Chapter: The great adventure of the great boss" },
+    { id: "2", title: "Chapter: The great adventure of the great boss" },
+    { id: "3", title: "Chapter: The great adventure of the great boss" },
+    { id: "4", title: "Chapter: The great adventure of the great boss" },
+    { id: "5", title: "Chapter: The great adventure of the great boss" },
+    { id: "6", title: "Chapter: The great adventure of the great boss" },
+    { id: "7", title: "Chapter: The great adventure of the great boss" },
+    { id: "8", title: "Chapter: The great adventure of the great boss" },
+    { id: "9", title: "Chapter: The great adventure of the great boss" },
+];
 
 const styles = StyleSheet.create({
     container: {
@@ -17,6 +30,7 @@ type NovelDetailsScreenProps = NativeStackScreenProps<RootStackParamList, 'Novel
 export default function NovelDetailsScreen({ navigation, route }: NovelDetailsScreenProps) {
     const { novel: { title, description, chapterCount, author, id, genre, mature, imgSrc } } = route.params;
     const { theme: { colors: { black, primary } } } = useTheme();
+    const [chapterListIsVisible, setChapterListIsVisible] = useState(false);
     const dimension = 165
 
     return (
@@ -35,17 +49,30 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                 </View>
             </View>
             <View style={{ flex: 0.75 }}>
-
                 <Card containerStyle={{ margin: 0, borderTopStartRadius: 10, borderTopEndRadius: 10, flex: 1, paddingHorizontal: 0 }}>
-
                     <View>
                         <View >
                             <View style={{ paddingHorizontal: 40 }}>
+                                <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10 }}>
+                                    <View style={{ width: 50, }}>
+                                        <Icon name="eye" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
+                                        <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>19.9K</Text>
+                                    </View>
+                                    <View style={{ width: 50, }}>
+                                        <Icon name="star" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
+                                        <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>19.9K</Text>
+                                    </View>
+                                    <View style={{ width: 50, }}>
+                                        <Icon name="comments" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
+                                        <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>19.9K</Text>
+                                    </View>
+                                </View>
+                                <Divider style={{ marginVertical: 15, opacity: 0.5 }} />
                                 <Text style={{ fontSize: 18, fontFamily: "Quicksand-700", marginBottom: 10 }}>Synopsis</Text>
-                                <Text style={{ opacity: 0.6, lineHeight: 20, fontFamily: "Quicksand" }}>{description}</Text>
+                                <Text style={{ opacity: 0.6, lineHeight: 16, fontFamily: "Quicksand" }}>{description}</Text>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: 10 }}>
                                     <Text style={{ fontFamily: "Quicksand-700", fontSize: 18 }}>{chapterCount}{" "}chapitres</Text>
-                                    <TouchableOpacity>
+                                    <TouchableOpacity onPress={() => setChapterListIsVisible(true)} >
                                         <Text style={{ opacity: 0.5, fontFamily: "Quicksand-700" }}>Voir tous les chapitres</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -76,14 +103,31 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                             </View>
                         </View>
 
-                        <Button containerStyle={{
-                            paddingHorizontal: 40,
-                            marginVertical: 20
-                        }} radius={25} buttonStyle={{ backgroundColor: primary }}>Commencer la lecture</Button>
+                        <View style={{ paddingHorizontal: 40 }}>
+
+                            <Divider style={{ marginVertical: 15, opacity: 0.5 }} />
+                            <Button
+                                onPress={() => { setChapterListIsVisible(true) }}
+                                containerStyle={{
+                                    marginVertical: 20
+                                }} radius={25} buttonStyle={{ backgroundColor: primary }}>Commencer la lecture</Button>
+                        </View>
                     </View>
 
                 </Card>
             </View>
+            <BottomSheet onBackdropPress={() => setChapterListIsVisible(false)} isVisible={chapterListIsVisible} >
+                <Card containerStyle={{ margin: 0, borderTopStartRadius: 10, borderTopEndRadius: 10, flex: 1, paddingHorizontal: 40, }}>
+                    <View>
+                        <Text style={{ fontFamily: "Quicksand-700", fontSize: 18, marginVertical: 15 }}>{chapterCount}{" "}chapitres</Text>
+                    </View>
+                    <FlatList showsVerticalScrollIndicator={false} style={{ height: 300 }} data={chapters} renderItem={({ index, item: { id, title } }) => (
+                        <TouchableOpacity key={id} style={{ paddingVertical: 12 }}>
+                            <Text style={{ fontFamily: "Quicksand-600" }}>{title}</Text>
+                        </TouchableOpacity>)}
+                    />
+                </Card>
+            </BottomSheet>
         </View>
     )
 }
