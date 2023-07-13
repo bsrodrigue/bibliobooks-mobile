@@ -7,6 +7,7 @@ import { Novel } from "../../types";
 type NovelGridProps = {
     novels: Novel[];
     onNovelPress: (novel: Novel) => void;
+    onNovelLongPress: (novel: Novel) => void;
     onLastItemPress: () => void;
 }
 
@@ -57,7 +58,7 @@ function BasicNovel({ novel: { title, imgSrc }, imageStyle, labelStyle }: BasicN
     )
 }
 
-export default function NovelGrid({ novels, onNovelPress, onLastItemPress }: NovelGridProps) {
+export default function NovelGrid({ novels, onNovelPress, onNovelLongPress, onLastItemPress }: NovelGridProps) {
     const screenWidth = Dimensions.get('window').width;
     const columns = useRef(3);
 
@@ -75,7 +76,10 @@ export default function NovelGrid({ novels, onNovelPress, onLastItemPress }: Nov
             }}
             renderItem={({ index, item }) =>
             (<TouchableOpacity
-                onPress={() => onNovelPress(item)}
+                onPress={() => {
+                    item.last ? onLastItemPress() : onNovelPress(item)
+                }}
+                onLongPress={() => onNovelLongPress(item)}
                 style={{ marginVertical: 1 }}
                 key={index}>
                 {

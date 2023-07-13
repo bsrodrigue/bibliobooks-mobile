@@ -57,10 +57,13 @@ export default function PublicationsScreen({ navigation }: PublicationsScreenPro
 
     return (
         <View style={styles.container}>
-            <NovelGrid novels={data} onNovelPress={(novel) => {
-                setCurrentNovel(novel);
-                setActionsIsVisible(true);
-            }} onLastItemPress={() => { }} />
+            <NovelGrid
+                novels={data}
+                onNovelPress={(novel) => { }}
+                onNovelLongPress={(novel) => {
+                    setCurrentNovel(novel);
+                    setActionsIsVisible(true);
+                }} onLastItemPress={() => { }} />
             <BottomSheet onBackdropPress={() => setActionsIsVisible(false)} isVisible={actionsIsVisible}>
                 <Card containerStyle={{
                     margin: 0,
