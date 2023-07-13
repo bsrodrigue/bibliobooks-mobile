@@ -8,6 +8,7 @@ import { RootStackParamList } from "../../types";
 import { DiscoverScreen } from "../DiscoverScreen";
 import { LibraryScreen } from "../LibraryScreen";
 import { LoginScreen } from "../LoginScreen";
+import { WorkshopScreen } from "../WorkshopScreen";
 
 const styles = StyleSheet.create({
     container: {
@@ -21,6 +22,7 @@ type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
 const Tab = createBottomTabNavigator();
 
 export default function MainScreen({ navigation, route }: MainScreenProps) {
+    console.log(route)
     const { theme: { colors: { primary } } } = useTheme();
     return (
         <View style={styles.container}>
@@ -89,7 +91,7 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                         headerTitle: "Atelier"
                     }}
                     name="Workshop"
-                    component={LoginScreen} />
+                    component={WorkshopScreen} />
                 <Tab.Screen
                     options={{
                         tabBarLabel: "Compte",

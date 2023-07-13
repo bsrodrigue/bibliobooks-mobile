@@ -118,7 +118,7 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                 </Card>
             </View>
             <BottomSheet onBackdropPress={() => setChapterListIsVisible(false)} isVisible={chapterListIsVisible}>
-                <Card containerStyle={{ margin: 0, borderTopStartRadius: 10, borderTopEndRadius: 10, flex: 1, paddingHorizontal: 40, }}>
+                <Card containerStyle={{ margin: 0, borderTopStartRadius: 25, borderTopEndRadius: 25, flex: 1, paddingHorizontal: 40, }}>
                     <FlatList
                         ListHeaderComponent={<Text style={{ fontFamily: "Quicksand-700", fontSize: 18, marginVertical: 15 }}>{chapterCount}{" "}chapitres</Text>}
                         showsVerticalScrollIndicator={false} style={{ height: 300 }} data={chapters} renderItem={({ index, item: { id, title } }) => (

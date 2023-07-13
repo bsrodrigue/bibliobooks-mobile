@@ -6,7 +6,7 @@ import { Novel } from "../../types";
 
 type NovelGridProps = {
     novels: Novel[];
-    onNovelPress: () => void;
+    onNovelPress: (novel: Novel) => void;
     onLastItemPress: () => void;
 }
 
@@ -73,15 +73,15 @@ export default function NovelGrid({ novels, onNovelPress, onLastItemPress }: Nov
                 justifyContent: "flex-start",
                 gap: 15
             }}
-            renderItem={({ index, item: { title, imgSrc, last } }) =>
+            renderItem={({ index, item }) =>
             (<TouchableOpacity
-                onPress={onNovelPress}
+                onPress={() => onNovelPress(item)}
                 style={{ marginVertical: 1 }}
                 key={index}>
                 {
-                    !last ? (
+                    !item.last ? (
                         <BasicNovel
-                            novel={{ title, imgSrc }}
+                            novel={item}
                             imageStyle={
                                 {
                                     height: 150,

@@ -7,7 +7,9 @@ export { MainScreen } from "./MainScreen";
 export { NovelDetails } from "./NovelDetails";
 export { NoveltyScreen } from "./NoveltyScreen";
 export { OnboardingScreen } from "./OnboardingScreen";
+export { PublicationsScreen } from "./PublicationsScreen";
 export { RegisterScreen } from "./RegisterScreen";
 export { SetupAccountScreen } from "./SetupAccountScreen";
 export { SuccessScreen } from "./SuccessScreen";
+export { WorkshopScreen } from "./WorkshopScreen";
 
