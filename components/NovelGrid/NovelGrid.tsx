@@ -1,61 +1,14 @@
-import { Icon } from "@rneui/base";
-import { useTheme } from "@rneui/themed";
 import { useRef } from "react";
-import { Dimensions, FlatList, Image, ImageStyle, StyleProp, Text, TextStyle, TouchableOpacity, View } from "react-native";
+import { Dimensions, FlatList, TouchableOpacity } from "react-native";
 import { Novel } from "../../types";
+import { AddNovel } from "../AddNovel";
+import { BasicNovel } from "../BasicNovel";
 
 type NovelGridProps = {
     novels: Novel[];
-    onNovelPress: (novel: Novel) => void;
-    onNovelLongPress: (novel: Novel) => void;
-    onLastItemPress: () => void;
-}
-
-type LastItemNovelProps = {
-    label: string;
-}
-
-function LastItemNovel({ label }: LastItemNovelProps) {
-    const screenWidth = Dimensions.get('window').width;
-    const { theme: { colors: { greyOutline } } } = useTheme();
-
-    return (
-        <>
-            <View style={{ flex: 1, backgroundColor: greyOutline, justifyContent: "center", alignItems: "center", borderRadius: 10, opacity: 0.5 }}>
-                <Icon name="plus" type="font-awesome-5" size={30} />
-                <Text
-                    style={{
-                        fontSize: 14,
-                        fontFamily: "Quicksand-700",
-                        marginBottom: 10,
-                        textAlign: "center",
-                        width: 75
-                    }}
-                >{label}</Text>
-            </View>
-            <Text style={{ width: (screenWidth - 75) / 3, marginBottom: 20 }} />
-        </>
-    )
-}
-
-type BasicNovelProps = {
-    novel: Novel;
-    imageStyle?: StyleProp<ImageStyle>;
-    labelStyle?: StyleProp<TextStyle>
-};
-
-function BasicNovel({ novel: { title, imgSrc }, imageStyle, labelStyle }: BasicNovelProps) {
-    return (
-        <>
-            <Image
-                resizeMode="cover"
-                source={imgSrc}
-                style={imageStyle}
-            />
-            <Text style={labelStyle}
-            >{title}</Text>
-        </>
-    )
+    onNovelPress?: (novel: Novel) => void;
+    onNovelLongPress?: (novel: Novel) => void;
+    onLastItemPress?: () => void;
 }
 
 export default function NovelGrid({ novels, onNovelPress, onNovelLongPress, onLastItemPress }: NovelGridProps) {
@@ -77,9 +30,9 @@ export default function NovelGrid({ novels, onNovelPress, onNovelLongPress, onLa
             renderItem={({ index, item }) =>
             (<TouchableOpacity
                 onPress={() => {
-                    item.last ? onLastItemPress() : onNovelPress(item)
+                    item.last ? onLastItemPress?.() : onNovelPress?.(item)
                 }}
-                onLongPress={() => onNovelLongPress(item)}
+                onLongPress={() => onNovelLongPress?.(item)}
                 style={{ marginVertical: 1 }}
                 key={index}>
                 {
@@ -102,7 +55,7 @@ export default function NovelGrid({ novels, onNovelPress, onNovelLongPress, onLa
                                 }
                             }
                         />
-                    ) : (<LastItemNovel label="Ajouter un livre" />)
+                    ) : (<AddNovel label="Ajouter un livre" />)
                 }
             </TouchableOpacity>)
             } />

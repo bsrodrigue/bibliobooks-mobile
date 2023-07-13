@@ -1,43 +1,19 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { ThemeProvider, createTheme } from "@rneui/themed";
+import { ThemeProvider } from "@rneui/themed";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useCachedResources } from "./hooks";
 import { ForgotPasswordScreen, LoginScreen, MainScreen, RegisterScreen, SetupAccountScreen, SuccessScreen } from "./screens";
 import NovelDetailsScreen from "./screens/NovelDetails/NovelDetails";
 import OnboardingScreen from './screens/OnboardingScreen/OnboardingScreen';
-
-const lightTheme = createTheme({
-  lightColors: {
-    primary: "#22A39F",
-    black: "#0A514F",
-    error: "#DF2E38",
-    greyOutline: "#CCCCCC",
-  },
-  darkColors: {
-    primary: "#22A39F",
-    error: "#DF2E38",
-    greyOutline: "#CCCCCC",
-  },
-  components: {
-    Text: {
-      style: {
-        fontFamily: "Quicksand-500"
-      }
-    },
-
-    Button: {
-      titleStyle: {
-        fontFamily: "Quicksand-500"
-      }
-    }
-  }
-})
+import { lightTheme } from "./themes";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   const { isLoadingComplete } = useCachedResources();
+  const [initialRouteName, setInitialRouteName] = useState("Onboarding");
 
   const isFirstBoot = false;
   const isAuth = true;
@@ -51,7 +27,7 @@ export default function App() {
     <ThemeProvider theme={lightTheme}>
       <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
         <NavigationContainer>
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
             {isFirstBoot ? (<Stack.Screen name='Onboarding' component={OnboardingScreen} />) : null}
             <Stack.Screen name='Main' component={MainScreen} />
             <Stack.Screen name='NovelDetails' component={NovelDetailsScreen} />

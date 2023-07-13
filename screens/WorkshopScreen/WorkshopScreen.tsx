@@ -16,6 +16,7 @@ export default function WorkshopScreen({ navigation }: WorkshopScreenProps) {
 
     return (
         <View style={{ flex: 1 }}>
+            {/* TODO: Try to separate the navigator into a different component to be reused */}
             <Tab.Navigator
                 sceneContainerStyle={{
                     paddingTop: 30
@@ -43,6 +44,7 @@ export default function WorkshopScreen({ navigation }: WorkshopScreenProps) {
                         </View>
                     )
                 }}>
+                {/* TODO: Use state instead of too deeply nested routers, extract PublicationsScreen */}
                 <Tab.Screen component={PublicationsScreen} name="Publications" options={{ title: "Publications" }} />
                 <Tab.Screen component={NoveltyScreen} name="Drafts" options={{ title: "Brouillons" }} />
                 <Tab.Screen component={GenreScreen} name="Archives" options={{ title: "Archives" }} />

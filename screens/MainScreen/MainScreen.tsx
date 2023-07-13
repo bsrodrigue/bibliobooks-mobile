@@ -22,7 +22,6 @@ type MainScreenProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
 const Tab = createBottomTabNavigator();
 
 export default function MainScreen({ navigation, route }: MainScreenProps) {
-    console.log(route)
     const { theme: { colors: { primary } } } = useTheme();
     return (
         <View style={styles.container}>

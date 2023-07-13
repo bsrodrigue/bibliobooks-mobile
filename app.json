@@ -1,7 +1,9 @@
 {
   "expo": {
-    "name": "mobile",
-    "slug": "mobile",
+    "name": "Bibliobooks",
+    "slug": "bibliobooks",
+    "description": "Bibliobooks is mobile application for writing, reading and sharing webnovels",
+    "githubUrl": "https://github.com/bsrodrigue/stalnov-native",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +23,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.bsrodrigue.bibliobooks"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e5e15686-405f-4ad5-bda8-ad23272610e9"
+      }
     }
   }
 }

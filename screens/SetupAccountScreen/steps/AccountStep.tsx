@@ -1,10 +1,10 @@
-import { FormPartial } from "@n7studio/react-original-form-native";
 import * as ImagePicker from "expo-image-picker";
 import { Avatar } from "@rneui/base";
 import { useState } from "react";
 import { View } from "react-native";
 import { useTheme } from "@rneui/themed";
 import { TextInput } from "../../../components";
+import { FormPartial } from "@n7studio/react-original-form-native";
 
 export default function AccountStep() {
     const [image, setImage] = useState(null);

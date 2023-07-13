@@ -1,6 +1,6 @@
 import { ImageSourcePropType } from "react-native";
-
 export * from "./routing";
+
 export type Slide = {
     id: string;
     title: string;
@@ -31,4 +31,10 @@ export type Novel = {
     author?: string;
     genre?: string;
     last?: boolean;
+}
+
+export type Action = {
+    icon: string;
+    title: string;
+    onPress: () => void;
 }

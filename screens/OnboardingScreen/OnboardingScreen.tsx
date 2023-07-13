@@ -1,74 +1,18 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ref, useRef, useState } from "react";
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import { Button, OnboardingItem } from "../../components";
-import { RootStackParamList, Slide } from "../../types";
-
-
-const slides: Slide[] = [
-    {
-        id: '1',
-        title: "Ecrivez",
-        description: 'Libérez votre créativité et donnez naissance à des histoires formidables que vous partagerez avec une communauté nombreuse',
-        image: require('../../assets/illustrations/onboarding1.png')
-    },
-    {
-        id: '2',
-        title: "Lisez",
-        description: 'Découvrez des tonnes d’histoires de genres différents! De l’aventure, de l’action, de la fantaisie et bien plus encore',
-        image: require('../../assets/illustrations/onboarding2.png')
-    },
-    {
-        id: '3',
-        title: "Partagez",
-        description: 'Libérez votre créativité et donnez naissance à des histoires formidables que vous partagerez avec une communauté nombreuse',
-        image: require('../../assets/illustrations/onboarding3.png'),
-        nextTitle: "Terminer"
-    },
-]
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "white",
-        paddingVertical: 20,
-    },
-
-    header: {
-        flex: 0.3,
-    },
-
-    body: {
-        flex: 0.5,
-
-    },
-
-    footer: {
-        flex: 0.2,
-        justifyContent: "flex-end",
-        gap: 15,
-        paddingHorizontal: 40,
-    },
-
-    next: {
-        fontSize: 20,
-        fontFamily: "Quicksand-700"
-    },
-
-    skip: {
-        color: "black",
-        fontFamily: "Quicksand-600",
-    }
-});
-
+import { RootStackParamList } from "../../types";
+import { slides } from "./slides";
+import { useOnboardingStyles } from "./useOnboardingStyles";
 
 type OnboardingScreenProps = NativeStackScreenProps<RootStackParamList, 'Onboarding'>;
 
 export default function OnboardingScreen({ navigation }: OnboardingScreenProps) {
     const slideRef: Ref<FlatList> = useRef(null);
     const [index, setIndex] = useState(0);
-
     const isLastSlide = index === slides.length - 1;
+    const styles = useOnboardingStyles();
 
     const goToLoginScreen = () => {
         navigation.navigate("Login")
@@ -92,7 +36,9 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
 
     return (
         <View style={styles.container}>
-            <View style={styles.header}></View>
+            <View style={styles.header}>
+                <Text style={styles.title}>Bibliobooks</Text>
+            </View>
             <View style={styles.body}>
                 <FlatList
                     ref={slideRef}

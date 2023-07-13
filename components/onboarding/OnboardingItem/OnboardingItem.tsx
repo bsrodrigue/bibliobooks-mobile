@@ -1,33 +1,6 @@
-import { Image, StyleSheet, Text, View, useWindowDimensions } from "react-native";
+import { Image, Text, View, useWindowDimensions } from "react-native";
 import { Slide } from "../../../types";
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingHorizontal: 40,
-    },
-
-    image: {
-        flex: 0.5,
-        marginBottom: 10,
-    },
-
-    title: {
-        textAlign: "center",
-        fontSize: 40,
-        fontFamily: "Quicksand-700",
-        marginVertical: 10
-    },
-
-    description: {
-        opacity: 0.5,
-        fontSize: 16,
-        textAlign: "center",
-        fontFamily: "Quicksand-600"
-    },
-
-
-});
+import { useOnboardingItemStyles } from "./useOnboardingItemStyles";
 
 type OnboardingItemProps = {
     item: Slide;
@@ -35,6 +8,7 @@ type OnboardingItemProps = {
 
 export default function OnboardingItem({ item }: OnboardingItemProps) {
     const { width } = useWindowDimensions();
+    const styles = useOnboardingItemStyles();
 
     return (
         <View style={[styles.container, { width }]}>
