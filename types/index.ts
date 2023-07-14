@@ -31,10 +31,17 @@ export type Novel = {
     author?: string;
     genre?: string;
     last?: boolean;
+    status?: NovelStatus;
 }
+
+export type NovelStatus = "published" | "draft" | "archived";
 
 export type Action = {
     icon: string;
     title: string;
     onPress: () => void;
+}
+
+export type TabItem = {
+    label: string;
 }

@@ -1,54 +1,93 @@
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useTheme } from "@rneui/themed";
-import { Text, View } from "react-native";
-import { RootStackParamList } from "../../types";
-import { GenreScreen } from "../GenreScreen";
-import { NoveltyScreen } from "../NoveltyScreen";
-import { PublicationsScreen } from "../PublicationsScreen";
-
-const Tab = createBottomTabNavigator();
+import { useState } from "react";
+import { View } from "react-native";
+import { WorkshopNovelGrid, WorkshopTabs } from "../../components";
+import { novels } from "../../mock";
+import { Novel, RootStackParamList } from "../../types";
 
 type WorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'Workshop'>;
 
+const tabs = [
+    { label: "Publications", },
+    { label: "Brouillons", },
+    { label: "Archives", },
+];
+
+const commonActions = [
+    {
+        icon: "trash",
+        title: "Supprimer",
+        onPress: () => { },
+    },
+    {
+        icon: "pen",
+        title: "Editer",
+        onPress: () => { },
+    },
+]
+
+const publishedActions = [
+    {
+        icon: "archive",
+        title: "Archiver",
+        onPress: () => { },
+    }, {
+        icon: "eye-slash",
+        title: "Dépublier",
+        onPress: () => { },
+    },
+    ...commonActions
+];
+
+const draftActions = [{
+    icon: "eye",
+    title: "Publier",
+    onPress: () => { },
+},
+{
+    icon: "archive",
+    title: "Archiver",
+    onPress: () => { },
+},
+...commonActions
+];
+
+const archivedActions = [
+    {
+        icon: "eye",
+        title: "Publier",
+        onPress: () => { },
+    },
+    ...commonActions
+];
+
+const filters = {
+    "Publications": "published",
+    "Brouillons": "draft",
+    "Archives": "archived",
+}
+
+const actionFilters = {
+    "Publications": publishedActions,
+    "Brouillons": draftActions,
+    "Archives": archivedActions,
+}
+
 export default function WorkshopScreen({ navigation }: WorkshopScreenProps) {
-    const { theme: { colors: { primary } } } = useTheme();
+    const [selectedItem, setSelectedItem] = useState(tabs[0].label);
+    const filtered = novels.filter((novel) => novel.status === filters[selectedItem]);
+    const data: Novel[] = [
+        ...filtered, { last: true }
+    ]
 
     return (
         <View style={{ flex: 1 }}>
-            {/* TODO: Try to separate the navigator into a different component to be reused */}
-            <Tab.Navigator
-                sceneContainerStyle={{
-                    paddingTop: 30
-                }}
-                screenOptions={{
-                    headerShown: false,
-                    tabBarStyle: {
-                        position: "absolute",
-                        top: 0,
-                        height: 30
-                    },
-                    tabBarIconStyle: {
-                        display: "none"
-                    },
-                    tabBarActiveTintColor: primary,
-                    tabBarLabel: ({ focused, children }) => (
-                        <View style={{ alignItems: "center" }}>
-                            <Text style={{
-                                fontSize: 14,
-                                fontFamily: "Quicksand-700",
-                                color: focused ? primary : "black",
-                                paddingVertical: 5
-                            }}>{children}</Text>
-                            {focused ? (<View style={{ width: 20, height: 5, backgroundColor: primary, borderRadius: 25 }}></View>) : null}
-                        </View>
-                    )
-                }}>
-                {/* TODO: Use state instead of too deeply nested routers, extract PublicationsScreen */}
-                <Tab.Screen component={PublicationsScreen} name="Publications" options={{ title: "Publications" }} />
-                <Tab.Screen component={NoveltyScreen} name="Drafts" options={{ title: "Brouillons" }} />
-                <Tab.Screen component={GenreScreen} name="Archives" options={{ title: "Archives" }} />
-            </Tab.Navigator>
+            <WorkshopTabs items={tabs} selectedItem={selectedItem} onPressTab={(label) => setSelectedItem(label)} />
+            <View style={{ flexDirection: "row", justifyContent: "center", flex: 1, paddingHorizontal: 20 }}>
+                <View style={{ alignItems: "flex-start", flex: 1, }}>
+                    <WorkshopNovelGrid actions={actionFilters[selectedItem]} novels={data} navigation={navigation} />
+                </View>
+            </View>
         </View>
     )
 }

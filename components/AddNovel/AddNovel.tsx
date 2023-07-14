@@ -12,13 +12,15 @@ export default function AddNovel({ label }: AddNovelProps) {
 
     return (
         <>
-            <View style={{ flex: 1, backgroundColor: greyOutline, justifyContent: "center", alignItems: "center", borderRadius: 10, opacity: 0.5 }}>
+            <View style={{
+                height: 150,
+                backgroundColor: greyOutline, justifyContent: "center", alignItems: "center", borderRadius: 10, opacity: 0.5
+            }}>
                 <Icon name="plus" type="font-awesome-5" size={30} />
                 <Text
                     style={{
                         fontSize: 14,
                         fontFamily: "Quicksand-700",
-                        marginBottom: 10,
                         textAlign: "center",
                         width: 75
                     }}

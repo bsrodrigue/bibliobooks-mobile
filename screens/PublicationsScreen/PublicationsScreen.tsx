@@ -1,12 +1,8 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StyleSheet, View } from "react-native";
-import { WorkshopNovelGrid } from "../../components";
-import { novels } from "../../mock";
-import { Novel, RootStackParamList } from "../../types";
+import { RootStackParamList } from "../../types";
 
-const data: Novel[] = [
-    ...novels, { last: true },
-]
+
 
 const styles = StyleSheet.create({
     container: {
@@ -22,26 +18,10 @@ type PublicationsScreenProps = NativeStackScreenProps<RootStackParamList, 'Publi
 
 export default function PublicationsScreen({ navigation }: PublicationsScreenProps) {
 
-    const actions = [
-        {
-            icon: "archive",
-            title: "Archiver",
-            onPress: () => { },
-        }, {
-            icon: "trash",
-            title: "Supprimer",
-            onPress: () => { },
-        },
-        {
-            icon: "pen",
-            title: "Editer",
-            onPress: () => { },
-        },
-    ];
+
 
     return (
         <View style={styles.container}>
-            <WorkshopNovelGrid actions={actions} novels={data} navigation={navigation} />
         </View>
     )
 }

@@ -50,14 +50,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
                         {...item} />)} />
             </View>
             <View style={styles.footer}>
-                <Button
-                    title={"Suivant"}
-                    titleStyle={styles.next}
-                    color="black"
-                    size="lg"
-                    radius={5}
-                    onPress={scrollToNext}
-                />
+                <Button title={"Suivant"} titleStyle={styles.next} color="black" size="lg" radius={5} onPress={scrollToNext} />
                 <Button title="Ignorer"
                     titleStyle={styles.skip}
                     onPress={goToLoginScreen}

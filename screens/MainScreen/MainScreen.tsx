@@ -2,8 +2,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
-import { TextInput } from "../../components";
+import { StyleSheet, View } from "react-native";
+import { Header } from "../../components";
 import { RootStackParamList } from "../../types";
 import { DiscoverScreen } from "../DiscoverScreen";
 import { LibraryScreen } from "../LibraryScreen";
@@ -23,37 +23,10 @@ const Tab = createBottomTabNavigator();
 
 export default function MainScreen({ navigation, route }: MainScreenProps) {
     const { theme: { colors: { primary } } } = useTheme();
+
     return (
         <View style={styles.container}>
-            <View style={{ backgroundColor: "white", flexDirection: "row", paddingVertical: 10, justifyContent: "space-between" }}>
-                <TouchableOpacity>
-                    <TextInput
-                        disabled
-                        inputContainerStyle={{
-                            backgroundColor: "#F5F5F5",
-                            borderBottomWidth: 0,
-                            borderRadius: 25,
-                            paddingHorizontal: 15,
-                        }}
-                        containerStyle={{
-                            width: 250
-                        }}
-                        placeholder="Rechercher des histoires"
-                        leftIcon={<Icon type="font-awesome-5" name="search" />}
-                        leftIconContainerStyle={{ marginRight: 10, opacity: 0.8 }}
-                    />
-                </TouchableOpacity>
-                <View style={{ flexDirection: "row", alignItems: "center", marginRight: 15, gap: 15 }}>
-                    <TouchableOpacity>
-                        <Icon type="font-awesome-5" name="cog" />
-                    </TouchableOpacity>
-                    <TouchableOpacity>
-                        <Icon type="font-awesome-5" name="bell" />
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-
+            <Header />
             <Tab.Navigator screenOptions={{
                 tabBarStyle: {
                     paddingVertical: 10,
@@ -71,7 +44,6 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                     options={{
                         tabBarLabel: "Découverte",
                         tabBarIcon: () => ((<Icon name="compass" type="font-awesome-5" />)),
-                        headerTitle: "Découverte",
                     }}
                     name="Discover"
                     component={DiscoverScreen} />
@@ -79,7 +51,6 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                     options={{
                         tabBarLabel: "Bibliothèque",
                         tabBarIcon: () => ((<Icon name="book" type="font-awesome-5" />)),
-                        headerTitle: "Bibliothèque"
                     }}
                     name="Library"
                     component={LibraryScreen} />
@@ -87,7 +58,6 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                     options={{
                         tabBarLabel: "Atelier",
                         tabBarIcon: () => ((<Icon name="pen" type="font-awesome-5" />)),
-                        headerTitle: "Atelier"
                     }}
                     name="Workshop"
                     component={WorkshopScreen} />
@@ -95,7 +65,6 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                     options={{
                         tabBarLabel: "Compte",
                         tabBarIcon: () => ((<Icon name="user" type="font-awesome-5" />)),
-                        headerTitle: "Compte"
                     }}
                     name="Account"
                     component={LoginScreen} />

@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
 type NoveltyScreenProps = NativeStackScreenProps<RootStackParamList, 'Novelty'>;
 
 export default function NoveltyScreen({ navigation }: NoveltyScreenProps) {
-
     return (
         <View style={styles.container}>
             <NovelGrid novels={data} onNovelPress={() => { }} onLastItemPress={() => { }} />

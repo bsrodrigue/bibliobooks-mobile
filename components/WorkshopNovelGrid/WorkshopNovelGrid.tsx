@@ -10,7 +10,7 @@ type WorkshopNovelGridProps = {
     actions: Action[];
     novels: Novel[];
     onLastItemPress?: () => void;
-    navigation: NativeStackNavigationProp<RootStackParamList, "Publications", undefined>;
+    navigation: NativeStackNavigationProp<RootStackParamList, "Workshop", undefined>;
 };
 
 export default function WorkshopNovelGrid({ actions, novels, navigation, onLastItemPress }: WorkshopNovelGridProps) {
