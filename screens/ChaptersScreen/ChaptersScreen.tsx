@@ -1,11 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { View } from "react-native";
-import { WorkshopNovelGrid, WorkshopTabs } from "../../components";
+import { WorkshopTabs } from "../../components";
 import { novels } from "../../mock";
 import { Novel, RootStackParamList } from "../../types";
 
-type WorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'Workshop'>;
+type ChaptersScreenProps = NativeStackScreenProps<RootStackParamList, 'Chapters'>;
 
 const tabs = [
     { label: "Publications", },
@@ -73,7 +73,7 @@ const actionFilters = {
     "Archives": archivedActions,
 }
 
-export default function WorkshopScreen({ navigation }: WorkshopScreenProps) {
+export default function ChaptersScreen({ navigation }: ChaptersScreenProps) {
     const [selectedItem, setSelectedItem] = useState(tabs[0].label);
     const filtered = novels.filter((novel) => novel.status === filters[selectedItem]);
     const data: Novel[] = [
@@ -83,11 +83,7 @@ export default function WorkshopScreen({ navigation }: WorkshopScreenProps) {
     return (
         <View style={{ flex: 1 }}>
             <WorkshopTabs items={tabs} selectedItem={selectedItem} onPressTab={(label) => setSelectedItem(label)} />
-            <View style={{ flexDirection: "row", justifyContent: "center", flex: 1, paddingHorizontal: 20 }}>
-                <View style={{ alignItems: "flex-start", flex: 1, }}>
-                    <WorkshopNovelGrid actions={actionFilters[selectedItem]} novels={data} navigation={navigation} />
-                </View>
-            </View>
+
         </View>
     )
 }

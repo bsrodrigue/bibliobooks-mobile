@@ -8,7 +8,7 @@ import { RootStackParamList } from "../../types";
 import { DiscoverScreen } from "../DiscoverScreen";
 import { LibraryScreen } from "../LibraryScreen";
 import { LoginScreen } from "../LoginScreen";
-import { WorkshopScreen } from "../WorkshopScreen";
+import { MainWorkshopScreen } from "../MainWorkshopScreen";
 
 const styles = StyleSheet.create({
     container: {
@@ -60,7 +60,7 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                         tabBarIcon: () => ((<Icon name="pen" type="font-awesome-5" />)),
                     }}
                     name="Workshop"
-                    component={WorkshopScreen} />
+                    component={MainWorkshopScreen} />
                 <Tab.Screen
                     options={{
                         tabBarLabel: "Compte",

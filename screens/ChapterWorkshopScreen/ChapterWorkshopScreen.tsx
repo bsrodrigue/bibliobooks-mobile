@@ -1,0 +1,111 @@
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Divider } from "@rneui/base";
+import { useState } from "react";
+import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { ActionBottomSheet, WorkshopTabs } from "../../components";
+import { chapters } from "../../mock";
+import { RootStackParamList } from "../../types";
+
+const tabs = [
+    { label: "Publications", },
+    { label: "Brouillons", },
+    { label: "Archives", },
+];
+
+const commonActions = [
+    {
+        icon: "trash",
+        title: "Supprimer",
+        onPress: () => { },
+    },
+    {
+        icon: "pen",
+        title: "Editer",
+        onPress: () => { },
+    },
+]
+
+const publishedActions = [
+    {
+        icon: "archive",
+        title: "Archiver",
+        onPress: () => { },
+    }, {
+        icon: "eye-slash",
+        title: "Dépublier",
+        onPress: () => { },
+    },
+    ...commonActions
+];
+
+const draftActions = [{
+    icon: "eye",
+    title: "Publier",
+    onPress: () => { },
+},
+{
+    icon: "archive",
+    title: "Archiver",
+    onPress: () => { },
+},
+...commonActions
+];
+
+const archivedActions = [
+    {
+        icon: "eye",
+        title: "Publier",
+        onPress: () => { },
+    },
+    ...commonActions
+];
+
+const filters = {
+    "Publications": "published",
+    "Brouillons": "draft",
+    "Archives": "archived",
+}
+
+const actionFilters = {
+    "Publications": publishedActions,
+    "Brouillons": draftActions,
+    "Archives": archivedActions,
+}
+
+type ChapterWorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'ChapterWorkshop'>;
+
+export default function ChapterWorkshopScreen({ navigation }: ChapterWorkshopScreenProps) {
+    const [selectedItem, setSelectedItem] = useState(tabs[0].label);
+    const [actionsIsVisible, setActionsIsVisible] = useState(false);
+    const filtered = chapters.filter((chapter) => chapter.status === filters[selectedItem]);
+
+    return (
+        <>
+            <WorkshopTabs items={tabs} selectedItem={selectedItem} onPressTab={(label) => setSelectedItem(label)} />
+            <View style={{ flexDirection: "row", justifyContent: "center", flex: 1, paddingHorizontal: 20, paddingTop: 40, backgroundColor: "white" }}>
+                <FlatList
+                    data={filtered}
+                    contentContainerStyle={{ gap: 15 }}
+                    ItemSeparatorComponent={() => <Divider style={{ marginTop: 10, opacity: 0.5, width: "60%" }} />}
+                    showsVerticalScrollIndicator={false}
+                    renderItem={({ index, item: { title } }) => (
+                        <TouchableOpacity
+                            onPress={() => {
+
+                            }}
+                            onLongPress={() => {
+                                setActionsIsVisible(true);
+                            }}
+                            style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                            <View style={{ gap: 5 }}>
+                                <Text style={{ maxWidth: 100, fontFamily: "Quicksand-700", fontSize: 14 }}>{title}</Text>
+                                <Text style={{ fontFamily: "Quicksand-500", opacity: 0.5 }}>1253 mots</Text>
+                            </View>
+                            <Text style={{ opacity: 0.5, fontSize: 12, fontStyle: "italic" }}>Il y a trois (3) jours</Text>
+                        </TouchableOpacity>
+                    )} />
+            </View>
+            <ActionBottomSheet actions={actionFilters[selectedItem]} isVisible={actionsIsVisible} onBackdropPress={() => setActionsIsVisible(false)} />
+        </>
+    )
+}

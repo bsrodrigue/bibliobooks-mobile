@@ -34,6 +34,23 @@ export type Novel = {
     status?: NovelStatus;
 }
 
+export type Chapter = {
+    id?: string;
+    title?: string;
+    body?: string;
+    genre?: string;
+    last?: boolean;
+    status?: ChapterStatus;
+
+    likeCount?: number;
+    commentCount?: number;
+    wordCount?: number;
+
+    createdAt?: string;
+    editedAt?: string;
+}
+
+export type ChapterStatus = NovelStatus;
 export type NovelStatus = "published" | "draft" | "archived";
 
 export type Action = {
