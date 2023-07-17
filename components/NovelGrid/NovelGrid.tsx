@@ -32,7 +32,7 @@ export default function NovelGrid({ novels, onNovelPress, onNovelLongPress, onLa
                 onPress={() => {
                     item.last ? onLastItemPress?.() : onNovelPress?.(item)
                 }}
-                onLongPress={() => onNovelLongPress?.(item)}
+                onLongPress={() => { !item.last && onNovelLongPress?.(item) }}
                 key={index}>
                 {
                     !item.last ? (

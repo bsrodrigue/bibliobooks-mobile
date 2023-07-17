@@ -16,7 +16,7 @@ type StoryRecommendationProps = {
 }
 
 export default function StoryRecommendations({ title, subtitle, novel, onPress }: StoryRecommendationProps) {
-    const { theme: { colors: { primary } } } = useTheme();
+    const { theme: { colors: { error: primary } } } = useTheme();
 
     return (
         <View style={{ marginVertical: 10 }}>

@@ -11,7 +11,7 @@ type RadioInputProps = {
 }
 
 export default function RadioInput({ label, imgSrc, value, selected, onPress }: RadioInputProps) {
-    const { theme: { colors: { primary, greyOutline } } } = useTheme();
+    const { theme: { colors: { error: primary, greyOutline } } } = useTheme();
     const checked = value === selected;
 
     return (

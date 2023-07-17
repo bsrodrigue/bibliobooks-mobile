@@ -4,6 +4,7 @@ export { AuthForm } from "./AuthForm";
 export { BaseAuthFormFooter } from "./BaseAuthFormFooter";
 export { BasicNovel } from "./BasicNovel";
 export { Button } from "./Button";
+export { CardBottomSheet } from "./CardBottomSheet";
 export { DateTimePicker } from "./DateTimePicker";
 export { Header } from "./Header";
 export { TextInput } from "./Input";

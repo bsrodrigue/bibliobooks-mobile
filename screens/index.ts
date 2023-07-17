@@ -8,6 +8,7 @@ export { LoginScreen } from "./LoginScreen";
 export { MainScreen } from "./MainScreen";
 export { MainWorkshopScreen } from "./MainWorkshopScreen";
 export { NovelDetails } from "./NovelDetails";
+export { NovelFormScreen } from "./NovelFormScreen";
 export { NovelWorkshopScreen } from "./NovelWorkshopScreen";
 export { NoveltyScreen } from "./NoveltyScreen";
 export { OnboardingScreen } from "./OnboardingScreen";

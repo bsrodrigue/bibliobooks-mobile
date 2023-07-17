@@ -1,27 +1,14 @@
-import * as ImagePicker from "expo-image-picker";
-import { Avatar } from "@rneui/base";
-import { useState } from "react";
-import { View } from "react-native";
-import { useTheme } from "@rneui/themed";
-import { TextInput } from "../../../components";
 import { FormPartial } from "@n7studio/react-original-form-native";
+import { Avatar } from "@rneui/base";
+import { useTheme } from "@rneui/themed";
+import { View } from "react-native";
+import { TextInput } from "../../../components";
+import { useImagePicker } from "../../../hooks";
 
 export default function AccountStep() {
-    const [image, setImage] = useState(null);
-    const { theme: { colors: { greyOutline, primary } } } = useTheme();
+    const { theme: { colors: { primary, greyOutline, } } } = useTheme();
+    const { image, pickImage } = useImagePicker();
 
-    const pickImage = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        })
-
-        if (!result.canceled) {
-            setImage(result.assets[0].uri);
-        }
-    }
 
     return (
         <FormPartial>

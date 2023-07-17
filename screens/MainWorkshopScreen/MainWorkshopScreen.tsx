@@ -2,6 +2,7 @@ import { NativeStackScreenProps, createNativeStackNavigator } from "@react-navig
 import { View } from "react-native";
 import { RootStackParamList } from "../../types";
 import { ChapterWorkshopScreen } from "../ChapterWorkshopScreen";
+import { NovelFormScreen } from "../NovelFormScreen";
 import { NovelWorkshopScreen } from "../NovelWorkshopScreen";
 
 type MainWorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'Workshop'>;
@@ -12,9 +13,9 @@ export default function MainWorkshopScreen({ navigation }: MainWorkshopScreenPro
 
     return (
         <View style={{ flex: 1 }}>
-
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name='NovelWorkshop' component={NovelWorkshopScreen} />
+                <Stack.Screen name='NovelForm' component={NovelFormScreen} />
                 <Stack.Screen name='ChapterWorkshop' component={ChapterWorkshopScreen} />
             </Stack.Navigator>
         </View>

@@ -19,7 +19,7 @@ export default function WorkshopNovelGrid({ actions, novels, navigation, onLastI
         <>
             <NovelGrid
                 novels={novels}
-                onLastItemPress={() => { }}
+                onLastItemPress={onLastItemPress}
                 onNovelPress={() => {
                     navigation.navigate("ChapterWorkshop");
                 }}
@@ -28,7 +28,7 @@ export default function WorkshopNovelGrid({ actions, novels, navigation, onLastI
                     setActionsIsVisible(true);
                 }}
             />
-            <ActionBottomSheet actions={actions} isVisible={actionsIsVisible} onBackdropPress={() => setActionsIsVisible(false)} />
+            <ActionBottomSheet novel={currentNovel} actions={actions} isVisible={actionsIsVisible} onBackdropPress={() => setActionsIsVisible(false)} />
         </>
     )
 }

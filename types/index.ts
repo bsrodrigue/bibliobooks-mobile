@@ -56,7 +56,7 @@ export type NovelStatus = "published" | "draft" | "archived";
 export type Action = {
     icon: string;
     title: string;
-    onPress: () => void;
+    onPress: (novel?: Novel) => void;
 }
 
 export type TabItem = {

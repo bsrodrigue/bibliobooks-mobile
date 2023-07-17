@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
     },
 });
 
-
 type LibraryScreenProps = NativeStackScreenProps<RootStackParamList, 'Library'>;
 
 export default function LibraryScreen({ navigation }: LibraryScreenProps) {
