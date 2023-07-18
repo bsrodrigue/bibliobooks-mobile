@@ -6,7 +6,7 @@ import { Action, Novel } from "../../types";
 import { CardBottomSheet } from "../CardBottomSheet";
 
 type ActionBottomSheetProps = {
-    novel: Novel;
+    novel?: Novel;
     isVisible?: boolean;
     onBackdropPress?: () => void;
     actions: Action[];

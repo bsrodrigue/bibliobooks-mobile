@@ -10,7 +10,7 @@ type WorkshopTabsProps = {
 };
 
 export default function WorkshopTabs({ items, selectedItem, onPressTab }: WorkshopTabsProps) {
-    const { theme: { colors: { error: primary } } } = useTheme();
+    const { theme: { colors: { primary } } } = useTheme();
 
     return (
         <View style={{ backgroundColor: "white" }} >

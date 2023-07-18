@@ -1,17 +1,15 @@
 import { createTheme } from "@rneui/themed";
 
+const commonColors = {
+    primary: "#22A39F",
+    black: "#0A514F",
+    error: "#DF2E38",
+    greyOutline: "#CCCCCC",
+}
+
 export const lightTheme = createTheme({
-    lightColors: {
-        primary: "#22A39F",
-        black: "#0A514F",
-        error: "#DF2E38",
-        greyOutline: "#CCCCCC",
-    },
-    darkColors: {
-        primary: "#22A39F",
-        error: "#DF2E38",
-        greyOutline: "#CCCCCC",
-    },
+    lightColors: commonColors,
+    darkColors: commonColors,
     components: {
         Text: {
             style: {

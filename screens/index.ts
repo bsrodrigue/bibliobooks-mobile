@@ -1,3 +1,4 @@
+export { ChapterFormScreen } from "./ChapterFormScreen";
 export { ChapterWorkshopScreen } from "./ChapterWorkshopScreen";
 export { ChaptersScreen } from "./ChaptersScreen";
 export { DiscoverScreen } from "./DiscoverScreen";

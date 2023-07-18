@@ -1,10 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Divider } from "@rneui/base";
+import { Divider, FAB, Icon } from "@rneui/base";
 import { useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { ActionBottomSheet, WorkshopTabs } from "../../components";
 import { chapters } from "../../mock";
 import { RootStackParamList } from "../../types";
+import { useTheme } from "@rneui/themed";
 
 const tabs = [
     { label: "Publications", },
@@ -78,6 +79,7 @@ export default function ChapterWorkshopScreen({ navigation }: ChapterWorkshopScr
     const [selectedItem, setSelectedItem] = useState(tabs[0].label);
     const [actionsIsVisible, setActionsIsVisible] = useState(false);
     const filtered = chapters.filter((chapter) => chapter.status === filters[selectedItem]);
+    const { theme: { colors: { primary } } } = useTheme();
 
     return (
         <>
@@ -105,7 +107,16 @@ export default function ChapterWorkshopScreen({ navigation }: ChapterWorkshopScr
                         </TouchableOpacity>
                     )} />
             </View>
-            <ActionBottomSheet actions={actionFilters[selectedItem]} isVisible={actionsIsVisible} onBackdropPress={() => setActionsIsVisible(false)} />
+            <FAB
+                placement="right"
+                color={primary}
+                icon={<Icon color="white" name="plus" type="font-awesome-5" />}
+                onPress={() => navigation.navigate("ChapterForm", { mode: "create" })}
+            />
+            <ActionBottomSheet
+                actions={actionFilters[selectedItem]}
+                isVisible={actionsIsVisible}
+                onBackdropPress={() => setActionsIsVisible(false)} />
         </>
     )
 }

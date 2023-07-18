@@ -5,6 +5,14 @@ const genderOptions: RadioInputOption[] = [
     { label: "Femme", value: "female", imgSrc: require("../assets/illustrations/female.png") },
 ]
 
+const genreTitleMap = {
+    "action": "Action",
+    "adventure": "Aventure",
+    "fantasy": "Fantasy",
+    "romance": "Romance",
+    "traditional": "Traditionnel",
+};
+
 const genres = [
     {
         title: "Action",
@@ -31,14 +39,18 @@ const genres = [
         cover: require("../assets/images/romance.jpg")
     },
     {
-        title: "Traditionel",
+        title: "Traditionnel",
         value: "traditional",
         description: "",
         cover: require("../assets/images/traditional.jpg")
     },
 ]
 
+const wrapperHorizontalPadding = 40;
+
 export const config = {
     genderOptions,
     genres,
+    genreTitleMap,
+    wrapperHorizontalPadding,
 };

@@ -26,7 +26,6 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
 
     return (
         <View style={styles.container}>
-            <Header />
             <Tab.Navigator screenOptions={{
                 tabBarStyle: {
                     paddingVertical: 10,
@@ -38,7 +37,7 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                     marginBottom: 5
                 },
                 tabBarActiveTintColor: primary,
-                headerShown: false,
+                header: () => (<Header />)
             }}>
                 <Tab.Screen
                     options={{

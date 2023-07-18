@@ -19,4 +19,5 @@ export { StoryRecommendation } from "./StoryRecommendation";
 export { WorkshopNovelGrid } from "./WorkshopNovelGrid";
 export { WorkshopTabs } from "./WorkshopTabs";
 export { OnboardingItem } from "./onboarding/OnboardingItem";
-
+export { CheckBox } from "./CheckBox";
+export { Wrapper } from "./Wrapper";

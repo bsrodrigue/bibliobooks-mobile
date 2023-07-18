@@ -5,15 +5,22 @@ import { WorkshopNovelGrid, WorkshopTabs } from "../../components";
 import { novels } from "../../mock";
 import { Novel, RootStackParamList } from "../../types";
 
+const tabs = [
+    { label: "Publications", },
+    { label: "Brouillons", },
+    { label: "Archives", },
+];
+
+const filters = {
+    "Publications": "published",
+    "Brouillons": "draft",
+    "Archives": "archived",
+}
+
 type NovelWorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'NovelWorkshop'>;
 
 export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenProps) {
 
-    const tabs = [
-        { label: "Publications", },
-        { label: "Brouillons", },
-        { label: "Archives", },
-    ];
 
     const commonActions = [
         {
@@ -63,19 +70,12 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
         ...commonActions
     ];
 
-    const filters = {
-        "Publications": "published",
-        "Brouillons": "draft",
-        "Archives": "archived",
-    }
 
     const actionFilters = {
         "Publications": publishedActions,
         "Brouillons": draftActions,
         "Archives": archivedActions,
     }
-
-
 
     const [selectedItem, setSelectedItem] = useState(tabs[0].label);
     const filtered = novels.filter((novel) => novel.status === filters[selectedItem]);

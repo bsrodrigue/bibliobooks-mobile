@@ -1,4 +1,4 @@
-import { Novel } from "..";
+import { Chapter, Novel } from "..";
 
 export type RootStackParamList = {
     Home;
@@ -20,6 +20,10 @@ export type RootStackParamList = {
     NovelForm: {
         mode: "create" | "edit",
         novel?: Novel;
+    };
+    ChapterForm: {
+        mode: "create" | "edit",
+        chapter?: Chapter;
     };
     NovelDetails: {
         novel: Novel;
