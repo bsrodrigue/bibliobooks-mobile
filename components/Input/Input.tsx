@@ -1,9 +1,12 @@
 import { Input, InputProps } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
+import { forwardRef } from "react";
 
-type TextInputProps = InputProps & { name?: string };
+type TextInputProps = InputProps & {
+    name?: string;
+};
 
-export default function TextInput(props: TextInputProps) {
+const TextInput = forwardRef(({ onChange, ...props }: TextInputProps, ref) => {
     const { theme: { colors: { error } } } = useTheme();
     return (
         <Input
@@ -47,8 +50,9 @@ export default function TextInput(props: TextInputProps) {
                 marginHorizontal: -10
             }}
             {...props}
+            ref={ref}
         />
     )
-}
+});
 
-
+export default TextInput;

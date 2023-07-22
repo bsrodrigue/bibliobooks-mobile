@@ -1,23 +1,50 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { ThemeProvider } from "@rneui/themed";
-import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Toast } from "react-native-toast-message/lib/src/Toast";
+import "./firebase";
 import { useCachedResources } from "./hooks";
-import { ForgotPasswordScreen, LoginScreen, MainScreen, RegisterScreen, SetupAccountScreen, SuccessScreen } from "./screens";
+import { SessionProvider } from "./providers";
+import { ForgotPasswordScreen, LoginScreen, MainScreen, OnboardingScreen, RegisterScreen, SetupAccountScreen, SuccessScreen } from "./screens";
 import NovelDetailsScreen from "./screens/NovelDetails/NovelDetails";
-import OnboardingScreen from './screens/OnboardingScreen/OnboardingScreen';
 import { lightTheme } from "./themes";
 
 const Stack = createNativeStackNavigator();
 
-export default function App() {
-  const { isLoadingComplete } = useCachedResources();
-  const [initialRouteName, setInitialRouteName] = useState("Onboarding");
+type AuthNavigatorProps = {
+  onboarding?: object;
+};
 
-  const isFirstBoot = false;
-  const isAuth = true;
-  const isAccountSetup = true;
+function PublicStack({ onboarding }: AuthNavigatorProps) {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {
+        !onboarding ? (
+          <Stack.Screen name='Onboarding' component={OnboardingScreen} />
+        ) : null
+      }
+      <Stack.Screen name='Login' component={LoginScreen} />
+      <Stack.Screen name='Register' component={RegisterScreen} />
+      <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
+    </Stack.Navigator>
+  )
+}
+
+function PrivateStack() {
+  return (
+    <>
+      <Stack.Screen name='SetupAccount' component={SetupAccountScreen} />
+      <Stack.Screen name='Main' component={MainScreen} />
+      <Stack.Screen name='NovelDetails' component={NovelDetailsScreen} />
+    </>
+  )
+}
+
+export default function App() {
+  const { isLoadingComplete, session, onboarding } = useCachedResources();
+  AsyncStorage.clear();
 
   if (!isLoadingComplete) {
     return null;
@@ -26,20 +53,14 @@ export default function App() {
   return (
     <ThemeProvider theme={lightTheme}>
       <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
-        <NavigationContainer>
-          <Stack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
-            {isFirstBoot ? (<Stack.Screen name='Onboarding' component={OnboardingScreen} />) : null}
-            <Stack.Screen name='Main' component={MainScreen} />
-            <Stack.Screen name='NovelDetails' component={NovelDetailsScreen} />
-            {!isAccountSetup ? (<Stack.Screen name='SetupAccount' component={SetupAccountScreen} />) : null}
-            {!isAuth ? (<>
-              <Stack.Screen name='Login' component={LoginScreen} />
-              <Stack.Screen name='Register' component={RegisterScreen} />
-              <Stack.Screen name='ForgotPassword' component={ForgotPasswordScreen} />
-            </>) : null}
+        <SessionProvider creds={session}>
+          <NavigationContainer>
+            <PublicStack onboarding={onboarding} />
+            <PrivateStack />
             <Stack.Screen name='Success' component={SuccessScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
+          </NavigationContainer>
+        </SessionProvider>
+        <Toast />
       </SafeAreaView>
     </ThemeProvider>
   );

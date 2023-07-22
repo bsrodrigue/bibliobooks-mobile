@@ -83,7 +83,6 @@ export default function ChaptersScreen({ navigation }: ChaptersScreenProps) {
     return (
         <View style={{ flex: 1 }}>
             <WorkshopTabs items={tabs} selectedItem={selectedItem} onPressTab={(label) => setSelectedItem(label)} />
-
         </View>
     )
 }

@@ -1,9 +1,13 @@
 import { loadAsync } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useAsyncStorage } from "../lib/storage";
 
 export default function useCachedResources() {
     const [isLoadingComplete, setLoadingComplete] = useState(false);
+    const [session, setSession] = useState();
+    const [onboarding, setOnboarding] = useState();
+    const { getData } = useAsyncStorage();
 
     const quicksandFontConfig = {
         "Quicksand": require("../assets/fonts/Quicksand-Regular.ttf"),
@@ -19,9 +23,14 @@ export default function useCachedResources() {
                 SplashScreen.preventAutoHideAsync();
 
                 await loadAsync({
-                    // heroicons: require("../../assets/fonts/heroicons.ttf"),
                     ...quicksandFontConfig,
                 });
+
+                const session = await getData("session");
+                setSession(JSON.parse(session));
+
+                const onboarding = await getData("onboarding");
+                setOnboarding(JSON.parse(onboarding));
 
             } finally {
                 setLoadingComplete(true);
@@ -32,5 +41,5 @@ export default function useCachedResources() {
         loadResourcesAndDataAsync();
     }, []);
 
-    return { isLoadingComplete };
+    return { isLoadingComplete, session, onboarding };
 }

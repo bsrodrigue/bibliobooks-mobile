@@ -2,6 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Ref, useRef, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { Button, OnboardingItem } from "../../components";
+import { useAsyncStorage } from "../../lib/storage";
 import { RootStackParamList } from "../../types";
 import { slides } from "./slides";
 import { useOnboardingStyles } from "./useOnboardingStyles";
@@ -10,11 +11,13 @@ type OnboardingScreenProps = NativeStackScreenProps<RootStackParamList, 'Onboard
 
 export default function OnboardingScreen({ navigation }: OnboardingScreenProps) {
     const slideRef: Ref<FlatList> = useRef(null);
+    const { storeData } = useAsyncStorage();
     const [index, setIndex] = useState(0);
     const isLastSlide = index === slides.length - 1;
     const styles = useOnboardingStyles();
 
-    const goToLoginScreen = () => {
+    const goToLoginScreen = async () => {
+        await storeData("onboarding", { seen: true });
         navigation.navigate("Login")
     }
 

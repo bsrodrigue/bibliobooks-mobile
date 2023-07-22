@@ -5,7 +5,7 @@ type ButtonProps = BaseButtonProps;
 export default function Button(props: ButtonProps) {
 
     return (
-        <BaseButton {...props} />
+        <BaseButton disabled={props.loading || props.disabled} {...props} />
     )
 
 }

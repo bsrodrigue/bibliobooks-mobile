@@ -1,4 +1,3 @@
-import { FormPartial } from "@n7studio/react-original-form-native";
 import { useTheme } from "@rneui/themed";
 import { useRef, useState } from "react";
 import { FlatList, ImageBackground, Text, TouchableOpacity, View } from "react-native";
@@ -23,7 +22,7 @@ export default function PreferencesStep() {
     }
 
     return (
-        <FormPartial>
+        <>
             <View style={{ marginBottom: 20 }}>
                 <Text style={{ fontFamily: "Quicksand-700", fontSize: 20 }}>Quels genres d’histoires aimez-vous?</Text>
                 <Text style={{ fontFamily: "Quicksand-600", opacity: 0.5 }}>Vous pourrez toujours changer ça plus tard</Text>
@@ -52,6 +51,6 @@ export default function PreferencesStep() {
                         </ImageBackground>
                     </TouchableOpacity>
                 )} />
-        </FormPartial>
+        </>
     )
 }

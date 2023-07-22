@@ -1,4 +1,3 @@
-import { FormPartial } from "@n7studio/react-original-form-native";
 import { Avatar } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { View } from "react-native";
@@ -11,7 +10,7 @@ export default function AccountStep() {
 
 
     return (
-        <FormPartial>
+        <>
             <View style={{ alignItems: "center", position: "relative" }}>
                 <Avatar
                     size={50}
@@ -29,6 +28,6 @@ export default function AccountStep() {
             </View>
             <TextInput name="pseudo" label="Pseudonyme" placeholder="Veuillez saisir votre pseudonyme" />
             <TextInput name="bio" label="Bio" placeholder="Veuillez parler un peu de vous-même..." multiline numberOfLines={8} />
-        </FormPartial>
+        </>
     )
 }

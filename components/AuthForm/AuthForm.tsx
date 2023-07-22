@@ -5,13 +5,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "white",
-        paddingVertical: 30,
         paddingHorizontal: 40,
     },
 
     header: {
         flex: 0.1,
-        marginBottom: 25
+        marginVertical: 10
     },
 
     title: {
@@ -28,17 +27,9 @@ const styles = StyleSheet.create({
     },
 
     body: {
-        flex: 0.7,
-        marginVertical: 15,
-        justifyContent: "center",
+        flex: 0.9,
+        marginVertical: 10
     },
-
-    footer: {
-        flex: 0.2,
-        justifyContent: "flex-end",
-        gap: 15,
-    },
-
 });
 
 type AuthFormProps = {
@@ -51,17 +42,13 @@ type AuthFormProps = {
 export default function AuthForm({ children, footer, title, subtitle }: AuthFormProps) {
 
     return (
-        <View
-            style={styles.container}>
+        <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.subtitle}>{subtitle}</Text>
             </View>
             <View style={styles.body}>
                 {children}
-            </View>
-            <View style={styles.footer}>
-                {footer}
             </View>
         </View>
     )

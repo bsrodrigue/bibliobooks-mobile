@@ -1,8 +1,7 @@
-import { Form } from "@n7studio/react-original-form-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useRef, useState } from "react";
-import { BackHandler, StyleSheet } from "react-native";
+import { BackHandler, StyleSheet, View } from "react-native";
 import { AuthForm, Button } from "../../components";
 import { RootStackParamList } from "../../types";
 import AccountStep from "./steps/AccountStep";
@@ -79,8 +78,11 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
     return (
         <AuthForm
             title={steps[currentStepIndex].title}
-            subtitle={steps[currentStepIndex].subtitle}
-            footer={<>
+            subtitle={steps[currentStepIndex].subtitle}>
+            <View style={{ flex: 1, paddingVertical: 15, justifyContent: "space-between" }}>
+                <View style={{ flex: 1, justifyContent: "center" }}>
+                    {steps[currentStepIndex].component}
+                </View>
                 <Button
                     onPress={() => {
                         formRef.current.submit();
@@ -91,12 +93,7 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
                     size="lg"
                     radius={5}
                 />
-            </>}>
-            <Form onSubmit={(values) => {
-                next();
-            }} ref={formRef}>
-                {steps[currentStepIndex].component}
-            </Form>
+            </View>
         </AuthForm>
     )
 }

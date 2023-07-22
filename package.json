@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@expo/webpack-config": "^18.0.1",
-    "@n7studio/react-original-form-native": "^1.0.0",
     "@react-native-community/datetimepicker": "6.7.3",
     "@react-navigation/bottom-tabs": "^6.5.8",
     "@react-navigation/native": "^6.1.7",
@@ -19,26 +18,31 @@
     "@rneui/themed": "^4.0.0-rc.7",
     "@types/react": "~18.0.27",
     "expo": "~48.0.18",
+    "expo-dev-client": "~2.2.1",
     "expo-font": "~11.1.1",
     "expo-image-picker": "~14.1.1",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
+    "firebase": "^10.1.0",
+    "formik": "^2.4.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-hook-form": "^7.45.1",
     "react-native": "0.71.8",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-pell-rich-editor": "^1.9.0",
     "react-native-safe-area-context": "^4.5.0",
     "react-native-screens": "~3.20.0",
+    "react-native-toast-message": "^2.1.6",
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.10",
-    "react-native-webview": "^13.2.2",
+    "react-native-webview": "11.26.0",
     "typescript": "^4.9.4",
-    "yup": "^0.32.11"
+    "yup": "^1.2.0",
+    "@react-native-async-storage/async-storage": "1.17.11"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0"
+    "@babel/core": "^7.20.0",
+    "@types/expo": "^33.0.1"
   },
   "private": true
 }
