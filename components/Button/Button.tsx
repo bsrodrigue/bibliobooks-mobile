@@ -5,7 +5,7 @@ type ButtonProps = BaseButtonProps;
 export default function Button({ titleStyle, ...rest }: ButtonProps) {
     return (
         <BaseButton
-            titleStyle={{ fontFamily: "Quicksand-700", fontSize: 20 }}
+            titleStyle={[{ fontFamily: "Quicksand-700", fontSize: 20 }, titleStyle]}
             color="black"
             size="lg"
             radius={5}

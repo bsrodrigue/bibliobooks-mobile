@@ -1,11 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Divider, FAB, Icon } from "@rneui/base";
+import { useTheme } from "@rneui/themed";
 import { useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { ActionBottomSheet, WorkshopTabs } from "../../components";
-import { chapters } from "../../mock";
 import { RootStackParamList } from "../../types";
-import { useTheme } from "@rneui/themed";
 
 const tabs = [
     { label: "Publications", },
@@ -78,7 +77,6 @@ type ChapterWorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'Ch
 export default function ChapterWorkshopScreen({ navigation }: ChapterWorkshopScreenProps) {
     const [selectedItem, setSelectedItem] = useState(tabs[0].label);
     const [actionsIsVisible, setActionsIsVisible] = useState(false);
-    const filtered = chapters.filter((chapter) => chapter.status === filters[selectedItem]);
     const { theme: { colors: { primary } } } = useTheme();
 
     return (
@@ -86,15 +84,12 @@ export default function ChapterWorkshopScreen({ navigation }: ChapterWorkshopScr
             <WorkshopTabs items={tabs} selectedItem={selectedItem} onPressTab={(label) => setSelectedItem(label)} />
             <View style={{ flexDirection: "row", justifyContent: "center", flex: 1, paddingHorizontal: 20, paddingTop: 40, backgroundColor: "white" }}>
                 <FlatList
-                    data={filtered}
+                    data={[]}
                     contentContainerStyle={{ gap: 15 }}
                     ItemSeparatorComponent={() => <Divider style={{ marginTop: 10, opacity: 0.5, width: "60%" }} />}
                     showsVerticalScrollIndicator={false}
                     renderItem={({ index, item: { title } }) => (
                         <TouchableOpacity
-                            onPress={() => {
-
-                            }}
                             onLongPress={() => {
                                 setActionsIsVisible(true);
                             }}

@@ -5,7 +5,7 @@ import { useTheme } from "@rneui/themed";
 import { ReactNode } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Header } from "../../components";
-import { useSession } from "../../lib/session";
+import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 import { AccountScreen } from "../AccountScreen";
 import { DiscoverScreen } from "../DiscoverScreen";

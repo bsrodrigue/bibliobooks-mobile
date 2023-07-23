@@ -5,7 +5,6 @@ import { useState } from "react";
 import { FlatList, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { NovelList } from "../../components";
 import { config } from "../../config";
-import { novels } from "../../mock";
 import { RootStackParamList } from "../../types";
 
 const styles = StyleSheet.create({
@@ -15,7 +14,6 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
 });
-
 
 type GenreScreenProps = NativeStackScreenProps<RootStackParamList, 'Genre'>;
 
@@ -52,7 +50,7 @@ export default function GenreScreen({ navigation }: GenreScreenProps) {
                         </TouchableOpacity>)} />
             </Card>
             <View style={styles.container}>
-                <NovelList novels={novels} onPressItem={() => { }} />
+                <NovelList novels={[]} onPressItem={() => { }} />
             </View>
         </>
     )

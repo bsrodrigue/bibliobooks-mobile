@@ -2,8 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { View } from "react-native";
 import { WorkshopTabs } from "../../components";
-import { novels } from "../../mock";
-import { Novel, RootStackParamList } from "../../types";
+import { RootStackParamList } from "../../types";
 
 type ChaptersScreenProps = NativeStackScreenProps<RootStackParamList, 'Chapters'>;
 
@@ -75,10 +74,6 @@ const actionFilters = {
 
 export default function ChaptersScreen({ navigation }: ChaptersScreenProps) {
     const [selectedItem, setSelectedItem] = useState(tabs[0].label);
-    const filtered = novels.filter((novel) => novel.status === filters[selectedItem]);
-    const data: Novel[] = [
-        ...filtered, { last: true }
-    ]
 
     return (
         <View style={{ flex: 1 }}>

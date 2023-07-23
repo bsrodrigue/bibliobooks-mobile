@@ -1,12 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StyleSheet, View } from "react-native";
 import { NovelGrid } from "../../components";
-import { novels } from "../../mock";
-import { Novel, RootStackParamList } from "../../types";
-
-const data: Novel[] = [
-    ...novels, { last: true },
-]
+import { RootStackParamList } from "../../types";
 
 const styles = StyleSheet.create({
     container: {
@@ -23,7 +18,7 @@ type NoveltyScreenProps = NativeStackScreenProps<RootStackParamList, 'Novelty'>;
 export default function NoveltyScreen({ navigation }: NoveltyScreenProps) {
     return (
         <View style={styles.container}>
-            <NovelGrid novels={data} onNovelPress={() => { }} onLastItemPress={() => { }} />
+            <NovelGrid novels={[]} onNovelPress={() => { }} onLastItemPress={() => { }} />
         </View>
     )
 }

@@ -1,7 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StyleSheet, View } from "react-native";
 import { NovelList } from "../../components";
-import { novels } from "../../mock";
 import { RootStackParamList } from "../../types";
 
 const styles = StyleSheet.create({
@@ -18,7 +17,7 @@ export default function LibraryScreen({ navigation }: LibraryScreenProps) {
 
     return (
         <View style={styles.container}>
-            <NovelList novels={novels} onPressItem={() => { }} />
+            <NovelList novels={[]} onPressItem={() => { }} />
         </View>
     )
 }

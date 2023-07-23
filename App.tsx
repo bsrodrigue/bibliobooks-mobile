@@ -1,7 +1,6 @@
 import { ThemeProvider } from "@rneui/themed";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-import "./firebase";
 import { useCachedResources } from "./hooks";
 import RootStackNavigator from "./navigator";
 import { SessionProvider } from "./providers";
