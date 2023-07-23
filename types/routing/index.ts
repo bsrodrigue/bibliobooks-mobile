@@ -17,6 +17,7 @@ export type RootStackParamList = {
     Chapters;
     NovelWorkshop;
     ChapterWorkshop;
+    Account;
     NovelForm: {
         mode: "create" | "edit",
         novel?: Novel;
@@ -32,6 +33,6 @@ export type RootStackParamList = {
         title: string;
         subtitle: string;
         confirm: string;
-        destination: "Login" | "SetupAccount" | "Home";
+        destination: "Login" | "SetupAccount" | "Main";
     };
 };

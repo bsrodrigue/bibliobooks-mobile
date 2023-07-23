@@ -2,11 +2,9 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Formik } from "formik";
 import { View } from "react-native";
 import * as Yup from "yup";
-import { register } from "../../api";
-import useCall from "../../api/useCall";
 import { AuthForm, BaseAuthFormFooter, TextInput } from "../../components";
+import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
-import { useAsyncStorage } from "../../lib/storage";
 
 const registerSchema = Yup.object().shape({
     email: Yup.string().email("Email invalide").required("Champ requis"),
@@ -17,12 +15,7 @@ const registerSchema = Yup.object().shape({
 type RegisterScreenProps = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
-    const { storeData } = useAsyncStorage();
-    const { call, isLoading } = useCall(register, {
-        successMessage: "Incription réussie", onSuccess(result) {
-            storeData("session", result);
-        },
-    });
+    const { updateSession } = useSession();
 
     return (
         <AuthForm
@@ -37,7 +30,6 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
                     }}
                     validationSchema={registerSchema}
                     onSubmit={(values) => {
-                        call(values);
                     }}>
                     {({ handleChange, handleSubmit, values, errors }) => (
                         <>
@@ -50,7 +42,6 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
                                 submitTitle="S'inscrire"
                                 alternativeTitle="Vous avez déjà un compte?"
                                 alternativeTitleNext="Connectez-vous!"
-                                loading={isLoading}
                                 onPressTitle={handleSubmit}
                                 onPressAlternative={() => navigation.navigate("Login")}
                             />

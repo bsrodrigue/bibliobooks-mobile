@@ -19,9 +19,14 @@ export const lightTheme = createTheme({
 
         Button: {
             titleStyle: {
-                fontFamily: "Quicksand-500"
-            }
+                fontSize: 20,
+                fontFamily: "Quicksand-700"
+            },
+            buttonStyle: {
+                backgroundColor: "black",
+            },
+            size: "lg",
+            radius: 5,
         }
     }
 })
-

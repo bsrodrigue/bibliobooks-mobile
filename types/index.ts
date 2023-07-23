@@ -62,3 +62,4 @@ export type Action = {
 export type TabItem = {
     label: string;
 }
+

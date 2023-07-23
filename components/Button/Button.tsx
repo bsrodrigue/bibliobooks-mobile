@@ -2,10 +2,13 @@ import { Button as BaseButton, ButtonProps as BaseButtonProps } from "@rneui/bas
 
 type ButtonProps = BaseButtonProps;
 
-export default function Button(props: ButtonProps) {
-
+export default function Button({ titleStyle, ...rest }: ButtonProps) {
     return (
-        <BaseButton disabled={props.loading || props.disabled} {...props} />
+        <BaseButton
+            titleStyle={{ fontFamily: "Quicksand-700", fontSize: 20 }}
+            color="black"
+            size="lg"
+            radius={5}
+            disabled={rest.loading || rest.disabled} {...rest} />
     )
-
 }

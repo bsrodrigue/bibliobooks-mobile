@@ -8,10 +8,12 @@ type RadioInputGroupProps = {
     name: string;
     options: RadioInputOption[];
     onChange?: (value: string) => void;
+    value?: string;
+    errorMessage?: string;
 }
 
-export default function RadioInputGroup({ label, name: _name, onChange, options }: RadioInputGroupProps) {
-    const [selected, setSelected] = useState("");
+export default function RadioInputGroup({ label, name: _name, onChange, value, errorMessage, options }: RadioInputGroupProps) {
+    const [selected, setSelected] = useState(value);
 
     useEffect(() => {
         onChange?.(selected);

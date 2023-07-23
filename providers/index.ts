@@ -1,1 +1,1 @@
-export { SessionProvider } from "./SessionProvider";
+export { SessionContext, SessionProvider, useSession } from "./SessionProvider";
