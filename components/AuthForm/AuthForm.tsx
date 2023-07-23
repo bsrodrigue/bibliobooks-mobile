@@ -16,7 +16,6 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 40,
         fontFamily: "Quicksand-700",
-        marginBottom: 10
     },
 
     subtitle: {
