@@ -5,9 +5,11 @@ import { useCachedResources } from "./hooks";
 import RootStackNavigator from "./navigator";
 import { SessionProvider } from "./providers";
 import { lightTheme } from "./themes";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function App() {
-  const { isLoadingComplete, session, setup, onboarding } = useCachedResources();
+  const { isLoadingComplete, session, onboarding } = useCachedResources();
+  // AsyncStorage.clear();
 
   if (!isLoadingComplete) {
     return null;
@@ -16,8 +18,8 @@ export default function App() {
   return (
     <ThemeProvider theme={lightTheme}>
       <SafeAreaView style={{ flex: 1, backgroundColor: "transparent" }}>
-        <SessionProvider creds={session}>
-          <RootStackNavigator setup={setup} onboarding={onboarding} />
+        <SessionProvider uSession={session}>
+          <RootStackNavigator skipOnboarding={Boolean(onboarding)} />
         </SessionProvider>
         <Toast />
       </SafeAreaView>

@@ -1,20 +1,23 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useAsyncStorage } from "../../lib/storage";
-import { UserProfile } from "../../types/auth";
+import { UserSession } from "../../types/auth";
 import SessionContext from "./SessionContext";
 
 type SessionProviderProps = {
     children?: ReactNode;
-    creds?: UserProfile;
+    uSession?: UserSession;
 }
 
-export default function SessionProvider({ children, creds }: SessionProviderProps) {
-    const [session, setSession] = useState(creds);
+export default function SessionProvider({ children, uSession }: SessionProviderProps) {
+    const [session, setSession] = useState(uSession);
     const { storeData, removeData } = useAsyncStorage();
 
-    const updateSession = async (session) => {
-        setSession(session);
-        await storeData("session", session);
+    useEffect(() => {
+        session && storeData("session", session);
+    }, [session]);
+
+    const updateSession = async (session: Partial<UserSession>) => {
+        setSession((prev: UserSession) => ({ ...prev, ...session }));
     }
 
     const stopSession = async () => {

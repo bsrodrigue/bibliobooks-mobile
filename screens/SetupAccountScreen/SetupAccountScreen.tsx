@@ -2,7 +2,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
 import { BackHandler, View } from "react-native";
-import { SetupAccountInput } from "../../api";
+import { SetupAccountInput } from "../../api/auth";
 import { AuthForm } from "../../components";
 import { RootStackParamList } from "../../types";
 import AccountStep from "./steps/AccountStep";

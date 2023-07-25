@@ -1,9 +1,9 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Icon } from "@rneui/base";
 import { Formik } from "formik";
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import * as Yup from "yup";
 import { AuthForm, BaseAuthFormFooter, TextInput } from "../../components";
-import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 
 const styles = StyleSheet.create({
@@ -22,7 +22,6 @@ const loginSchema = Yup.object().shape({
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
-    const { updateSession } = useSession();
 
     return (
         <AuthForm
@@ -40,8 +39,12 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
                     {({ handleChange, handleSubmit, values, errors }) => (
                         <>
                             <View>
-                                <TextInput errorMessage={errors.email} value={values.email} onChangeText={handleChange('email')} label="Adresse email" placeholder="Veuillez saisir votre adresse email" />
-                                <TextInput errorMessage={errors.password} value={values.password} onChangeText={handleChange('password')} label="Mot de passe" placeholder="Veuillez saisir votre mot de passe" />
+                                <TextInput
+                                    leftIcon={<Icon name="email" type="fontisto" />}
+                                    errorMessage={errors.email} value={values.email} onChangeText={handleChange('email')} label="Adresse email" placeholder="Veuillez saisir votre adresse email" />
+                                <TextInput
+                                    leftIcon={<Icon name="lock" type="foundation" />}
+                                    errorMessage={errors.password} value={values.password} onChangeText={handleChange('password')} label="Mot de passe" placeholder="Veuillez saisir votre mot de passe" />
                                 <TouchableWithoutFeedback onPress={() => navigation.navigate("ForgotPassword")}>
                                     <Text style={styles.forgotPassword}>
                                         Mot de passe oublié?

@@ -16,6 +16,7 @@ export { NoveltyScreen } from "./NoveltyScreen";
 export { OnboardingScreen } from "./OnboardingScreen";
 export { PublicationsScreen } from "./PublicationsScreen";
 export { RegisterScreen } from "./RegisterScreen";
+export { RegisterSuccessScreen } from "./RegisterSuccessScreen";
 export { SetupAccountScreen } from "./SetupAccountScreen";
 export { SuccessScreen } from "./SuccessScreen";
 

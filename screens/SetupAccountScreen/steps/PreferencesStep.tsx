@@ -6,6 +6,9 @@ import * as Yup from "yup";
 import { Button } from "../../../components";
 import { config } from "../../../config";
 import { useAsyncStorage } from "../../../lib/storage";
+import useCall from "../../../api/useCall";
+import { useSession } from "../../../providers";
+import { setupAccount } from "../../../api/auth";
 
 const preferencesSchema = Yup.object().shape({
     favouriteGenres: Yup.string().required("Champ requis"),
@@ -18,7 +21,13 @@ type PreferencesStepProps = {
 
 export default function PreferencesStep({ formValues, onNext }: PreferencesStepProps) {
     const { theme: { colors: { primary } } } = useTheme();
-    const { storeData } = useAsyncStorage();
+    const { session: { userProfile } } = useSession();
+    console.log(userProfile)
+    const { call, isLoading } = useCall(setupAccount, {
+        onSuccess() {
+
+        },
+    })
     const numColumns = useRef(2);
     const [genres, setGenres] = useState(config.genres.map(genre => ({
         selected: false, ...genre,
@@ -47,6 +56,9 @@ export default function PreferencesStep({ formValues, onNext }: PreferencesStepP
                 const genres = favs.map((fav) => fav.value);
                 values.favouriteGenres = genres;
 
+
+                await call({ ...values, ...formValues, userId: userProfile.userId });
+                // onNext();
             }}
         >
             {({ handleChange, handleSubmit }) => (
@@ -83,7 +95,7 @@ export default function PreferencesStep({ formValues, onNext }: PreferencesStepP
                                 </ImageBackground>
                             </TouchableOpacity>
                         )} />
-                    <Button onPress={() => handleSubmit()} title="Terminer" />
+                    <Button loading={isLoading} onPress={() => handleSubmit()} title="Terminer" />
                 </>
             )}
         </Formik>

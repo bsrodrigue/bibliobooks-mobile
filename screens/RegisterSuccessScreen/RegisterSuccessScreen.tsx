@@ -1,5 +1,8 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, Text, View } from "react-native";
+import useCall from "../../api/useCall";
+import { Button } from "../../components";
+import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 
 const styles = StyleSheet.create({
@@ -28,17 +31,19 @@ const styles = StyleSheet.create({
     },
 
     confirm: {
+        color: "black",
         fontSize: 20,
         fontFamily: "Quicksand-700",
     }
 });
 
+type SuccessScreenProps = NativeStackScreenProps<RootStackParamList, 'RegisterSuccess'>;
 
-type SuccessScreenProps = NativeStackScreenProps<RootStackParamList, 'Success'>;
-
-export default function SuccessScreen({ navigation, route }: SuccessScreenProps) {
+export default function SuccessScreen({ route }: SuccessScreenProps) {
     const dimension = 165
-    const { title, subtitle, confirm, destination } = route.params;
+    const { updateSession } = useSession();
+    const { call, isLoading } = useCall(updateSession);
+    const { userProfile } = route.params;
 
     return (
         <View style={styles.container}>
@@ -47,14 +52,14 @@ export default function SuccessScreen({ navigation, route }: SuccessScreenProps)
                 height: dimension
             }} source={require("../../assets/illustrations/party.png")} />
             <View>
-                <Text style={styles.title}>{title}</Text>
-                <Text style={styles.subtitle}>{subtitle}</Text>
+                <Text style={styles.title}>Félicitations</Text>
+                <Text style={styles.subtitle}>Votre inscription s'est bien déroulée! Veuillez à présent configurer votre compte pour profiter de la plateforme</Text>
             </View>
-            <TouchableOpacity onPress={async () => {
-                navigation.navigate(destination)
-            }}>
-                <Text style={styles.confirm}>{confirm}</Text>
-            </TouchableOpacity>
+            <Button
+                onPress={() => call({ userProfile })}
+                loading={isLoading}
+                buttonStyle={{ backgroundColor: "white" }}
+                titleStyle={styles.confirm}>D'accord</Button>
         </View>
     )
 }

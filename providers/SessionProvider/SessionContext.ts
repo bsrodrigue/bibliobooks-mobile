@@ -1,9 +1,10 @@
 import { createContext } from "react";
-import { UserProfile } from "../../types/auth";
+import { UserSession } from "../../types/auth";
+
 
 type SessionContextType = {
-    session: UserProfile;
-    updateSession: (session: UserProfile) => void;
+    session: UserSession;
+    updateSession: (session: Partial<UserSession>) => Promise<void>;
     stopSession: () => void;
 }
 

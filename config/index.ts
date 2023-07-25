@@ -1,3 +1,4 @@
+import Crypto from "../lib/crypto";
 import { RadioInputOption } from "../types";
 
 const genderOptions: RadioInputOption[] = [
@@ -48,9 +49,14 @@ const genres = [
 
 const wrapperHorizontalPadding = 40;
 
+const defaultIdGenerator = {
+    generateId: Crypto.generateRandomUUID,
+};
+
 export const config = {
     genderOptions,
     genres,
     genreTitleMap,
     wrapperHorizontalPadding,
+    defaultIdGenerator,
 };

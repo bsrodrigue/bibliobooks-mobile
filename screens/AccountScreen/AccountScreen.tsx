@@ -3,12 +3,15 @@ import { Avatar, useTheme } from "@rneui/themed";
 import { View } from "react-native";
 import { useImagePicker } from "../../hooks";
 import { RootStackParamList } from "../../types";
-
+import { useState } from "react";
+import { useSession } from "../../providers";
 
 type AccountScreenProps = NativeStackScreenProps<RootStackParamList, 'Account'>;
 
 export default function AccountScreen({ navigation }: AccountScreenProps) {
     const { theme: { colors: { primary, greyOutline } } } = useTheme();
+    const [isEditMode, setIsEditMode] = useState(false);
+    const { session: { userProfile: { pseudo, firstName, lastName, bio, avatarUrl, email } } } = useSession();
     const { image, pickImage } = useImagePicker();
 
     return (

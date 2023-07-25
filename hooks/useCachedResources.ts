@@ -6,7 +6,6 @@ import { useAsyncStorage } from "../lib/storage";
 export default function useCachedResources() {
     const [isLoadingComplete, setLoadingComplete] = useState(false);
     const [session, setSession] = useState();
-    const [setup, setSetup] = useState();
     const [onboarding, setOnboarding] = useState();
     const { getData } = useAsyncStorage();
 
@@ -33,9 +32,6 @@ export default function useCachedResources() {
                 const onboarding = await getData("onboarding");
                 setOnboarding(JSON.parse(onboarding));
 
-                const setup = await getData("account-setup");
-                setSetup(JSON.parse(setup));
-
             } finally {
                 setLoadingComplete(true);
                 SplashScreen.hideAsync();
@@ -45,5 +41,5 @@ export default function useCachedResources() {
         loadResourcesAndDataAsync();
     }, []);
 
-    return { isLoadingComplete, session, onboarding, setup };
+    return { isLoadingComplete, session, onboarding };
 }

@@ -3,20 +3,26 @@ import { Icon } from "@rneui/base";
 import { Formik } from "formik";
 import { View } from "react-native";
 import * as Yup from "yup";
+import { register } from "../../api/auth";
+import useCall from "../../api/useCall";
 import { AuthForm, BaseAuthFormFooter, TextInput } from "../../components";
-import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 
 const registerSchema = Yup.object().shape({
     email: Yup.string().email("Email invalide").required("Champ requis"),
     password: Yup.string().required("Champ requis"),
-    password2: Yup.string().required("Champ requis").oneOf([Yup.ref('password')], 'Les mots de passe ne correspondent pas'),
+    password2: Yup.string().required("Champ requis")
+        .oneOf([Yup.ref('password')], 'Les mots de passe ne correspondent pas'),
 });
 
 type RegisterScreenProps = NativeStackScreenProps<RootStackParamList, 'Register'>;
 
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
-    const { updateSession } = useSession();
+    const { call, isLoading } = useCall(register, {
+        onSuccess(userProfile) {
+            navigation.replace("RegisterSuccess", { userProfile });
+        },
+    });
 
     return (
         <AuthForm
@@ -31,6 +37,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
                     }}
                     validationSchema={registerSchema}
                     onSubmit={(values) => {
+                        call(values);
                     }}>
                     {({ handleChange, handleSubmit, values, errors }) => (
                         <>
@@ -50,6 +57,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
                                 submitTitle="S'inscrire"
                                 alternativeTitle="Vous avez déjà un compte?"
                                 alternativeTitleNext="Connectez-vous!"
+                                loading={isLoading}
                                 onPressTitle={handleSubmit}
                                 onPressAlternative={() => navigation.navigate("Login")}
                             />
