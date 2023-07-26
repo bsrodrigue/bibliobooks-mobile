@@ -1,14 +1,15 @@
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useTheme } from "@rneui/themed";
 import { Formik } from "formik";
 import { useRef, useState } from "react";
 import { FlatList, ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import * as Yup from "yup";
+import { setupAccount } from "../../../api/auth";
+import useCall from "../../../api/useCall";
 import { Button } from "../../../components";
 import { config } from "../../../config";
-import { useAsyncStorage } from "../../../lib/storage";
-import useCall from "../../../api/useCall";
 import { useSession } from "../../../providers";
-import { setupAccount } from "../../../api/auth";
+import { RootStackParamList } from "../../../types";
 
 const preferencesSchema = Yup.object().shape({
     favouriteGenres: Yup.string().required("Champ requis"),
@@ -16,16 +17,15 @@ const preferencesSchema = Yup.object().shape({
 
 type PreferencesStepProps = {
     formValues?: any;
-    onNext?: (values?: object) => void;
+    navigation?: NativeStackNavigationProp<RootStackParamList, "SetupAccount", undefined>;
 };
 
-export default function PreferencesStep({ formValues, onNext }: PreferencesStepProps) {
+export default function PreferencesStep({ formValues, navigation }: PreferencesStepProps) {
     const { theme: { colors: { primary } } } = useTheme();
-    const { session: { userProfile } } = useSession();
-    console.log(userProfile)
+    const { session: { userProfile: { userId } }, updateSession } = useSession();
     const { call, isLoading } = useCall(setupAccount, {
-        onSuccess() {
-
+        async onSuccess(userProfile) {
+            await updateSession({ userProfile });
         },
     })
     const numColumns = useRef(2);
@@ -55,10 +55,8 @@ export default function PreferencesStep({ formValues, onNext }: PreferencesStepP
                 const favs = JSON.parse(values.favouriteGenres);
                 const genres = favs.map((fav) => fav.value);
                 values.favouriteGenres = genres;
-
-
-                await call({ ...values, ...formValues, userId: userProfile.userId });
-                // onNext();
+                const result = await call({ ...values, ...formValues, userId });
+                navigation.replace("SetupAccountSuccess", { userProfile: result });
             }}
         >
             {({ handleChange, handleSubmit }) => (

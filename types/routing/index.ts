@@ -33,6 +33,9 @@ export type RootStackParamList = {
     RegisterSuccess: {
         userProfile: UserProfile;
     };
+    SetupAccountSuccess: {
+        userProfile: UserProfile;
+    };
     Success: {
         title: string;
         subtitle: string;

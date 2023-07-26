@@ -31,7 +31,7 @@ export default function InformationsStep({ formValues, onNext }: InformationsSte
             }}
             onSubmit={(values) => {
                 
-                onNext?.({ ...formValues, ...values, birthdate: values.birthdate.toISOString() })
+                onNext?.({ ...formValues, ...values, birthdate: values.birthdate.toLocaleString()})
             }}
         >
             {({ handleChange, handleSubmit, values, errors }) => (

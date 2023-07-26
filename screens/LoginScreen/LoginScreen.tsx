@@ -3,7 +3,10 @@ import { Icon } from "@rneui/base";
 import { Formik } from "formik";
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from "react-native";
 import * as Yup from "yup";
+import { LoginInput, login } from "../../api/auth";
+import useCall from "../../api/useCall";
 import { AuthForm, BaseAuthFormFooter, TextInput } from "../../components";
+import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 
 const styles = StyleSheet.create({
@@ -22,6 +25,12 @@ const loginSchema = Yup.object().shape({
 type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 
 export default function LoginScreen({ navigation }: LoginScreenProps) {
+    const { updateSession } = useSession();
+    const { call, isLoading } = useCall(login, {
+        onSuccess(userProfile) {
+            updateSession({ userProfile });
+        },
+    });
 
     return (
         <AuthForm
@@ -34,7 +43,8 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
                         password: "",
                     }}
                     validationSchema={loginSchema}
-                    onSubmit={(values) => {
+                    onSubmit={(values: LoginInput) => {
+                        call(values);
                     }}>
                     {({ handleChange, handleSubmit, values, errors }) => (
                         <>
@@ -55,6 +65,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
                                 submitTitle="Se connecter"
                                 alternativeTitle="Vous n'avez pas de compte?"
                                 alternativeTitleNext="Inscrivez-vous!"
+                                loading={isLoading}
                                 onPressTitle={handleSubmit}
                                 onPressAlternative={() => navigation.navigate("Register")}
                             />

@@ -3,6 +3,7 @@ import { useTheme } from "@rneui/themed";
 import { Formik } from "formik";
 import { View } from "react-native";
 import * as Yup from "yup";
+import { SetupAccountInput } from "../../../api/auth";
 import { Button, TextInput } from "../../../components";
 import { useImagePicker } from "../../../hooks";
 
@@ -13,12 +14,12 @@ const accountSchema = Yup.object().shape({
 
 type AccountStepProps = {
     formValues?: object;
-    onNext?: (values: object) => void;
+    onNext?: (values: Partial<SetupAccountInput>) => void;
 };
 
 export default function AccountStep({ formValues, onNext }: AccountStepProps) {
     const { theme: { colors: { primary, greyOutline, } } } = useTheme();
-    const { image, pickImage } = useImagePicker();
+    const { image, imgBase64, pickImage } = useImagePicker();
 
     return (
         <Formik
@@ -27,8 +28,8 @@ export default function AccountStep({ formValues, onNext }: AccountStepProps) {
                 pseudo: "",
                 bio: "",
             }}
-            onSubmit={(values) => {
-                onNext?.({ ...formValues, ...values })
+            onSubmit={async (values) => {
+                onNext?.({ ...formValues, ...values, avatarBase64: imgBase64 })
             }}
         >
             {({ handleChange, handleSubmit, values, errors }) => (

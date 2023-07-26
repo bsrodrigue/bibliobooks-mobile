@@ -18,5 +18,6 @@ export { PublicationsScreen } from "./PublicationsScreen";
 export { RegisterScreen } from "./RegisterScreen";
 export { RegisterSuccessScreen } from "./RegisterSuccessScreen";
 export { SetupAccountScreen } from "./SetupAccountScreen";
+export { SetupAccountSuccessScreen } from "./SetupAccountSuccessScreen";
 export { SuccessScreen } from "./SuccessScreen";
 

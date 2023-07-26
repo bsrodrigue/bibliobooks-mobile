@@ -15,19 +15,13 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [formValues, setFormValues] = useState<SetupAccountInput>();
 
-    const next = (values) => {
+    const next = (values: SetupAccountInput) => {
         setFormValues(values);
+
         if (currentStepIndex < steps.length - 1) {
             setCurrentStepIndex(currentStepIndex + 1)
             return;
         }
-
-        navigation.replace("Success", {
-            title: "Parfait",
-            subtitle: "Votre compte est finalement prêt. Vous pouvez commencer à explorer la plateforme",
-            confirm: "Poursuivre",
-            destination: "Main"
-        })
     };
 
     const previous = () => {
@@ -62,7 +56,7 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
         {
             title: "Préférences",
             subtitle: "Choisissez vos genres favoris",
-            component: <PreferencesStep formValues={formValues} onNext={next} />
+            component: <PreferencesStep formValues={formValues} navigation={navigation} />
         },
     ]
 

@@ -26,6 +26,7 @@ export default function useCall<R, P>(
             const data = await callback(args)
             handleSuccess(options?.successMessage);
             options?.onSuccess?.(data);
+            return data;
         } catch (error) {
             handleError(options?.errorMessage || error.message);
             options?.onError?.();

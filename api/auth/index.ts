@@ -1,9 +1,33 @@
-import { User, createUserWithEmailAndPassword } from "firebase/auth";
-import { getDocs, query, where } from "firebase/firestore";
-import { auth } from "../../config/firebase";
+import { User, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { DocumentData, DocumentReference, getDocs, query, where } from "firebase/firestore";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { auth, storage } from "../../config/firebase";
 import { UserProfile } from "../../types/auth";
 import { NovelGenre } from "../../types/models";
 import { createEntity, getColRefFromDocMap, updateEntity, uploadFile } from "../base";
+
+export type GetUserProfileInput = {
+    userId: string;
+}
+
+export type GetUserProfileOutput = {
+    userProfile: UserProfile;
+    userProfileRef: DocumentReference<DocumentData, DocumentData>;
+};
+
+export async function getUserProfile({ userId }: GetUserProfileInput) {
+    const userProfilesRef = getColRefFromDocMap("user_profile");
+    const q = query(userProfilesRef, where("userId", "==", userId));
+    const qs = await getDocs(q);
+
+    if (qs.empty) {
+        throw new Error("User does not have a user profile");
+    }
+
+    const userProfile = qs.docs[0].data() as UserProfile;
+
+    return { userProfile, userProfilesRef };
+}
 
 export type RegisterInput = {
     email: string;
@@ -12,9 +36,10 @@ export type RegisterInput = {
 
 export type RegisterOutput = UserProfile;
 
-export async function register({ email, password }: RegisterInput) {
+export async function register({ email, password }: RegisterInput): Promise<RegisterOutput> {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
-    return await createUserProfile(user);
+    const { userProfile } = await getUserProfile({ userId: user.uid });
+    return userProfile;
 }
 
 export async function createUserProfile(user: User): Promise<UserProfile> {
@@ -27,40 +52,52 @@ export async function createUserProfile(user: User): Promise<UserProfile> {
     return await createEntity(profile, "user_profile");
 }
 
+export type LoginInput = {
+    email: string;
+    password: string;
+}
+
+export type LoginOutput = UserProfile;
+
+export async function login({ email, password }: RegisterInput): Promise<LoginOutput> {
+    const { user } = await signInWithEmailAndPassword(auth, email, password);
+    const { userProfile } = await getUserProfile({ userId: user.uid });
+    return userProfile;
+}
+
 export type SetupAccountInput = {
-    userId?:string;
+    userId?: string;
     firstName: string;
     lastName: string;
     birthdate: Date;
     pseudo: string;
     bio: string;
     gender: "male" | "female";
-    avatarImage?: File;
+    avatarBase64?: string;
     favouriteGenres?: Array<string>;
 }
 
 export type SetupAccountOutput = UserProfile;
 
-export async function setupAccount(input: SetupAccountInput) {
-    const ref = getColRefFromDocMap("user_profile");
-    const q = query(ref, where("userId", "==", input.userId));
+export async function setupAccount(input: SetupAccountInput): Promise<SetupAccountOutput> {
+    const { userProfile, userProfilesRef } = await getUserProfile({ userId: input.userId });
 
-    const qs = await getDocs(q);
-
-    if (qs.empty) {
-        throw new Error("not found, userId:id")
+    let avatarUrl = "";
+    if (input.avatarBase64) {
+        const avatarStorageRef = ref(storage, `files/users/avatars/${input.userId}/avatar.jpg`);
+        const result = await uploadString(avatarStorageRef, input.avatarBase64)
+        avatarUrl = await getDownloadURL(result.ref);
     }
-
-    const data = qs.docs[0].data() as UserProfile;
 
     delete input.userId;
+    delete input.avatarBase64;
+
     const result: SetupAccountOutput = {
-        isAccountSetup: true, ...data, ...input
+        ...userProfile, ...input, avatarUrl, isAccountSetup: true
     }
 
-    const resultRef = qs.docs[0].ref;
-    await updateEntity(resultRef, result);
-    this.userProfile = result;
+    await updateEntity(userProfilesRef, result);
+    return result;
 }
 
 type CreateNovelInput = {

@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSession } from "../providers";
-import { ForgotPasswordScreen, LoginScreen, MainScreen, OnboardingScreen, RegisterScreen, RegisterSuccessScreen, SetupAccountScreen, SuccessScreen } from "../screens";
+import { ForgotPasswordScreen, LoginScreen, MainScreen, OnboardingScreen, RegisterScreen, RegisterSuccessScreen, SetupAccountScreen, SetupAccountSuccessScreen } from "../screens";
 import NovelDetailsScreen from "../screens/NovelDetails/NovelDetails";
 import { UserSession } from "../types/auth";
 
@@ -36,7 +36,7 @@ function PrivateStack({ session }: PrivateStackProps) {
             <Stack.Screen name='SetupAccount' component={SetupAccountScreen} />
             <Stack.Screen name='Main' component={MainScreen} />
             <Stack.Screen name='NovelDetails' component={NovelDetailsScreen} />
-            <Stack.Screen name='Success' component={SuccessScreen} />
+            <Stack.Screen name='SetupAccountSuccess' component={SetupAccountSuccessScreen} />
         </Stack.Navigator>
     )
 }
@@ -47,6 +47,8 @@ type RootStackNavigatorProps = {
 
 export default function RootStackNavigator({ skipOnboarding }: RootStackNavigatorProps) {
     const { session } = useSession();
+
+    console.log(session.userProfile)
 
     return (
         <NavigationContainer>
