@@ -38,7 +38,9 @@ export interface Novel
 }
 
 export interface Chapter
-    extends BaseModel {
+    extends
+    BaseModel,
+    HasAuthor {
     title: string;
     body: string;
     status: ChapterStatus;
@@ -66,4 +68,3 @@ export type FireBaseEntityDoc = {
 }
 
 export type FireBaseEntityDocMap = Record<Entity, FireBaseEntityDoc>
-

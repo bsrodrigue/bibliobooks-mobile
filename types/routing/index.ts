@@ -29,6 +29,7 @@ export type RootStackParamList = {
     ChapterForm: {
         mode: "create" | "edit",
         chapter?: Chapter;
+        novel: Novel;
     };
     NovelDetails: {
         novel?: CreateNovelInput;

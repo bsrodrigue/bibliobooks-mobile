@@ -48,7 +48,6 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                 const response = await fetch(imgUri);
                 const blob = await response.blob();
                 const result = await call({ coverImg: blob, ...values, userId })
-                console.log(result);
             }}>
             {
                 ({ handleSubmit, handleChange, values, errors }) => (
@@ -69,7 +68,6 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                     <TextInput errorMessage={errors.title} value={values.title} onChangeText={handleChange("title")} label="Titre" placeholder="Veuillez saisir le titre du roman" />
                                 </View>
                             </View>
-
 
                             <Wrapper>
                                 <TextInput errorMessage={errors.description} value={values.description} onChangeText={handleChange("description")} name="description" label="Resumé de l'histoire" placeholder="Veuillez donner le resumé de l'histoire..." multiline numberOfLines={8} />

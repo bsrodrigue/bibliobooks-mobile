@@ -2,7 +2,8 @@ import { Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { useRef } from "react";
 import { Dimensions, FlatList, Text, TouchableOpacity } from "react-native";
-import { Action, Novel } from "../../types";
+import { Action } from "../../types";
+import { Novel } from "../../types/models";
 import { CardBottomSheet } from "../CardBottomSheet";
 
 type ActionBottomSheetProps = {

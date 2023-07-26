@@ -20,7 +20,6 @@ export default function NovelGrid({ novels, onNovelPress, onNovelLongPress, onLa
             data={[...novels, { last: true }]}
             numColumns={columns.current}
             showsVerticalScrollIndicator={false}
-
             ListEmptyComponent={() => (
                 <TouchableOpacity onPress={() => {
                     onLastItemPress?.()
@@ -38,9 +37,9 @@ export default function NovelGrid({ novels, onNovelPress, onNovelLongPress, onLa
             renderItem={({ index, item }) =>
             (<TouchableOpacity
                 onPress={() => {
-                    index === novels.length - 1 ? onLastItemPress?.() : onNovelPress?.(item)
+                    item?.last ? onLastItemPress?.() : onNovelPress?.(item)
                 }}
-                onLongPress={() => { !(index === novels.length - 1) && onNovelLongPress?.(item) }}
+                onLongPress={() => { !item?.last && onNovelLongPress?.(item) }}
                 key={index}>
 
                 {item?.last ? (<AddNovel label="Ajouter un livre" />) : (

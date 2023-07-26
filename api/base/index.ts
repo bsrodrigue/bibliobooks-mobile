@@ -2,7 +2,6 @@ import { DocumentData, DocumentReference, addDoc, collection, deleteDoc, getDocs
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { config } from "../../config";
 import { db, storage } from "../../config/firebase";
-import { UserProfile } from "../../types/auth";
 import { Entity, FireBaseEntityDocMap } from "../../types/models";
 
 const firebaseEntityDocMap: FireBaseEntityDocMap = {
@@ -58,7 +57,7 @@ export async function createAuthoredEntity<T extends object>(userId: string, ent
     return createdEntity;
 }
 
-export async function updateEntity(reference: DocumentReference<DocumentData, DocumentData>, entity: UserProfile) {
+export async function updateEntity<T>(reference: DocumentReference<DocumentData, DocumentData>, entity: Partial<T>) {
     const updatedAt = new Date().toISOString();
     await updateDoc(reference, {
         updatedAt,
@@ -94,4 +93,61 @@ export async function getEntitiesByUser<T>({ userId, type }: GetEntitiesByUser):
     })
 
     return result;
+}
+
+export type GetEntitiesByStatus = {
+    type: Entity;
+}
+
+export async function getPublicEntities<T>({ type }: GetEntitiesByStatus): Promise<Array<T>> {
+    const modelRef = getColRefFromDocMap(type);
+    const q = query(modelRef, where("status", "==", "published"));
+    const qs = await getDocs(q);
+
+    if (qs.empty) {
+        return [];
+    }
+
+    const result = [];
+    qs.docs.forEach((doc) => {
+        result.push(doc.data());
+    })
+
+    return result;
+}
+
+export type GetEntityByIdInput = {
+    id: string;
+    type: Entity;
+}
+
+export async function getEntityById<T>({ id, type }: GetEntityByIdInput): Promise<T> {
+    const modelRef = getColRefFromDocMap(type);
+
+    const q = query(modelRef, where("id", "==", id));
+    const qs = await getDocs(q);
+
+    if (qs.empty) {
+        return null;
+    }
+
+    return qs.docs[0].data() as T;
+}
+
+export type GetEntityRefByIdInput = {
+    id: string;
+    type: Entity;
+}
+
+export async function getEntityRefById({ id, type }: GetEntityRefByIdInput) {
+    const modelRef = getColRefFromDocMap(type);
+
+    const q = query(modelRef, where("id", "==", id));
+    const qs = await getDocs(q);
+
+    if (qs.empty) {
+        return null;
+    }
+
+    return qs.docs[0].ref;
 }

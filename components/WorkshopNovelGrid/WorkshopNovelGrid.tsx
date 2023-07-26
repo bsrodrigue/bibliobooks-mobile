@@ -21,15 +21,23 @@ export default function WorkshopNovelGrid({ actions, novels, navigation, onLastI
             <NovelGrid
                 novels={novels}
                 onLastItemPress={onLastItemPress}
-                onNovelPress={() => {
-                    navigation.navigate("ChapterWorkshop");
+                onNovelPress={(novel: Novel) => {
+                    navigation.navigate("ChapterWorkshop", { novel });
                 }}
                 onNovelLongPress={(novel) => {
                     setCurrentNovel(novel);
                     setActionsIsVisible(true);
                 }}
             />
-            <ActionBottomSheet novel={currentNovel} actions={actions} isVisible={actionsIsVisible} onBackdropPress={() => setActionsIsVisible(false)} />
+            <ActionBottomSheet
+                novel={currentNovel}
+                actions={actions}
+                isVisible={actionsIsVisible}
+                onBackdropPress={() => {
+                    setCurrentNovel(null)
+                    setActionsIsVisible(false)
+                }
+                } />
         </>
     )
 }

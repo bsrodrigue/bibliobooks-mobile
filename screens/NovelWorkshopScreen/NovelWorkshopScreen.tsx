@@ -1,13 +1,13 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useTheme } from "@rneui/themed";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
-import { WorkshopNovelGrid, WorkshopTabs } from "../../components";
-import { RootStackParamList } from "../../types";
-import { Novel } from "../../types/models";
+import { getUserNovels, updateNovelStatus } from "../../api/novels";
 import useCall from "../../api/useCall";
-import { getUserNovels } from "../../api/novels";
+import { WorkshopNovelGrid, WorkshopTabs } from "../../components";
 import { useSession } from "../../providers";
-import { useTheme } from "@rneui/themed";
+import { Action, RootStackParamList } from "../../types";
+import { Novel } from "../../types/models";
 
 const tabs = [
     { label: "Publications", },
@@ -24,8 +24,21 @@ const filters = {
 type NovelWorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'NovelWorkshop'>;
 
 export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenProps) {
+    const [novels, setNovels] = useState<Array<Novel>>([]);
+    const { session: { userProfile: { userId } } } = useSession();
+    const { call, isLoading } = useCall(getUserNovels, {
+        onSuccess(result) {
+            setNovels(result)
+        },
+    });
 
-    const commonActions = [
+    const { call: callUpdateNovelStatus, isLoading: updateNovelIsLoading } = useCall(updateNovelStatus, {
+        onSuccess(result) {
+            call({ userId });
+        },
+    });
+
+    const commonActions: Array<Action> = [
         {
             icon: "trash",
             title: "Supprimer",
@@ -38,41 +51,51 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
         },
     ]
 
-    const publishedActions = [
+    const publishedActions: Array<Action> = [
         {
             icon: "archive",
             title: "Archiver",
-            onPress: () => { },
+            onPress: async (novel: Novel) => {
+                await callUpdateNovelStatus({ novelId: novel.id, status: "archived" });
+            },
         }, {
             icon: "eye-slash",
             title: "Dépublier",
-            onPress: () => { },
+            onPress: async (novel: Novel) => {
+                await callUpdateNovelStatus({ novelId: novel.id, status: "draft" });
+            },
         },
         ...commonActions
     ];
 
-    const draftActions = [{
+    const draftActions: Array<Action> = [{
         icon: "eye",
         title: "Publier",
-        onPress: () => { },
+        onPress: async (novel: Novel) => {
+            await callUpdateNovelStatus({ novelId: novel.id, status: "published" });
+        },
     },
     {
         icon: "archive",
         title: "Archiver",
-        onPress: () => { },
+        onPress: async (novel: Novel) => {
+            await callUpdateNovelStatus({ novelId: novel.id, status: "archived" });
+        },
     },
     ...commonActions
     ];
 
-    const archivedActions = [
+    const archivedActions: Array<Action> = [
         {
             icon: "eye",
             title: "Publier",
-            onPress: () => { },
+            onPress: async (novel: Novel) => {
+                await callUpdateNovelStatus({ novelId: novel.id, status: "published" });
+            },
+
         },
         ...commonActions
     ];
-
 
     const actionFilters = {
         "Publications": publishedActions,
@@ -80,15 +103,8 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
         "Archives": archivedActions,
     }
 
-    const [selectedItem, setSelectedItem] = useState(tabs[0].label);
-    const { session: { userProfile: { userId } } } = useSession();
+    const [selectedTab, setSelectedTab] = useState(tabs[0].label);
     const { theme: { colors: { primary } } } = useTheme();
-    const [novels, setNovels] = useState<Array<Novel>>([]);
-    const { call, isLoading } = useCall(getUserNovels, {
-        onSuccess(result) {
-            setNovels(result);
-        },
-    });
 
     useEffect(() => {
         call({ userId })
@@ -96,18 +112,22 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
 
     return (
         <View style={{ flex: 1 }}>
-            <WorkshopTabs items={tabs} selectedItem={selectedItem} onPressTab={(label) => setSelectedItem(label)} />
+            <WorkshopTabs items={tabs} selectedItem={selectedTab} onPressTab={(label) => setSelectedTab(label)} />
             <View style={{ flexDirection: "row", justifyContent: "center", flex: 1, paddingHorizontal: 20 }}>
                 <View style={{ alignItems: "flex-start", flex: 1, }}>
                     {
-                        isLoading ? (
+                        isLoading || updateNovelIsLoading ? (
                             <View style={{ justifyContent: "center", alignItems: "center", flex: 1, width: "100%" }} >
                                 <ActivityIndicator color={primary} size="large" />
                             </View>
                         ) : (
-                            <WorkshopNovelGrid actions={actionFilters[selectedItem]} novels={novels} navigation={navigation} onLastItemPress={() => {
-                                navigation.navigate("NovelForm", { mode: "create" });
-                            }} />
+                            <WorkshopNovelGrid
+                                actions={actionFilters[selectedTab]}
+                                novels={novels.filter((novel) => filters[selectedTab] === novel.status)}
+                                navigation={navigation} onLastItemPress={() => {
+                                    navigation.navigate("NovelForm", { mode: "create" });
+                                }}
+                            />
                         )
                     }
                 </View>

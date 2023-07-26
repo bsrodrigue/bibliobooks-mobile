@@ -16,8 +16,6 @@ export type RadioInputOption = {
     imgSrc: ImageSourcePropType;
 }
 
-
-
 export type Action = {
     icon: string;
     title: string;
