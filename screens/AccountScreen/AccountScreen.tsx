@@ -11,7 +11,7 @@ type AccountScreenProps = NativeStackScreenProps<RootStackParamList, 'Account'>;
 export default function AccountScreen({ navigation }: AccountScreenProps) {
     const { theme: { colors: { primary, greyOutline } } } = useTheme();
     const [isEditMode, setIsEditMode] = useState(false);
-    const { session: { userProfile: { pseudo, firstName, lastName, bio, avatarUrl, email } } } = useSession();
+    const { session: { userProfile: { pseudo, firstName, lastName, bio, avatarUrl, email, birthdate, gender } } } = useSession();
     const { image, pickImage } = useImagePicker();
 
     return (
@@ -30,6 +30,9 @@ export default function AccountScreen({ navigation }: AccountScreenProps) {
                     <Text>{lastName}</Text>
                     <Text>{bio}</Text>
                     <Text>{pseudo}</Text>
+                    <Text>{email}</Text>
+                    <Text>{birthdate}</Text>
+                    <Text>{gender}</Text>
                 </View>
             </View>
             <View>

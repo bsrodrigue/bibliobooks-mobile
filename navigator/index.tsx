@@ -48,8 +48,6 @@ type RootStackNavigatorProps = {
 export default function RootStackNavigator({ skipOnboarding }: RootStackNavigatorProps) {
     const { session } = useSession();
 
-    console.log(session.userProfile)
-
     return (
         <NavigationContainer>
             {session ? (<PrivateStack session={session} />) : (<PublicStack skipOnboarding={skipOnboarding} />)}

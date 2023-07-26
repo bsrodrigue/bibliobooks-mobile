@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Icon } from "@rneui/base";
+import { Dialog, Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
-import { ReactNode } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ReactNode, useState } from "react";
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Header } from "../../components";
 import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
@@ -44,11 +44,22 @@ function SimpleHeader({ label, rightIcon }: SimpleHeaderProps) {
 const Tab = createBottomTabNavigator();
 
 export default function MainScreen({ navigation, route }: MainScreenProps) {
+    const [logoutDialogIsvisible, setLogoutDialogIsVisible] = useState(false);
     const { theme: { colors: { primary } } } = useTheme();
     const { stopSession } = useSession();
 
     return (
         <View style={styles.container}>
+            <Dialog
+                onBackdropPress={() => setLogoutDialogIsVisible(false)}
+                isVisible={logoutDialogIsvisible}>
+                <Dialog.Title>
+                    Voulez-vous vous déconnecter?
+                </Dialog.Title>
+                <Dialog.Actions>
+                    <Dialog.Button title="Confirmer" onPress={() => stopSession()} />
+                </Dialog.Actions>
+            </Dialog>
             <Tab.Navigator screenOptions={{
                 tabBarStyle: {
                     paddingVertical: 10,
@@ -64,7 +75,9 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                     return route.name === "Discover" ? <Header /> : <SimpleHeader
                         label={options.tabBarLabel.toString()}
                         rightIcon={route.name === "Account" ? (
-                            <TouchableOpacity onPress={stopSession}>
+                            <TouchableOpacity onPress={() => {
+                                setLogoutDialogIsVisible(true);
+                            }}>
                                 <Icon size={20} name="logout" type="ant-design" />
                             </TouchableOpacity>
                         ) : null}

@@ -38,8 +38,7 @@ export type RegisterOutput = UserProfile;
 
 export async function register({ email, password }: RegisterInput): Promise<RegisterOutput> {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
-    const { userProfile } = await getUserProfile({ userId: user.uid });
-    return userProfile;
+    return await createUserProfile(user);
 }
 
 export async function createUserProfile(user: User): Promise<UserProfile> {
