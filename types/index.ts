@@ -1,4 +1,5 @@
 import { ImageSourcePropType } from "react-native";
+import { Novel } from "./models";
 export * from "./routing";
 
 export type Slide = {
@@ -15,43 +16,7 @@ export type RadioInputOption = {
     imgSrc: ImageSourcePropType;
 }
 
-export type Genre = {
-    title: string;
-    description: string;
-    cover: ImageSourcePropType;
-}
 
-export type Novel = {
-    id?: string;
-    title?: string;
-    chapterCount?: number;
-    description?: string;
-    imgSrc?: ImageSourcePropType;
-    mature?: boolean;
-    author?: string;
-    genre?: string;
-    last?: boolean;
-    status?: NovelStatus;
-}
-
-export type Chapter = {
-    id?: string;
-    title?: string;
-    body?: string;
-    genre?: string;
-    last?: boolean;
-    status?: ChapterStatus;
-
-    likeCount?: number;
-    commentCount?: number;
-    wordCount?: number;
-
-    createdAt?: string;
-    editedAt?: string;
-}
-
-export type ChapterStatus = NovelStatus;
-export type NovelStatus = "published" | "draft" | "archived";
 
 export type Action = {
     icon: string;

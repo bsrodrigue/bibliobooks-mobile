@@ -1,10 +1,10 @@
 import { User, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { DocumentData, DocumentReference, getDocs, query, where } from "firebase/firestore";
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { getDocs, query, where } from "firebase/firestore";
 import { auth, storage } from "../../config/firebase";
 import { UserProfile } from "../../types/auth";
 import { NovelGenre } from "../../types/models";
 import { createEntity, getColRefFromDocMap, updateEntity, uploadFile } from "../base";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export type GetUserProfileInput = {
     userId: string;
@@ -12,10 +12,10 @@ export type GetUserProfileInput = {
 
 export type GetUserProfileOutput = {
     userProfile: UserProfile;
-    userProfileRef: DocumentReference<DocumentData, DocumentData>;
+    userProfileRef: any;
 };
 
-export async function getUserProfile({ userId }: GetUserProfileInput) {
+export async function getUserProfile({ userId }: GetUserProfileInput): Promise<GetUserProfileOutput> {
     const userProfilesRef = getColRefFromDocMap("user_profile");
     const q = query(userProfilesRef, where("userId", "==", userId));
     const qs = await getDocs(q);
@@ -26,7 +26,7 @@ export async function getUserProfile({ userId }: GetUserProfileInput) {
 
     const userProfile = qs.docs[0].data() as UserProfile;
 
-    return { userProfile, userProfilesRef };
+    return { userProfile, userProfileRef: qs.docs[0].ref };
 }
 
 export type RegisterInput = {
@@ -72,51 +72,30 @@ export type SetupAccountInput = {
     pseudo: string;
     bio: string;
     gender: "male" | "female";
-    avatarBase64?: string;
+    avatarImg?: File | Blob;
     favouriteGenres?: Array<string>;
 }
 
 export type SetupAccountOutput = UserProfile;
 
 export async function setupAccount(input: SetupAccountInput): Promise<SetupAccountOutput> {
-    const { userProfile, userProfilesRef } = await getUserProfile({ userId: input.userId });
+    const { userProfile, userProfileRef } = await getUserProfile({ userId: input.userId });
 
     let avatarUrl = "";
-    if (input.avatarBase64) {
-        const avatarStorageRef = ref(storage, `files/users/avatars/${input.userId}/avatar.jpg`);
-        const result = await uploadString(avatarStorageRef, input.avatarBase64)
-        avatarUrl = await getDownloadURL(result.ref);
+    if (input.avatarImg) {
+        const avatarRef = ref(storage, `files/users/${input.userId}/avatar/avatar.jpeg`);
+        const result = await uploadBytes(avatarRef, input.avatarImg);
+        const downloadUrl = await getDownloadURL(result.ref);
+        avatarUrl = downloadUrl;
     }
 
     delete input.userId;
-    delete input.avatarBase64;
+    delete input.avatarImg;
 
     const result: SetupAccountOutput = {
         ...userProfile, ...input, avatarUrl, isAccountSetup: true
     }
 
-    await updateEntity(userProfilesRef, result);
+    await updateEntity(userProfileRef, result);
     return result;
 }
-
-type CreateNovelInput = {
-    title?: string;
-    description?: string;
-    cover?: File;
-    genre: NovelGenre;
-    isMature?: boolean;
-    authorId?: string;
-}
-
-export async function createNovel(novel: CreateNovelInput) {
-    if (novel.cover) {
-        const coverUrl = uploadFile(novel.cover);
-    }
-
-    novel.title = novel.title || "Nouvelle Histoire";
-    novel.description = novel.description || "Nouvelle Histoire";
-    novel.authorId = this.userId;
-
-    return await createEntity(novel, "novel");
-}
-

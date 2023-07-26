@@ -1,8 +1,13 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useState } from "react";
-import { View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, View } from "react-native";
 import { WorkshopNovelGrid, WorkshopTabs } from "../../components";
-import { Novel, RootStackParamList } from "../../types";
+import { RootStackParamList } from "../../types";
+import { Novel } from "../../types/models";
+import useCall from "../../api/useCall";
+import { getUserNovels } from "../../api/novels";
+import { useSession } from "../../providers";
+import { useTheme } from "@rneui/themed";
 
 const tabs = [
     { label: "Publications", },
@@ -19,7 +24,6 @@ const filters = {
 type NovelWorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'NovelWorkshop'>;
 
 export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenProps) {
-
 
     const commonActions = [
         {
@@ -77,16 +81,37 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
     }
 
     const [selectedItem, setSelectedItem] = useState(tabs[0].label);
+    const { session: { userProfile: { userId } } } = useSession();
+    const { theme: { colors: { primary } } } = useTheme();
+    const [novels, setNovels] = useState<Array<Novel>>([]);
+    const { call, isLoading } = useCall(getUserNovels, {
+        onSuccess(result) {
+            setNovels(result);
+        },
+    });
+
+    useEffect(() => {
+        call({ userId })
+    }, []);
+
     return (
-        <>
+        <View style={{ flex: 1 }}>
             <WorkshopTabs items={tabs} selectedItem={selectedItem} onPressTab={(label) => setSelectedItem(label)} />
             <View style={{ flexDirection: "row", justifyContent: "center", flex: 1, paddingHorizontal: 20 }}>
                 <View style={{ alignItems: "flex-start", flex: 1, }}>
-                    <WorkshopNovelGrid actions={actionFilters[selectedItem]} novels={[]} navigation={navigation} onLastItemPress={() => {
-                        navigation.navigate("NovelForm", { mode: "create" });
-                    }} />
+                    {
+                        isLoading ? (
+                            <View style={{ justifyContent: "center", alignItems: "center", flex: 1, width: "100%" }} >
+                                <ActivityIndicator color={primary} size="large" />
+                            </View>
+                        ) : (
+                            <WorkshopNovelGrid actions={actionFilters[selectedItem]} novels={novels} navigation={navigation} onLastItemPress={() => {
+                                navigation.navigate("NovelForm", { mode: "create" });
+                            }} />
+                        )
+                    }
                 </View>
             </View>
-        </>
+        </View>
     )
 }

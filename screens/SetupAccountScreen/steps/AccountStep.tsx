@@ -19,7 +19,7 @@ type AccountStepProps = {
 
 export default function AccountStep({ formValues, onNext }: AccountStepProps) {
     const { theme: { colors: { primary, greyOutline, } } } = useTheme();
-    const { image, imgBase64, pickImage } = useImagePicker();
+    const { imgUri, pickImage } = useImagePicker();
 
     return (
         <Formik
@@ -29,7 +29,9 @@ export default function AccountStep({ formValues, onNext }: AccountStepProps) {
                 bio: "",
             }}
             onSubmit={async (values) => {
-                onNext?.({ ...formValues, ...values, avatarBase64: imgBase64 })
+                const response = await fetch(imgUri);
+                const blob = await response.blob();
+                onNext?.({ ...formValues, ...values, avatarImg: blob })
             }}
         >
             {({ handleChange, handleSubmit, values, errors }) => (
@@ -40,7 +42,7 @@ export default function AccountStep({ formValues, onNext }: AccountStepProps) {
                             <Avatar
                                 size={50}
                                 rounded
-                                onPress={pickImage}
+                                onPress={() => pickImage()}
                                 icon={{ name: "pencil", type: "font-awesome" }}
                                 containerStyle={{ backgroundColor: greyOutline, position: "absolute", zIndex: 1, right: "20%" }}
                             />
@@ -48,7 +50,7 @@ export default function AccountStep({ formValues, onNext }: AccountStepProps) {
                                 size={180}
                                 rounded
                                 containerStyle={{ backgroundColor: primary, marginBottom: 10, padding: 5 }}
-                                source={{ uri: image }}
+                                source={{ uri: imgUri }}
                             />
                         </View>
                         <TextInput

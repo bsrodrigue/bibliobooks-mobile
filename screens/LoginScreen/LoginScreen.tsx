@@ -53,6 +53,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
                                     leftIcon={<Icon name="email" type="fontisto" />}
                                     errorMessage={errors.email} value={values.email} onChangeText={handleChange('email')} label="Adresse email" placeholder="Veuillez saisir votre adresse email" />
                                 <TextInput
+                                    secureTextEntry
                                     leftIcon={<Icon name="lock" type="foundation" />}
                                     errorMessage={errors.password} value={values.password} onChangeText={handleChange('password')} label="Mot de passe" placeholder="Veuillez saisir votre mot de passe" />
                                 <TouchableWithoutFeedback onPress={() => navigation.navigate("ForgotPassword")}>

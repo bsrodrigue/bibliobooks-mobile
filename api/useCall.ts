@@ -3,6 +3,7 @@ import { notify } from "../lib";
 
 function handleError(error: any) {
     notify.error(error);
+    console.error(error);
 }
 
 function handleSuccess(message: string) {

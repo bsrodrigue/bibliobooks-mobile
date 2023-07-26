@@ -1,5 +1,5 @@
 import { Image, ImageStyle, StyleProp, Text, TextStyle } from "react-native";
-import { Novel } from "../../types";
+import { Novel } from "../../types/models";
 
 type BasicNovelProps = {
     novel: Novel;
@@ -7,12 +7,12 @@ type BasicNovelProps = {
     labelStyle?: StyleProp<TextStyle>
 };
 
-export default function BasicNovel({ novel: { title, imgSrc }, imageStyle, labelStyle }: BasicNovelProps) {
+export default function BasicNovel({ novel: { title, coverUrl }, imageStyle, labelStyle }: BasicNovelProps) {
     return (
         <>
             <Image
                 resizeMode="cover"
-                source={imgSrc}
+                source={{ uri: coverUrl }}
                 style={imageStyle}
             />
             <Text style={labelStyle}

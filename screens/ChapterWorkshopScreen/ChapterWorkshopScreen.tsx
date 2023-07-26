@@ -74,7 +74,7 @@ const actionFilters = {
 
 type ChapterWorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'ChapterWorkshop'>;
 
-export default function ChapterWorkshopScreen({ navigation }: ChapterWorkshopScreenProps) {
+export default function ChapterWorkshopScreen({ navigation, route: { params: { novel } } }: ChapterWorkshopScreenProps) {
     const [selectedItem, setSelectedItem] = useState(tabs[0].label);
     const [actionsIsVisible, setActionsIsVisible] = useState(false);
     const { theme: { colors: { primary } } } = useTheme();
@@ -85,6 +85,10 @@ export default function ChapterWorkshopScreen({ navigation }: ChapterWorkshopScr
             <View style={{ flexDirection: "row", justifyContent: "center", flex: 1, paddingHorizontal: 20, paddingTop: 40, backgroundColor: "white" }}>
                 <FlatList
                     data={[]}
+                    ListEmptyComponent={<View style={{ flex: 1, justifyContent: "center", alignItems: "center", opacity: 0.5 }}>
+                        <Text style={{ fontFamily: "Quicksand-700", fontSize: 16 }}>{novel.title}</Text>
+                        <Text style={{ fontFamily: "Quicksand-500", fontSize: 16 }}>n'a aucun chapitre...</Text>
+                    </View>}
                     contentContainerStyle={{ gap: 15 }}
                     ItemSeparatorComponent={() => <Divider style={{ marginTop: 10, opacity: 0.5, width: "60%" }} />}
                     showsVerticalScrollIndicator={false}

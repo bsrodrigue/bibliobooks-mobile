@@ -6,6 +6,11 @@ import RootStackNavigator from "./navigator";
 import { SessionProvider } from "./providers";
 import { lightTheme } from "./themes";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { decode } from "base-64";
+
+if (typeof atob === 'undefined') {
+  global.atob = decode;
+}
 
 export default function App() {
   const { isLoadingComplete, session, onboarding } = useCachedResources();

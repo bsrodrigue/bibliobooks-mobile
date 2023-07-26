@@ -1,5 +1,6 @@
-import { Chapter, Novel } from "..";
+import { CreateNovelInput } from "../../api/novels";
 import { UserProfile } from "../auth";
+import { Chapter, Novel } from "../models";
 
 export type RootStackParamList = {
     Home: any;
@@ -17,7 +18,9 @@ export type RootStackParamList = {
     Publications: any;
     Chapters: any;
     NovelWorkshop: any;
-    ChapterWorkshop: any;
+    ChapterWorkshop: {
+        novel: Novel;
+    };
     Account: any;
     NovelForm: {
         mode: "create" | "edit",
@@ -28,7 +31,7 @@ export type RootStackParamList = {
         chapter?: Chapter;
     };
     NovelDetails: {
-        novel: Novel;
+        novel?: CreateNovelInput;
     };
     RegisterSuccess: {
         userProfile: UserProfile;

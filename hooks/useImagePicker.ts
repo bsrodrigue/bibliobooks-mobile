@@ -3,15 +3,14 @@ import { useState } from "react";
 
 export default function useImagePicker() {
     const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
-    const [image, setImage] = useState(null);
-    const [imgBase64, setImgBase64] = useState("");
+    const [imgUri, setImgUri] = useState(null);
 
     const handlePermission = async () => {
         const response = await requestPermission();
         return response.granted;
     }
 
-    const pickImage = async () => {
+    const pickImage = async (aspect: [number, number] = [1, 1]) => {
         if (!status.granted) {
             const granted = await handlePermission();
             if (!granted) return;
@@ -20,16 +19,15 @@ export default function useImagePicker() {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            base64: true,
-            aspect: [4, 3],
-            quality: 1,
+            aspect,
+            quality: 0.5,
         })
 
         if (!result.canceled) {
-            setImage(result.assets[0].uri);
-            setImgBase64(result.assets[0].base64);
+            setImgUri(result.assets[0].uri);
+
         }
     }
 
-    return { image, imgBase64, pickImage };
+    return { imgUri, pickImage };
 }

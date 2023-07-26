@@ -6,19 +6,23 @@ type TextInputProps = InputProps & {
     name?: string;
 };
 
-const TextInput = forwardRef(({ onChange, inputStyle, ...props }: TextInputProps, ref) => {
+const TextInput = forwardRef(({ onChange, inputStyle, errorStyle, ...props }: TextInputProps, ref) => {
     const { theme: { colors: { error } } } = useTheme();
     return (
         <Input
-            errorStyle={{
-                position: "absolute",
-                bottom: -10,
-                right: 25,
-                backgroundColor: "white",
-                paddingHorizontal: 5,
-                zIndex: 1,
-                fontStyle: "italic"
-            }}
+            errorStyle={
+                [
+                    {
+                        position: "absolute",
+                        bottom: -10,
+                        right: 25,
+                        backgroundColor: props.errorMessage ? "white" : "transparent",
+                        paddingHorizontal: 5,
+                        zIndex: 1,
+                        fontStyle: "italic"
+                    }, errorStyle
+                ]
+            }
             leftIconContainerStyle={{
                 marginRight: 5
             }}

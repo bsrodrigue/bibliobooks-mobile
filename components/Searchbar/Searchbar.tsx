@@ -19,6 +19,7 @@ export default function Searchbar({ searchMode }: SearchbarProps) {
             containerStyle={{
                 width: 250
             }}
+            errorStyle={{ backgroundColor: "transparent" }}
             placeholder="Rechercher des histoires"
             leftIcon={<Icon type="font-awesome-5" name="search" />}
             leftIconContainerStyle={{ marginRight: 10, opacity: 0.8 }}

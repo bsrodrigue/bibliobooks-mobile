@@ -39,12 +39,11 @@ const styles = StyleSheet.create({
 
 type SuccessScreenProps = NativeStackScreenProps<RootStackParamList, 'SetupAccountSuccess'>;
 
-export default function SuccessScreen({ route }: SuccessScreenProps) {
+export default function SuccessScreen({ route, navigation }: SuccessScreenProps) {
     const dimension = 165
     const { updateSession } = useSession();
     const { call, isLoading } = useCall(updateSession);
     const { userProfile } = route.params;
-    console.log(userProfile.isAccountSetup);
 
     return (
         <View style={styles.container}>
@@ -59,7 +58,10 @@ export default function SuccessScreen({ route }: SuccessScreenProps) {
                 </Text>
             </View>
             <Button
-                onPress={() => call({ userProfile })}
+                onPress={async () => {
+                    await call({ userProfile });
+                    navigation.replace("Main");
+                }}
                 loading={isLoading}
                 buttonStyle={{ backgroundColor: "white" }}
                 titleStyle={styles.confirm}>D'accord</Button>

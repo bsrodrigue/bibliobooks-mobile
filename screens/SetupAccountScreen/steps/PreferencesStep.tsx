@@ -22,12 +22,8 @@ type PreferencesStepProps = {
 
 export default function PreferencesStep({ formValues, navigation }: PreferencesStepProps) {
     const { theme: { colors: { primary } } } = useTheme();
-    const { session: { userProfile: { userId } }, updateSession } = useSession();
-    const { call, isLoading } = useCall(setupAccount, {
-        async onSuccess(userProfile) {
-            await updateSession({ userProfile });
-        },
-    })
+    const { session: { userProfile: { userId } } } = useSession();
+    const { call, isLoading } = useCall(setupAccount);
     const numColumns = useRef(2);
     const [genres, setGenres] = useState(config.genres.map(genre => ({
         selected: false, ...genre,
@@ -56,7 +52,7 @@ export default function PreferencesStep({ formValues, navigation }: PreferencesS
                 const genres = favs.map((fav) => fav.value);
                 values.favouriteGenres = genres;
                 const result = await call({ ...values, ...formValues, userId });
-                navigation.replace("SetupAccountSuccess", { userProfile: result });
+                result && navigation.replace("SetupAccountSuccess", { userProfile: result });
             }}
         >
             {({ handleChange, handleSubmit }) => (

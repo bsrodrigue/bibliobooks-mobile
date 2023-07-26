@@ -18,7 +18,9 @@
     "@rneui/base": "^4.0.0-rc.7",
     "@rneui/themed": "^4.0.0-rc.7",
     "@types/react": "~18.0.27",
+    "base-64": "^1.0.0",
     "expo": "~48.0.18",
+    "expo-crypto": "~12.2.1",
     "expo-dev-client": "~2.2.1",
     "expo-font": "~11.1.1",
     "expo-image-picker": "~14.1.1",
@@ -38,11 +40,11 @@
     "react-native-web": "~0.18.10",
     "react-native-webview": "11.26.0",
     "typescript": "^4.9.4",
-    "yup": "^1.2.0",
-    "expo-crypto": "~12.2.1"
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@types/base-64": "^1.0.0",
     "@types/expo": "^33.0.1"
   },
   "private": true

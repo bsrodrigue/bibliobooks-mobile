@@ -1,3 +1,5 @@
+import { ImageSourcePropType } from "react-native";
+
 export interface BaseModel {
     id?: string;
     createdAt?: Date;
@@ -32,9 +34,29 @@ export interface Novel
     coverUrl?: string;
     isMature?: boolean;
     genre: NovelGenre;
+    status: NovelStatus;
 }
 
+export interface Chapter
+    extends BaseModel {
+    title: string;
+    body: string;
+    status: ChapterStatus;
+    novelId: string;
+    order: number;
+}
+
+export type ChapterStatus = NovelStatus;
+
+export type NovelStatus = "published" | "draft" | "archived";
+
 export type NovelGenre = "adventure" | "action" | "fantasy" | "romance" | "traditional" | "historical" | "horror";
+
+export type Genre = {
+    title: string;
+    description: string;
+    cover: ImageSourcePropType;
+}
 
 export type Entity = "novel" | "chapter" | "user_profile";
 

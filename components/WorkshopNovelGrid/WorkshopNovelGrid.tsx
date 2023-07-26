@@ -1,12 +1,13 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useState } from "react";
-import { Action, Novel, RootStackParamList } from "../../types";
+import { Action, RootStackParamList } from "../../types";
+import { Novel } from "../../types/models";
 import { ActionBottomSheet } from "../ActionBottomSheet";
 import { NovelGrid } from "../NovelGrid";
 
 type WorkshopNovelGridProps = {
     actions: Action[];
-    novels: Novel[];
+    novels: Array<Novel>;
     onLastItemPress?: () => void;
     navigation: NativeStackNavigationProp<RootStackParamList, "NovelWorkshop", undefined>;
 };

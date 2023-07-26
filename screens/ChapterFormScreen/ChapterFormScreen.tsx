@@ -30,7 +30,6 @@ export default function ChapterFormScreen({ navigation, route: { params: { mode 
                         borderColor: greyOutline,
                     }}
                     onChange={(text) => {
-                        console.log(text)
                     }}
                 />
                 <Button

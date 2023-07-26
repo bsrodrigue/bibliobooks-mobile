@@ -58,7 +58,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
 
     return (
         <ScrollView style={styles.container}>
-            <LatestReadCard title="Dernière lecture" time="Il y a trois (3) jours" novel={novels[1]} />
+            {/* <LatestReadCard title="Dernière lecture" time="Il y a trois (3) jours" novel={novels[1]} />
             <StoryRecommendation
                 title="Le jardin des plaisirs"
                 subtitle="Laissez-vous charmer par les rondeurs de Sophia"
@@ -68,7 +68,7 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
                 }}
             />
             <RecommendationCarousel title="Les histoires les plus populaires" novels={novels} />
-            <StoryRecommendation title="Les totems des anciens" subtitle="Renouez avec vos racines" novel={{ title: "", description: "", mature: false, chapterCount: 35, imgSrc: require("../../assets/images/traditional.jpg") }} />
+            <StoryRecommendation title="Les totems des anciens" subtitle="Renouez avec vos racines" novel={{ title: "", description: "", mature: false, chapterCount: 35, imgSrc: require("../../assets/images/traditional.jpg") }} /> */}
         </ScrollView>
     )
 }
