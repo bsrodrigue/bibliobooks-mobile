@@ -18,6 +18,8 @@ export default function ChapterFormScreen({ navigation, route: { params: { mode,
         onSuccess(result) {
             navigation.pop();
         },
+
+        successMessage: "Chapitre créé avec succès!"
     });
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
@@ -46,8 +48,8 @@ export default function ChapterFormScreen({ navigation, route: { params: { mode,
                     title="Sauvegarder"
                     loading={isLoading}
                     buttonStyle={{ backgroundColor: "black" }}
-                    onPress={() => {
-                        call({ title, body: content, novelId: id, order: 0, userId })
+                    onPress={async () => {
+                        await call({ title, body: content, novelId: id, order: 0, userId })
                     }}
                     containerStyle={{ marginVertical: 5 }} />
             </View>

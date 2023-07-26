@@ -10,15 +10,19 @@ type WorkshopNovelGridProps = {
     novels: Array<Novel>;
     onLastItemPress?: () => void;
     navigation: NativeStackNavigationProp<RootStackParamList, "NovelWorkshop", undefined>;
+    refreshing?: boolean;
+    onRefresh?: () => void;
 };
 
-export default function WorkshopNovelGrid({ actions, novels, navigation, onLastItemPress }: WorkshopNovelGridProps) {
+export default function WorkshopNovelGrid({ actions, novels, navigation, onLastItemPress, refreshing, onRefresh }: WorkshopNovelGridProps) {
     const [actionsIsVisible, setActionsIsVisible] = useState(false);
     const [currentNovel, setCurrentNovel] = useState(null);
 
     return (
         <>
             <NovelGrid
+                refreshing={refreshing}
+                onRefresh={onRefresh}
                 novels={novels}
                 onLastItemPress={onLastItemPress}
                 onNovelPress={(novel: Novel) => {

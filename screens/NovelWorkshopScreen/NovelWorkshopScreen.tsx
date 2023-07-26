@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useTheme } from "@rneui/themed";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { View } from "react-native";
 import { getUserNovels, updateNovelStatus } from "../../api/novels";
 import useCall from "../../api/useCall";
 import { WorkshopNovelGrid, WorkshopTabs } from "../../components";
@@ -115,21 +115,15 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
             <WorkshopTabs items={tabs} selectedItem={selectedTab} onPressTab={(label) => setSelectedTab(label)} />
             <View style={{ flexDirection: "row", justifyContent: "center", flex: 1, paddingHorizontal: 20 }}>
                 <View style={{ alignItems: "flex-start", flex: 1, }}>
-                    {
-                        isLoading || updateNovelIsLoading ? (
-                            <View style={{ justifyContent: "center", alignItems: "center", flex: 1, width: "100%" }} >
-                                <ActivityIndicator color={primary} size="large" />
-                            </View>
-                        ) : (
-                            <WorkshopNovelGrid
-                                actions={actionFilters[selectedTab]}
-                                novels={novels.filter((novel) => filters[selectedTab] === novel.status)}
-                                navigation={navigation} onLastItemPress={() => {
-                                    navigation.navigate("NovelForm", { mode: "create" });
-                                }}
-                            />
-                        )
-                    }
+                    <WorkshopNovelGrid
+                        refreshing={isLoading}
+                        onRefresh={() => call({ userId })}
+                        actions={actionFilters[selectedTab]}
+                        novels={novels.filter((novel) => filters[selectedTab] === novel.status)}
+                        navigation={navigation} onLastItemPress={() => {
+                            navigation.navigate("NovelForm", { mode: "create" });
+                        }}
+                    />
                 </View>
             </View>
         </View>
