@@ -1,5 +1,5 @@
 import { ImageSourcePropType } from "react-native";
-import { Novel } from "./models";
+import { Chapter, Novel } from "./models";
 export * from "./routing";
 
 export type Slide = {
@@ -19,7 +19,7 @@ export type RadioInputOption = {
 export type Action = {
     icon: string;
     title: string;
-    onPress: (novel?: Novel) => void;
+    onPress: (item?: Novel | Chapter) => void;
 }
 
 export type TabItem = {

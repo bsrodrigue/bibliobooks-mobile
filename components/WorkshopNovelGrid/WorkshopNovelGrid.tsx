@@ -12,9 +12,17 @@ type WorkshopNovelGridProps = {
     navigation: NativeStackNavigationProp<RootStackParamList, "NovelWorkshop", undefined>;
     refreshing?: boolean;
     onRefresh?: () => void;
+    confirm?: boolean;
+    onConfirm?: () => Promise<void>;
+    loading?: boolean;
+    onBackdropPress?: () => void;
 };
 
-export default function WorkshopNovelGrid({ actions, novels, navigation, onLastItemPress, refreshing, onRefresh }: WorkshopNovelGridProps) {
+export default function WorkshopNovelGrid({
+    actions, novels, navigation,
+    onLastItemPress, refreshing, onRefresh,
+    confirm, onConfirm, loading, onBackdropPress
+}: WorkshopNovelGridProps) {
     const [actionsIsVisible, setActionsIsVisible] = useState(false);
     const [currentNovel, setCurrentNovel] = useState(null);
 
@@ -34,10 +42,17 @@ export default function WorkshopNovelGrid({ actions, novels, navigation, onLastI
                 }}
             />
             <ActionBottomSheet
-                novel={currentNovel}
+                confirm={confirm}
+                onConfirm={async () => {
+                    await onConfirm?.();
+                    setActionsIsVisible(false);
+                }}
+                loading={loading}
+                item={currentNovel}
                 actions={actions}
                 isVisible={actionsIsVisible}
                 onBackdropPress={() => {
+                    onBackdropPress?.();
                     setCurrentNovel(null)
                     setActionsIsVisible(false)
                 }

@@ -5,7 +5,7 @@ import { Formik } from "formik";
 import { useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import * as Yup from "yup";
-import { CreateNovelInput, createNovel } from "../../api/novels";
+import { CreateNovelInput, createNovel, editNovel } from "../../api/novels";
 import useCall from "../../api/useCall";
 import { Button, CardBottomSheet, CheckBox, TextInput, Wrapper } from "../../components";
 import { config } from "../../config";
@@ -31,6 +31,12 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
         },
         successMessage: "Nouvelle histoire créée avec succès!"
     });
+    const { call: callEditNovel, isLoading: isEditNovelLoading } = useCall(editNovel, {
+        onSuccess() {
+            navigation.pop();
+        },
+        successMessage: "Votre histoire a étée modifiée avec succès!"
+    });
     const { session: { userProfile: { userId } } } = useSession();
     const [selectedGenre, setSelectedGenre] = useState(novel?.genre);
     const [isMature, setIsMature] = useState(novel?.isMature);
@@ -45,9 +51,19 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                 genre: novel?.genre,
                 isMature,
             }} onSubmit={async (values: CreateNovelInput) => {
-                const response = await fetch(imgUri);
-                const blob = await response.blob();
-                const result = await call({ coverImg: blob, ...values, userId })
+                let coverImg = null;
+                if (imgUri) {
+                    const response = await fetch(imgUri);
+                    coverImg = await response.blob();
+                }
+                if (mode === "create") {
+                    await call({ coverImg: coverImg, ...values, userId })
+                } else {
+                    await callEditNovel({
+                        coverImg, ...values, userId,
+                        novelId: novel.id
+                    })
+                }
             }}>
             {
                 ({ handleSubmit, handleChange, values, errors }) => (
@@ -59,7 +75,7 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                         <Avatar
                                             containerStyle={{ backgroundColor: "grey", height: 125, width: "100%", borderRadius: 10 }}
                                             avatarStyle={{ borderRadius: 10, resizeMode: "cover" }}
-                                            source={{ uri: imgUri }}
+                                            source={{ uri: novel?.coverUrl || imgUri }}
                                         />
                                     </TouchableOpacity>
                                 </View>
@@ -108,7 +124,7 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                         </View>
 
                         <View style={{ flex: 0.1, paddingHorizontal: 40 }}>
-                            <Button loading={isLoading} onPress={() => handleSubmit()} buttonStyle={{ backgroundColor: "black", borderRadius: 10 }}>Sauvegarder</Button>
+                            <Button loading={isLoading || isEditNovelLoading} onPress={() => handleSubmit()} buttonStyle={{ backgroundColor: "black", borderRadius: 10 }}>Sauvegarder</Button>
                         </View>
 
                         <CardBottomSheet isVisible={genreSheetIsVisible} onBackdropPress={() => setGenreSheetIsVisible(false)}>

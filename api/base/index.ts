@@ -66,7 +66,13 @@ export async function updateEntity<T>(reference: DocumentReference<DocumentData,
 }
 
 export async function deleteEntity(reference) {
+    // Maybe consider adding additional checks
     await deleteDoc(reference);
+}
+
+export async function deleteEntityById(id: string, type: Entity) {
+    const ref = await getEntityRefById({ id, type })
+    await deleteEntity(ref);
 }
 
 export async function uploadFile(file: File) {

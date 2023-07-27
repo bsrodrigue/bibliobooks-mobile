@@ -1,20 +1,24 @@
 import { Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { useRef } from "react";
-import { Dimensions, FlatList, Text, TouchableOpacity } from "react-native";
+import { Dimensions, FlatList, Text, TouchableOpacity, View } from "react-native";
 import { Action } from "../../types";
-import { Novel } from "../../types/models";
+import { Chapter, Novel } from "../../types/models";
+import { Button } from "../Button";
 import { CardBottomSheet } from "../CardBottomSheet";
 
 type ActionBottomSheetProps = {
-    novel?: Novel;
+    item: Novel | Chapter;
     isVisible?: boolean;
     onBackdropPress?: () => void;
     actions: Action[];
+    confirm?: boolean;
+    onConfirm?: () => void;
+    loading?: boolean;
 }
 
-export default function ActionBottomSheet({ novel, isVisible, onBackdropPress, actions }: ActionBottomSheetProps) {
-    const { theme: { colors: { greyOutline } } } = useTheme();
+export default function ActionBottomSheet({ item: entity, isVisible, onBackdropPress, actions, confirm, onConfirm, loading }: ActionBottomSheetProps) {
+    const { theme: { colors: { greyOutline, error } } } = useTheme();
     const { width: screenWidth } = Dimensions.get("screen");
     const columns = useRef(3);
     const width = (screenWidth - 100) / 3;
@@ -26,7 +30,7 @@ export default function ActionBottomSheet({ novel, isVisible, onBackdropPress, a
                 columnWrapperStyle={{ gap: 15 }}
                 data={actions} renderItem={({ item: { title, icon, onPress } }) => (
                     <TouchableOpacity
-                        onPress={() => onPress(novel)}
+                        onPress={() => !loading && onPress(entity)}
                         style={{
                             borderWidth: 1,
                             borderColor: greyOutline,
@@ -35,12 +39,20 @@ export default function ActionBottomSheet({ novel, isVisible, onBackdropPress, a
                             height: width,
                             justifyContent: "center",
                             alignItems: "center",
-                            marginVertical: 10
+                            marginVertical: 10,
+                            opacity: loading ? 0.5 : 1
                         }}>
                         <Icon name={icon} type="font-awesome-5" />
                         <Text style={{ fontFamily: "Quicksand-700" }}>{title}</Text>
                     </TouchableOpacity>
                 )} />
+            {
+                confirm && (
+                    <View>
+                        <Button loading={loading} onPress={onConfirm} color={error}>Confirmer</Button>
+                    </View>
+                )
+            }
         </CardBottomSheet>
     )
 }
