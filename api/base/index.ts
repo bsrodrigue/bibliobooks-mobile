@@ -44,17 +44,7 @@ export async function createEntity<T extends object>(entity: T, type: Entity) {
 }
 
 export async function createAuthoredEntity<T extends object>(userId: string, entity: T, type: Entity) {
-    const createdAt = new Date().toISOString();
-    const createdEntity =
-    {
-        id: config.defaultIdGenerator.generateId(),
-        createdAt,
-        updatedAt: createdAt,
-        authorId: userId,
-        ...entity
-    }
-    await addDoc(getColRefFromDocMap(type), createdEntity);
-    return createdEntity;
+    return createEntity({ authorId: userId, ...entity }, type);
 }
 
 export async function updateEntity<T>(reference: DocumentReference<DocumentData, DocumentData>, entity: Partial<T>) {
