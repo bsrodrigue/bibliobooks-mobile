@@ -1,4 +1,5 @@
 import { ImageSourcePropType } from "react-native";
+import { UserProfile } from "../auth";
 
 export interface BaseModel {
     id?: string;
@@ -35,6 +36,13 @@ export interface Novel
     isMature?: boolean;
     genre: NovelGenre;
     status: NovelStatus;
+}
+
+export interface ReaderNovel
+    extends Novel {
+    chapters: Array<Chapter>;
+    author: UserProfile;
+    authorNovels: Array<Novel>;
 }
 
 export interface Chapter

@@ -1,12 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useTheme } from "@rneui/themed";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, StyleSheet, View } from "react-native";
-import { getPublicNovels } from "../../api/novels";
-import useCall from "../../api/useCall";
+import { useEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import { NovelList } from "../../components";
+import { useLatestNovels } from "../../hooks/api/reader";
 import { RootStackParamList } from "../../types";
-import { Novel } from "../../types/models";
+import { ReaderNovel } from "../../types/models";
 
 const styles = StyleSheet.create({
     container: {
@@ -21,27 +20,22 @@ const styles = StyleSheet.create({
 type LibraryScreenProps = NativeStackScreenProps<RootStackParamList, 'Library'>;
 
 export default function LibraryScreen({ navigation }: LibraryScreenProps) {
-    const [novels, setNovels] = useState<Array<Novel>>([]);
     const { theme: { colors: { primary } } } = useTheme();
-    const { call, isLoading } = useCall(getPublicNovels, {
-        onSuccess(result) {
-            setNovels(result);
-        },
-    });
+    const { getLatestNovels, latestNovels, isLoading } = useLatestNovels();
 
     useEffect(() => {
-        call({});
+        getLatestNovels();
     }, []);
 
     return (
         <View style={styles.container}>
-            {isLoading ?
-                (
-                    <ActivityIndicator color={primary} size="large" />
-                ) : (
-                    <NovelList novels={novels} onPressItem={() => { }} />
-                )
-            }
+            <NovelList
+                refreshing={isLoading}
+                onRefresh={getLatestNovels}
+                novels={latestNovels} onPressItem={(novel: ReaderNovel) => {
+                    navigation.navigate("NovelDetails", { novel })
+                }}
+            />
         </View>
     )
 }

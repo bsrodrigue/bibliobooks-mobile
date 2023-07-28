@@ -176,6 +176,29 @@ export type GetPublicNovelsInput = {
 
 export type GetPublicNovelsOutput = Promise<Array<Novel>>
 
-export async function getPublicNovels({ }: GetPublicNovelsInput): Promise<GetPublicNovelsOutput> {
+export async function getPublicNovels(): Promise<GetPublicNovelsOutput> {
     return await getPublicEntities<Novel>({ type: "novel" })
+}
+
+export type GetPublicChaptersFromNovelInput = {
+    novelId: string;
+}
+
+export type GetPublicChaptersFromNovelOutput = Promise<Array<Chapter>>
+
+export async function getPublicChaptersFromNovel({ novelId }: GetPublicChaptersFromNovelInput): GetPublicChaptersFromNovelOutput {
+    const modelRef = getColRefFromDocMap("chapter");
+    const q = query(modelRef, where("status", "==", "published"), where("novelId", "==", novelId));
+    const qs = await getDocs(q);
+
+    if (qs.empty) {
+        return [];
+    }
+
+    const result = [];
+    qs.docs.forEach((doc) => {
+        result.push(doc.data());
+    })
+
+    return result;
 }

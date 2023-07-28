@@ -7,18 +7,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../../components";
 import { RootStackParamList } from "../../types";
 
-const chapters = [
-    { id: "1", title: "Chapter: The great adventure of the great boss" },
-    { id: "2", title: "Chapter: The great adventure of the great boss" },
-    { id: "3", title: "Chapter: The great adventure of the great boss" },
-    { id: "4", title: "Chapter: The great adventure of the great boss" },
-    { id: "5", title: "Chapter: The great adventure of the great boss" },
-    { id: "6", title: "Chapter: The great adventure of the great boss" },
-    { id: "7", title: "Chapter: The great adventure of the great boss" },
-    { id: "8", title: "Chapter: The great adventure of the great boss" },
-    { id: "9", title: "Chapter: The great adventure of the great boss" },
-];
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -29,10 +17,10 @@ const styles = StyleSheet.create({
 type NovelDetailsScreenProps = NativeStackScreenProps<RootStackParamList, 'NovelDetails'>;
 
 export default function NovelDetailsScreen({ navigation, route }: NovelDetailsScreenProps) {
-    const { novel: { title, description, chapterCount, author, id, genre, mature, imgSrc } } = route.params;
+    const { novel } = route.params;
+    const { title, description, coverUrl, chapters, id, genre, isMature, author: { avatarUrl, pseudo }, authorNovels } = novel;
     const { theme: { colors: { black, primary } } } = useTheme();
     const [chapterListIsVisible, setChapterListIsVisible] = useState(false);
-    const dimension = 165
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: black }]}>
@@ -41,12 +29,12 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                     <View style={{ justifyContent: "space-between" }}>
                         <View>
                             <Text style={{ width: 150, fontSize: 18, color: "white", fontFamily: "Quicksand-700", marginBottom: 10 }}>{title}</Text>
-                            <Text style={{ color: "white", fontSize: 16, opacity: 0.5 }}>{author}</Text>
+                            <Text style={{ color: "white", fontSize: 16, opacity: 0.5 }}>{pseudo}</Text>
                         </View>
                         <Text style={{ color: "white", fontStyle: "italic" }}>{genre}</Text>
 
                     </View>
-                    <Image style={{ width: 100, height: 150, borderRadius: 10, }} resizeMode="cover" source={imgSrc} />
+                    <Image style={{ width: 100, height: 150, borderRadius: 10, }} resizeMode="cover" source={{ uri: coverUrl }} />
                 </View>
             </View>
             <View style={{ flex: 0.75 }}>
@@ -72,7 +60,7 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                                 <Text style={{ fontSize: 18, fontFamily: "Quicksand-700", marginBottom: 10 }}>Synopsis</Text>
                                 <Text style={{ opacity: 0.6, lineHeight: 16, fontFamily: "Quicksand" }}>{description}</Text>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: 10 }}>
-                                    <Text style={{ fontFamily: "Quicksand-700", fontSize: 18 }}>{chapterCount}{" "}chapitres</Text>
+                                    <Text style={{ fontFamily: "Quicksand-700", fontSize: 18 }}>{chapters.length}{" "}chapitres</Text>
                                     <TouchableOpacity onPress={() => setChapterListIsVisible(true)} >
                                         <Text style={{ opacity: 0.5, fontFamily: "Quicksand-700" }}>Voir tous les chapitres</Text>
                                     </TouchableOpacity>
@@ -88,12 +76,12 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                                         <Avatar
                                             size={50}
                                             rounded
-                                            source={imgSrc}
+                                            source={{ uri: avatarUrl }}
                                         />
 
                                         <View>
-                                            <Text style={{ fontSize: 18, fontFamily: "Quicksand-700" }}>{author}</Text>
-                                            <Text style={{ opacity: 0.6, fontFamily: "Quicksand" }}>13 oeuvres</Text>
+                                            <Text style={{ fontSize: 18, fontFamily: "Quicksand-700" }}>{pseudo}</Text>
+                                            <Text style={{ opacity: 0.6, fontFamily: "Quicksand" }}>{authorNovels?.length} oeuvres</Text>
                                         </View>
 
                                     </View>
@@ -104,14 +92,18 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                             </View>
                         </View>
 
-                        <View style={{ paddingHorizontal: 40 }}>
+                        <View style={{ paddingHorizontal: 40, }}>
 
-                            <Divider style={{ marginVertical: 15, opacity: 0.5 }} />
-                            <Button
-                                onPress={() => { setChapterListIsVisible(true) }}
-                                containerStyle={{
-                                    marginVertical: 20
-                                }} radius={25} buttonStyle={{ backgroundColor: primary }}>Commencer la lecture</Button>
+                            <View style={{ marginTop: 75 }}>
+                                <Divider style={{ marginVertical: 15, opacity: 0.5 }} />
+                                <Button
+                                    onPress={() => {
+                                        navigation.navigate("Reader", { novel, chapter: novel.chapters[0] })
+                                    }}
+                                    containerStyle={{
+                                        marginVertical: 20
+                                    }} radius={25} buttonStyle={{ backgroundColor: primary }}>Commencer la lecture</Button>
+                            </View>
                         </View>
                     </View>
 
@@ -120,10 +112,14 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
             <BottomSheet onBackdropPress={() => setChapterListIsVisible(false)} isVisible={chapterListIsVisible}>
                 <Card containerStyle={{ margin: 0, borderTopStartRadius: 25, borderTopEndRadius: 25, flex: 1, paddingHorizontal: 40, }}>
                     <FlatList
-                        ListHeaderComponent={<Text style={{ fontFamily: "Quicksand-700", fontSize: 18, marginVertical: 15 }}>{chapterCount}{" "}chapitres</Text>}
-                        showsVerticalScrollIndicator={false} style={{ height: 300 }} data={chapters} renderItem={({ index, item: { id, title } }) => (
-                            <TouchableOpacity key={id} style={{ paddingVertical: 12 }}>
-                                <Text style={{ fontFamily: "Quicksand-600" }}>{title}</Text>
+                        ListHeaderComponent={<Text style={{ fontFamily: "Quicksand-700", fontSize: 18, marginVertical: 15 }}>{chapters.length}{" "}chapitres</Text>}
+                        showsVerticalScrollIndicator={false} style={{ height: 300 }} data={chapters} renderItem={({ index, item }) => (
+                            <TouchableOpacity
+                                onPress={() => {
+                                    navigation.navigate("Reader", { novel, chapter: item })
+                                }}
+                                key={item.id} style={{ paddingVertical: 12 }}>
+                                <Text style={{ fontFamily: "Quicksand-600" }}>{item.title}</Text>
                             </TouchableOpacity>)}
                     />
                 </Card>

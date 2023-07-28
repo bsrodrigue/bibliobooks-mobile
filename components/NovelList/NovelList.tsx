@@ -1,28 +1,30 @@
 import { Card } from "@rneui/base";
-import { FlatList, Image, Text, TouchableOpacity, View } from "react-native";
-import { Novel } from "../../types/models";
+import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
+import { ReaderNovel } from "../../types/models";
 
 type NovelListProps = {
-    novels: Novel[];
-    onPressItem: (item: Novel) => void;
+    novels: Array<ReaderNovel>;
+    onPressItem: (item: ReaderNovel) => void;
+    refreshing?: boolean;
+    onRefresh?: () => void;
 };
 
-export default function NovelList({ novels, onPressItem }: NovelListProps) {
+export default function NovelList({ novels, onPressItem, refreshing, onRefresh }: NovelListProps) {
 
     return (
         <FlatList
             data={novels}
             showsVerticalScrollIndicator={false}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             renderItem={({ index, item }) =>
             (
                 <Card containerStyle={{ marginHorizontal: 0, borderRadius: 10 }}>
                     <TouchableOpacity key={index} onPress={() => onPressItem(item)}>
                         <View style={{ flexDirection: "row", gap: 10 }}>
                             <Image resizeMode="cover" style={{ width: 70, height: 100, borderRadius: 5 }} source={{ uri: item?.coverUrl }} />
-
                             <View>
                                 <Text style={{ fontFamily: "Quicksand-700" }}>{item.title}</Text>
-                                <Text style={{ fontFamily: "Quicksand-300", opacity: 0.5, fontStyle: "italic" }}>{"0"}{" "}chapitres</Text>
+                                <Text style={{ fontFamily: "Quicksand-300", opacity: 0.5, fontStyle: "italic" }}>{item.chapters.length}{" "}chapitres</Text>
                                 <Text numberOfLines={4} style={{ width: 200, textAlign: "justify" }}>{item.description}</Text>
                             </View>
                         </View>

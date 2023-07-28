@@ -1,6 +1,5 @@
-import { CreateNovelInput } from "../../api/novels";
 import { UserProfile } from "../auth";
-import { Chapter, Novel } from "../models";
+import { Chapter, Novel, ReaderNovel } from "../models";
 
 export type RootStackParamList = {
     Home: any;
@@ -32,7 +31,7 @@ export type RootStackParamList = {
         novel: Novel;
     };
     NovelDetails: {
-        novel?: CreateNovelInput;
+        novel?: ReaderNovel;
     };
     RegisterSuccess: {
         userProfile: UserProfile;
@@ -46,4 +45,8 @@ export type RootStackParamList = {
         confirm: string;
         destination: "Login" | "SetupAccount" | "Main";
     };
+    Reader: {
+        novel: ReaderNovel;
+        chapter: Chapter;
+    }
 };

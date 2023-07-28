@@ -91,11 +91,11 @@ export async function getEntitiesByUser<T>({ userId, type }: GetEntitiesByUser):
     return result;
 }
 
-export type GetEntitiesByStatus = {
+export type GetPublicEntitiesInput = {
     type: Entity;
 }
 
-export async function getPublicEntities<T>({ type }: GetEntitiesByStatus): Promise<Array<T>> {
+export async function getPublicEntities<T>({ type }: GetPublicEntitiesInput): Promise<Array<T>> {
     const modelRef = getColRefFromDocMap(type);
     const q = query(modelRef, where("status", "==", "published"));
     const qs = await getDocs(q);

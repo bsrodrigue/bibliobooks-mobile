@@ -39,7 +39,7 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
     });
     const { session: { userProfile: { userId } } } = useSession();
     const [selectedGenre, setSelectedGenre] = useState(novel?.genre);
-    const [isMature, setIsMature] = useState(novel?.isMature);
+    const [isMature, setIsMature] = useState(Boolean(novel?.isMature));
     const { imgUri, pickImage } = useImagePicker();
 
     return (

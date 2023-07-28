@@ -15,6 +15,7 @@ export { NovelWorkshopScreen } from "./NovelWorkshopScreen";
 export { NoveltyScreen } from "./NoveltyScreen";
 export { OnboardingScreen } from "./OnboardingScreen";
 export { PublicationsScreen } from "./PublicationsScreen";
+export { ReaderScreen } from "./ReaderScreen";
 export { RegisterScreen } from "./RegisterScreen";
 export { RegisterSuccessScreen } from "./RegisterSuccessScreen";
 export { SetupAccountScreen } from "./SetupAccountScreen";
