@@ -3,7 +3,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Dialog, Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { ReactNode, useState } from "react";
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Header } from "../../components";
 import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
@@ -72,7 +72,7 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                 },
                 tabBarActiveTintColor: primary,
                 header: ({ route, options }) => {
-                    return route.name === "Discover" ? <Header /> : <SimpleHeader
+                    return route.name === "Discover" ? <Header onPressSettings={() => navigation.navigate("Settings")} /> : <SimpleHeader
                         label={options.tabBarLabel.toString()}
                         rightIcon={route.name === "Account" ? (
                             <TouchableOpacity onPress={() => {

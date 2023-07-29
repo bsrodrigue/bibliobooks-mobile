@@ -1,10 +1,9 @@
-import { User, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { User, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
 import { getDocs, query, where } from "firebase/firestore";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { auth, storage } from "../../config/firebase";
 import { UserProfile } from "../../types/auth";
-import { NovelGenre } from "../../types/models";
-import { createEntity, getColRefFromDocMap, updateEntity, uploadFile } from "../base";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { createEntity, getColRefFromDocMap, updateEntity } from "../base";
 
 export type GetUserProfileInput = {
     userId: string;
@@ -38,6 +37,7 @@ export type RegisterOutput = UserProfile;
 
 export async function register({ email, password }: RegisterInput): Promise<RegisterOutput> {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
+    await sendEmailVerification(user);
     return await createUserProfile(user);
 }
 
@@ -49,6 +49,26 @@ export async function createUserProfile(user: User): Promise<UserProfile> {
     }
 
     return await createEntity(profile, "user_profile");
+}
+
+export type UpdateUserProfile = {
+    userId: string;
+    profile: Partial<UserProfile>;
+    avatarImg?: Blob | File;
+}
+
+export async function updateUserProfile({ userId, profile, avatarImg }: UpdateUserProfile) {
+    const { userProfileRef } = await getUserProfile({ userId });
+
+    if (avatarImg) {
+        const avatarRef = ref(storage, `files/users/${userId}/avatar/avatar.jpeg`);
+        const result = await uploadBytes(avatarRef, avatarImg);
+        const downloadUrl = await getDownloadURL(result.ref);
+        profile.avatarUrl = downloadUrl;
+    }
+
+    await updateEntity(userProfileRef, { ...profile });
+    return profile;
 }
 
 export type LoginInput = {

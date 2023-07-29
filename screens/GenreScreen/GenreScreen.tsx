@@ -6,7 +6,10 @@ import { FlatList, ImageBackground, StyleSheet, Text, TouchableOpacity, View } f
 import { NovelList } from "../../components";
 import { config } from "../../config";
 import { useLatestNovels } from "../../hooks/api/reader";
+import { mom } from "../../lib/moment";
+import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
+import { ReaderNovel } from "../../types/models";
 
 const styles = StyleSheet.create({
     container: {
@@ -21,7 +24,12 @@ type GenreScreenProps = NativeStackScreenProps<RootStackParamList, 'Genre'>;
 export default function GenreScreen({ navigation }: GenreScreenProps) {
     const { theme: { colors: { primary } } } = useTheme();
     const [selectedGenre, setSelectedGenre] = useState("action");
-    const { getLatestNovels, latestNovels, isLoading } = useLatestNovels();
+    const { session: { userProfile: { birthdate } } } = useSession();
+    const birth = mom(birthdate.toString().split(",")[0], "MM-DD-YYYY");
+    const isAdult = mom().diff(birth, "year") >= 18;
+    const { getLatestNovels, latestNovels, isLoading } = useLatestNovels({
+        omitMatureNovels: !isAdult
+    });
 
     useEffect(() => {
         getLatestNovels();
@@ -59,7 +67,12 @@ export default function GenreScreen({ navigation }: GenreScreenProps) {
                         </TouchableOpacity>)} />
             </Card>
             <View style={styles.container}>
-                <NovelList refreshing={isLoading} onRefresh={getLatestNovels} novels={latestNovels.filter((novel) => novel.genre === selectedGenre)} onPressItem={() => { }} />
+                <NovelList refreshing={isLoading}
+                    onRefresh={getLatestNovels}
+                    novels={latestNovels.filter((novel) => novel.genre === selectedGenre)}
+                    onPressItem={(novel: ReaderNovel) => {
+                        navigation.navigate("NovelDetails", { novel });
+                    }} />
             </View>
         </>
     )

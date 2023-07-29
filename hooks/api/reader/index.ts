@@ -5,14 +5,21 @@ import { getNovelChapters, getPublicChaptersFromNovel, getPublicNovels, getUserN
 import { notify } from "../../../lib";
 import { ReaderNovel } from "../../../types/models";
 
-export function useLatestNovels() {
+type UseLatestNovelsProps = {
+    omitMatureNovels?: boolean;
+}
+
+export function useLatestNovels({ omitMatureNovels }: UseLatestNovelsProps) {
     const [latestNovels, setLatestNovels] = useState<Array<ReaderNovel>>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     const getLatestNovels = async () => {
         try {
             setIsLoading(true);
-            const novels = await getPublicNovels();
+            let novels = await getPublicNovels();
+            if (omitMatureNovels!) {
+                novels = novels.filter((novel) => !novel.isMature);
+            }
             const readerNovels: Array<ReaderNovel> = [];
 
             for (const novel of novels) {

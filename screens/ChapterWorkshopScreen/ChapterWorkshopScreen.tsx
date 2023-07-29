@@ -9,6 +9,8 @@ import { ActionBottomSheet, WorkshopTabs } from "../../components";
 import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 import { Chapter } from "../../types/models";
+import { getWordCount } from "../../lib/utils";
+import { mom } from "../../lib/moment";
 
 const tabs = [
     { label: "Publications", },
@@ -102,7 +104,7 @@ export default function ChapterWorkshopScreen({ navigation, route: { params: { n
                     data={chapters.filter((chapter) => filters[selectedTab] === chapter.status)}
                     ListEmptyComponent={<View style={{ flex: 1, justifyContent: "center", alignItems: "center", opacity: 0.5 }}>
                         <Text style={{ fontFamily: "Quicksand-700", fontSize: 16 }}>{novel.title}</Text>
-                        <Text style={{ fontFamily: "Quicksand-500", fontSize: 16 }}>n'a aucun chapitre...</Text>
+                        <Text style={{ fontFamily: "Quicksand-500", fontSize: 16 }}>n'a aucun chapitre dans cette section</Text>
                     </View>}
                     contentContainerStyle={{ gap: 15 }}
                     ItemSeparatorComponent={() => <Divider style={{ marginTop: 10, opacity: 0.5, width: "60%" }} />}
@@ -115,10 +117,15 @@ export default function ChapterWorkshopScreen({ navigation, route: { params: { n
                             }}
                             style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                             <View style={{ gap: 5 }}>
-                                <Text style={{ maxWidth: 100, fontFamily: "Quicksand-700", fontSize: 14 }}>{item.title}</Text>
-                                <Text style={{ fontFamily: "Quicksand-500", opacity: 0.5 }}>1253 mots</Text>
+                                <Text
+                                    numberOfLines={3}
+                                    style={{
+                                        maxWidth: 100,
+                                        fontFamily: "Quicksand-700", fontSize: 14
+                                    }}>{item.title}</Text>
+                                <Text style={{ fontFamily: "Quicksand-500", opacity: 0.5 }}>{getWordCount(item.body)} mots</Text>
                             </View>
-                            <Text style={{ opacity: 0.5, fontSize: 12, fontStyle: "italic" }}>Il y a trois (3) jours</Text>
+                            <Text style={{ opacity: 0.5, fontSize: 12, fontStyle: "italic" }}>{mom(item.updatedAt).fromNow()}</Text>
                         </TouchableOpacity>
                     )} />
             </View >

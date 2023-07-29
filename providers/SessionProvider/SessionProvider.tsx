@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
+import { auth } from "../../config/firebase";
 import { useAsyncStorage } from "../../lib/storage";
 import { UserSession } from "../../types/auth";
 import SessionContext from "./SessionContext";
@@ -21,6 +22,7 @@ export default function SessionProvider({ children, uSession }: SessionProviderP
     }
 
     const stopSession = async () => {
+        await auth.signOut();
         await removeData("session");
         await removeData("account-setup");
         setSession(null);

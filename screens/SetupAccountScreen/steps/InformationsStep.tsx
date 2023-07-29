@@ -4,6 +4,7 @@ import { View } from "react-native";
 import * as Yup from "yup";
 import { Button, DateTimePicker, RadioInputGroup, TextInput } from "../../../components";
 import { config } from "../../../config";
+import { notify } from "../../../lib";
 
 const informationSchema = Yup.object().shape({
     firstName: Yup.string().required("Champ requis"),
@@ -30,8 +31,8 @@ export default function InformationsStep({ formValues, onNext }: InformationsSte
                 birthdate: new Date(),
             }}
             onSubmit={(values) => {
-                
-                onNext?.({ ...formValues, ...values, birthdate: values.birthdate.toLocaleString()})
+
+                onNext?.({ ...formValues, ...values, birthdate: values.birthdate.toLocaleString() })
             }}
         >
             {({ handleChange, handleSubmit, values, errors }) => (
@@ -57,6 +58,10 @@ export default function InformationsStep({ formValues, onNext }: InformationsSte
                         />
                         <DateTimePicker
                             date={birthdate} mode="date" onChange={(value) => {
+                                if (value > new Date()) {
+                                    notify.error("Nous ne supportons pas les voyageurs temporels :'(")
+                                    return;
+                                }
                                 setBirthdate(value);
                                 return handleChange("birthdate");
                             }} />

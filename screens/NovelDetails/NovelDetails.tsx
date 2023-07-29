@@ -4,7 +4,6 @@ import { useTheme } from "@rneui/themed";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Button } from "../../components";
 import { useNovelStats } from "../../hooks/api/reader";
 import { RootStackParamList } from "../../types";
 
@@ -103,15 +102,19 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                     </View>
 
                 </Card>
-                <FAB color={primary} onPress={() => { }}
+                <FAB color={black} onPress={() => { }}
                     icon={<Icon color="white" name="plus" type="font-awesome-5" />}
                     placement="right"
-                    style={{ bottom: 75, }} />
-                <FAB color={primary}
+                    style={{ bottom: 75, }}
+                    containerStyle={{ borderRadius: 10 }}
+                />
+                <FAB color={black}
                     onPress={() => {
                         navigation.navigate("Reader", { novel, chapter: novel.chapters[0] })
                     }}
-                    icon={<Icon color="white" name="book" type="font-awesome-5" />} placement="right" />
+                    icon={<Icon color="white" name="book" type="font-awesome-5" />} placement="right"
+                    containerStyle={{ borderRadius: 10 }}
+                />
             </View>
             <BottomSheet onBackdropPress={() => setChapterListIsVisible(false)} isVisible={chapterListIsVisible}>
                 <Card containerStyle={{ margin: 0, borderTopStartRadius: 25, borderTopEndRadius: 25, flex: 1, paddingHorizontal: 40, }}>

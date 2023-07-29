@@ -1,4 +1,6 @@
 export { AccountScreen } from "./AccountScreen";
+export { ChangeEmailScreen } from "./ChangeEmailScreen";
+export { ChangePasswordScreen } from "./ChangePasswordScreen";
 export { ChapterFormScreen } from "./ChapterFormScreen";
 export { ChapterWorkshopScreen } from "./ChapterWorkshopScreen";
 export { ChaptersScreen } from "./ChaptersScreen";
@@ -18,6 +20,7 @@ export { PublicationsScreen } from "./PublicationsScreen";
 export { ReaderScreen } from "./ReaderScreen";
 export { RegisterScreen } from "./RegisterScreen";
 export { RegisterSuccessScreen } from "./RegisterSuccessScreen";
+export { SettingsScreen } from "./SettingsScreen";
 export { SetupAccountScreen } from "./SetupAccountScreen";
 export { SetupAccountSuccessScreen } from "./SetupAccountSuccessScreen";
 export { SuccessScreen } from "./SuccessScreen";

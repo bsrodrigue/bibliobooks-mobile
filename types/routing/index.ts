@@ -17,10 +17,15 @@ export type RootStackParamList = {
     Publications: any;
     Chapters: any;
     NovelWorkshop: any;
+    Settings: any;
+    ChangeEmail: any;
+    ChangePassword: any;
     ChapterWorkshop: {
         novel: Novel;
     };
-    Account: any;
+    Account: {
+        novel?: ReaderNovel;
+    };
     NovelForm: {
         mode: "create" | "edit",
         novel?: Novel;

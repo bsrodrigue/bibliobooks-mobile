@@ -11,7 +11,7 @@ export type UserProfile = {
     gender?: "male" | "female";
     isAccountSetup: boolean;
     library?: Array<string>;
-    userId?:string;
+    userId?: string;
 };
 
 export type UserSession = {

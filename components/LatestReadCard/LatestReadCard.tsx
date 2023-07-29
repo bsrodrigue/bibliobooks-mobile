@@ -42,10 +42,6 @@ const styles = StyleSheet.create({
         fontSize: 12
     },
 
-    button: {
-        backgroundColor: "black",
-        borderRadius: 10
-    }
 });
 
 type LatestReadCardProps = {
@@ -72,7 +68,7 @@ export default function LatestReadCard({ title, time, novel, onResume }: LatestR
                 </View>
             </View>
             <View>
-                <Button onPress={() => onResume?.(novel)} buttonStyle={styles.button}>Poursuivre</Button>
+                <Button size="sm" titleStyle={{ fontFamily: "Quicksand-700" }} onPress={() => onResume?.(novel)} >Poursuivre</Button>
             </View>
         </Card>
     )

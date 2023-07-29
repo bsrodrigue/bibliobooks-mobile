@@ -37,7 +37,6 @@ export default function AccountStep({ formValues, onNext }: AccountStepProps) {
             {({ handleChange, handleSubmit, values, errors }) => (
                 <View style={{ flex: 1, justifyContent: "space-between", paddingTop: 15 }}>
                     <View>
-
                         <View style={{ alignItems: "center", position: "relative" }}>
                             <Avatar
                                 size={50}

@@ -1,4 +1,4 @@
-import { DocumentData, DocumentReference, addDoc, collection, deleteDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { DocumentData, DocumentReference, addDoc, collection, deleteDoc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { config } from "../../config";
 import { db, storage } from "../../config/firebase";

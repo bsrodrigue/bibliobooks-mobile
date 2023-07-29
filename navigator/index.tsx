@@ -1,7 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSession } from "../providers";
-import { ForgotPasswordScreen, LoginScreen, MainScreen, OnboardingScreen, ReaderScreen, RegisterScreen, RegisterSuccessScreen, SetupAccountScreen, SetupAccountSuccessScreen } from "../screens";
+import { ChangeEmailScreen, ChangePasswordScreen, ForgotPasswordScreen, LoginScreen, MainScreen, OnboardingScreen, ReaderScreen, RegisterScreen, RegisterSuccessScreen, SettingsScreen, SetupAccountScreen, SetupAccountSuccessScreen } from "../screens";
 import NovelDetailsScreen from "../screens/NovelDetails/NovelDetails";
 import { UserSession } from "../types/auth";
 
@@ -38,6 +38,9 @@ function PrivateStack({ session }: PrivateStackProps) {
             <Stack.Screen name='NovelDetails' component={NovelDetailsScreen} />
             <Stack.Screen name='SetupAccountSuccess' component={SetupAccountSuccessScreen} />
             <Stack.Screen name='Reader' component={ReaderScreen} />
+            <Stack.Screen name='Settings' component={SettingsScreen} options={{ headerShown: true, headerTitle: "Paramètres" }} />
+            <Stack.Screen name='ChangeEmail' component={ChangeEmailScreen} options={{ headerShown: true, headerTitle: "Paramètres" }} />
+            <Stack.Screen name='ChangePassword' component={ChangePasswordScreen} options={{ headerShown: true, headerTitle: "Paramètres" }} />
         </Stack.Navigator>
     )
 }

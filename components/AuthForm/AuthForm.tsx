@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
     },
 
     header: {
-        flex: 0.1,
+        flex: 0.2,
         marginVertical: 10
     },
 
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     },
 
     body: {
-        flex: 0.9,
+        flex: 0.8,
         marginVertical: 10
     },
 });
