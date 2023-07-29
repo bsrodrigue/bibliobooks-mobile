@@ -16,7 +16,9 @@ type NoveltyScreenProps = NativeStackScreenProps<RootStackParamList, 'Novelty'>;
 export default function NoveltyScreen({ navigation }: NoveltyScreenProps) {
     return (
         <View style={styles.container}>
-            <NovelGrid novels={[]} onNovelPress={() => { }} onLastItemPress={() => { }} />
+            <NovelGrid novels={[]} onNovelPress={() => { }} onLastItemPress={() => {
+                navigation.navigate("Novelty");
+            }} />
         </View>
     )
 }

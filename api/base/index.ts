@@ -15,6 +15,26 @@ const firebaseEntityDocMap: FireBaseEntityDocMap = {
 
     "user_profile": {
         root: "user_profiles",
+    },
+
+    "activity": {
+        root: "activity",
+    },
+
+    "like": {
+        root: "likes",
+    },
+
+    "comment": {
+        root: "comments",
+    },
+
+    "read": {
+        root: "reads",
+    },
+
+    "library": {
+        root: "libraries",
     }
 }
 

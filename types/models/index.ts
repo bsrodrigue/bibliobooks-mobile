@@ -3,8 +3,8 @@ import { UserProfile } from "../auth";
 
 export interface BaseModel {
     id?: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export interface HasAuthor {
@@ -15,7 +15,14 @@ export interface Like
     extends
     BaseModel,
     HasAuthor {
-    likedChapterId: string;
+    chapterId: string;
+}
+
+export interface Read
+    extends
+    BaseModel,
+    HasAuthor {
+    chapterId: string;
 }
 
 export interface Comment
@@ -43,6 +50,9 @@ export interface ReaderNovel
     chapters: Array<Chapter>;
     author: UserProfile;
     authorNovels: Array<Novel>;
+    likes?: Array<Like>;
+    reads?: Array<Read>;
+    comments?: Array<Comment>;
 }
 
 export interface Chapter
@@ -56,9 +66,26 @@ export interface Chapter
     order: number;
 }
 
+export interface Activity
+    extends
+    BaseModel,
+    HasAuthor {
+    entityId: string;
+    type: ActivityType;
+    options?: any;
+}
+
+export interface library
+    extends BaseModel,
+    HasAuthor {
+    novels: Array<Novel | ReaderNovel>;
+}
+
+export type ActivityType = "reading" | "writing";
+
 export type ChapterStatus = NovelStatus;
 
-export type NovelStatus = "published" | "draft" | "archived";
+export type NovelStatus = "published" | "draft" | "archived" | "banned";
 
 export type NovelGenre = "adventure" | "action" | "fantasy" | "romance" | "traditional" | "historical" | "horror";
 
@@ -68,7 +95,7 @@ export type Genre = {
     cover: ImageSourcePropType;
 }
 
-export type Entity = "novel" | "chapter" | "user_profile";
+export type Entity = "novel" | "chapter" | "user_profile" | "activity" | "like" | "comment" | "read" | "library";
 
 export type FireBaseEntityDoc = {
     root: string;

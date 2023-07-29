@@ -1,10 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Avatar, BottomSheet, Card, Divider, Icon } from "@rneui/base";
+import { Avatar, BottomSheet, Card, Divider, FAB, Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { useState } from "react";
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Button } from "../../components";
+import { useNovelStats } from "../../hooks/api/reader";
 import { RootStackParamList } from "../../types";
 
 const styles = StyleSheet.create({
@@ -21,6 +22,7 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
     const { title, description, coverUrl, chapters, id, genre, isMature, author: { avatarUrl, pseudo }, authorNovels } = novel;
     const { theme: { colors: { black, primary } } } = useTheme();
     const [chapterListIsVisible, setChapterListIsVisible] = useState(false);
+    const { reads, likes, comments, isLoading } = useNovelStats({ novelId: novel.id });
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: black }]}>
@@ -42,19 +44,26 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                     <View>
                         <View >
                             <View style={{ paddingHorizontal: 40 }}>
-                                <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10 }}>
-                                    <View style={{ width: 50, }}>
-                                        <Icon name="eye" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
-                                        <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>19.9K</Text>
-                                    </View>
-                                    <View style={{ width: 50, }}>
-                                        <Icon name="star" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
-                                        <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>19.9K</Text>
-                                    </View>
-                                    <View style={{ width: 50, }}>
-                                        <Icon name="comments" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
-                                        <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>19.9K</Text>
-                                    </View>
+                                <View style={{ flexDirection: "row", justifyContent: isLoading ? "center" : "space-between", marginVertical: 10 }}>
+
+                                    {
+                                        isLoading ? (<ActivityIndicator size="large" color={primary} />) : (
+                                            <>
+                                                <View style={{ width: 50, }}>
+                                                    <Icon name="eye" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
+                                                    <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>{reads}</Text>
+                                                </View>
+                                                <View style={{ width: 50, }}>
+                                                    <Icon name="star" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
+                                                    <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>{likes}</Text>
+                                                </View>
+                                                <View style={{ width: 50, }}>
+                                                    <Icon name="comments" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
+                                                    <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>{comments}</Text>
+                                                </View>
+                                            </>
+                                        )
+                                    }
                                 </View>
                                 <Divider style={{ marginVertical: 15, opacity: 0.5 }} />
                                 <Text style={{ fontSize: 18, fontFamily: "Quicksand-700", marginBottom: 10 }}>Synopsis</Text>
@@ -91,23 +100,18 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                                 </View>
                             </View>
                         </View>
-
-                        <View style={{ paddingHorizontal: 40, }}>
-
-                            <View style={{ marginTop: 75 }}>
-                                <Divider style={{ marginVertical: 15, opacity: 0.5 }} />
-                                <Button
-                                    onPress={() => {
-                                        navigation.navigate("Reader", { novel, chapter: novel.chapters[0] })
-                                    }}
-                                    containerStyle={{
-                                        marginVertical: 20
-                                    }} radius={25} buttonStyle={{ backgroundColor: primary }}>Commencer la lecture</Button>
-                            </View>
-                        </View>
                     </View>
 
                 </Card>
+                <FAB color={primary} onPress={() => { }}
+                    icon={<Icon color="white" name="plus" type="font-awesome-5" />}
+                    placement="right"
+                    style={{ bottom: 75, }} />
+                <FAB color={primary}
+                    onPress={() => {
+                        navigation.navigate("Reader", { novel, chapter: novel.chapters[0] })
+                    }}
+                    icon={<Icon color="white" name="book" type="font-awesome-5" />} placement="right" />
             </View>
             <BottomSheet onBackdropPress={() => setChapterListIsVisible(false)} isVisible={chapterListIsVisible}>
                 <Card containerStyle={{ margin: 0, borderTopStartRadius: 25, borderTopEndRadius: 25, flex: 1, paddingHorizontal: 40, }}>

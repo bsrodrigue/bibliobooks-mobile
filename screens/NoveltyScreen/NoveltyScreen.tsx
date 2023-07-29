@@ -1,5 +1,4 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useTheme } from "@rneui/themed";
 import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { NovelList } from "../../components";
@@ -20,7 +19,6 @@ const styles = StyleSheet.create({
 type LibraryScreenProps = NativeStackScreenProps<RootStackParamList, 'Library'>;
 
 export default function LibraryScreen({ navigation }: LibraryScreenProps) {
-    const { theme: { colors: { primary } } } = useTheme();
     const { getLatestNovels, latestNovels, isLoading } = useLatestNovels();
 
     useEffect(() => {

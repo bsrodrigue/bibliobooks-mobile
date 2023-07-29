@@ -1,7 +1,15 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ScrollView, StyleSheet } from "react-native";
+import { useTheme } from "@rneui/themed";
+import { useEffect, useState } from "react";
+import { RefreshControl, ScrollView, StyleSheet } from "react-native";
+import { getNovel, getReaderNovelFromNovel, getUserActivities } from "../../api/novels";
+import useCall from "../../api/useCall";
 import { LatestReadCard, RecommendationCarousel, StoryRecommendation } from "../../components";
+import { notify } from "../../lib";
+import { mom } from "../../lib/moment";
+import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
+import { Activity, ReaderNovel } from "../../types/models";
 
 const styles = StyleSheet.create({
     container: {
@@ -55,20 +63,65 @@ const novel = {
 type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: HomeScreenProps) {
+    const { theme: { colors: { primary } } } = useTheme();
+    const [latestRead, setLatestRead] = useState<ReaderNovel>(null);
+    const [latestActivity, setLatestActivity] = useState<Activity>(null);
+    const [loading, setLoading] = useState(false);
+    const { session: { userProfile: { userId, birthdate } } } = useSession();
+    const { call: callGetUserActivities, isLoading: isGetUserActivitiesLoading } = useCall(getUserActivities, {
+        async onSuccess(activities) {
+            if (activities.length) {
+                try {
+                    setLoading(true);
+                    const latestActivity = activities[activities.length - 1];
+                    setLatestActivity(latestActivity);
+                    const novel = await getNovel({ novelId: latestActivity.entityId });
+                    const readerNovel = await getReaderNovelFromNovel(novel);
+                    readerNovel && setLatestRead(readerNovel);
+                } catch (error) {
+                    notify.error(error?.message || "Une erreur est survenue...");
+                } finally {
+                    setLoading(false);
+                }
+            }
+        },
+    });
+
+    const refreshing = isGetUserActivitiesLoading || loading;
+
+    useEffect(() => {
+        callGetUserActivities({ userId });
+    }, []);
 
     return (
-        <ScrollView style={styles.container}>
-            {/* <LatestReadCard title="Dernière lecture" time="Il y a trois (3) jours" novel={novels[1]} />
+        <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
+            callGetUserActivities({ userId })
+        }} />} style={styles.container}>
+            {
+                latestRead &&
+                <LatestReadCard
+                    title="Dernière lecture"
+                    time={mom(latestActivity.createdAt).fromNow()}
+                    novel={latestRead}
+                    onResume={(novel) => {
+                        const result = novel.chapters.filter((chapter) => chapter.id === latestActivity.options?.chapterId)
+                        result.length && navigation.navigate("Reader", { novel, chapter: result[0] });
+                    }}
+                />}
+
             <StoryRecommendation
                 title="Le jardin des plaisirs"
                 subtitle="Laissez-vous charmer par les rondeurs de Sophia"
                 novel={novel}
                 onPress={() => {
-                    navigation.navigate("NovelDetails", { novel });
+                    // navigation.navigate("NovelDetails", {  });
                 }}
             />
             <RecommendationCarousel title="Les histoires les plus populaires" novels={novels} />
-            <StoryRecommendation title="Les totems des anciens" subtitle="Renouez avec vos racines" novel={{ title: "", description: "", mature: false, chapterCount: 35, imgSrc: require("../../assets/images/traditional.jpg") }} /> */}
-        </ScrollView>
+            <StoryRecommendation
+                title="Les totems des anciens"
+                subtitle="Renouez avec vos racines"
+                novel={{ title: "", description: "", mature: false, chapterCount: 35, imgSrc: require("../../assets/images/traditional.jpg") }} />
+        </ScrollView >
     )
 }

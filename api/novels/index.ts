@@ -1,6 +1,7 @@
 import { getDocs, query, where } from "firebase/firestore";
-import { Chapter, ChapterStatus, Novel, NovelGenre, NovelStatus } from "../../types/models";
-import { createAuthoredEntity, deleteEntityById, getColRefFromDocMap, getEntitiesByUser, getEntityRefById, getPublicEntities, updateEntity, uploadUserFile } from "../base";
+import { Activity, ActivityType, Chapter, ChapterStatus, Entity, Like, Novel, NovelGenre, NovelStatus, Read } from "../../types/models";
+import { getUserProfile } from "../auth";
+import { createAuthoredEntity, deleteEntityById, getColRefFromDocMap, getEntitiesByUser, getEntityById, getEntityRefById, getPublicEntities, updateEntity, uploadUserFile } from "../base";
 
 export type CreateChapterInput = {
     title: string;
@@ -201,4 +202,123 @@ export async function getPublicChaptersFromNovel({ novelId }: GetPublicChaptersF
     })
 
     return result;
+}
+
+export type CreateActivityInput = {
+    userId: string;
+    activityType: ActivityType;
+    entityId: string;
+    options?: any;
+}
+
+export type CreateActivityOutput = Promise<Activity>
+
+export async function createActivity({ userId, activityType, entityId, options }: CreateActivityInput): CreateActivityOutput {
+    return await createAuthoredEntity(userId, {
+        entityId,
+        type: activityType,
+        options
+    }, "activity");
+}
+
+export type GetUserActivitiesInput = {
+    userId: string;
+}
+
+export async function getUserActivities({ userId }: GetUserActivitiesInput) {
+    return await getEntitiesByUser<Activity>({ userId, type: "activity" });
+}
+
+export type GetNovelInput = {
+    novelId: string;
+}
+
+export type GetNovelOutput = Promise<Novel>;
+
+export async function getNovel({ novelId }: GetNovelInput): GetNovelOutput {
+    return await getEntityById({ id: novelId, type: "novel" });
+}
+
+export async function getReaderNovelFromNovel(novel: Novel) {
+    const chapters = await getPublicChaptersFromNovel({ novelId: novel.id });
+    if (chapters.length !== 0) {
+        const author = await getUserProfile({ userId: novel.authorId });
+        const authorNovels = await getUserNovels({ userId: novel.authorId });
+        return { ...novel, chapters, author: author.userProfile, authorNovels };
+    }
+    return null;
+}
+
+export type GetNovelRecommendationsInput = {
+    latestActivities: Array<Activity>;
+    favouriteGenres: Array<NovelGenre>;
+}
+
+export async function getNovelRecommendations({ latestActivities, favouriteGenres }: GetNovelRecommendationsInput) {
+    // TODO: Implement
+}
+
+export type GetUniqueChapterEntityByUserInput = {
+    userId: string;
+    chapterId: string;
+    type: Entity;
+}
+
+export async function getUniqueChapterEntityByUser<T>({ userId, chapterId, type }: GetUniqueChapterEntityByUserInput) {
+    const modelRef = getColRefFromDocMap(type);
+    const q = query(modelRef, where("chapterId", "==", chapterId), where("authorId", "==", userId));
+    const qs = await getDocs(q);
+
+    if (qs.empty) {
+        return null;
+    }
+
+    return qs.docs[0].data() as T;
+}
+
+export type GetReadByUserInput = {
+    userId: string;
+    chapterId: string;
+}
+
+export async function getReadByUser({ userId, chapterId }: GetReadByUserInput) {
+    return await getUniqueChapterEntityByUser<Read>({ userId, chapterId, type: "read" });
+}
+
+export type GetLikeByUserInput = {
+    userId: string;
+    chapterId: string;
+}
+
+export async function getLikeByUser({ userId, chapterId }: GetLikeByUserInput) {
+    return await getUniqueChapterEntityByUser<Like>({ userId, chapterId, type: "like" });
+}
+
+
+export type CreateReadInput = {
+    userId: string;
+    chapterId: string;
+}
+
+export async function createRead({ userId, chapterId }: CreateReadInput) {
+    const existingRead = await getReadByUser({ userId, chapterId });
+    if (existingRead) return;
+
+    return await createAuthoredEntity<Read>(userId, { chapterId }, "read");
+}
+
+export type LikeInput = {
+    userId: string;
+    chapterId: string;
+}
+
+export async function like({ userId, chapterId }: LikeInput) {
+    const existingLike = await getLikeByUser({ userId, chapterId });
+    if (existingLike) {
+        await deleteEntityById(existingLike.id, "like");
+        return false;
+    }
+
+    await createAuthoredEntity<Like>(userId, { chapterId }, "like");
+    return true;
 }
