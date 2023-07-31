@@ -1,10 +1,8 @@
 import { createTheme } from "@rneui/themed";
 
 const commonColors = {
-    // primary: "#22A39F",
-    primary: "#6C3428",
-    // black: "#0A514F",
-    black: "#000000",
+    primary: "#22A39F",
+    black: "#0A514F",
     error: "#DF2E38",
     greyOutline: "#CCCCCC",
 }

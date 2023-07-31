@@ -1,5 +1,5 @@
 import { UserProfile } from "../auth";
-import { Chapter, Novel, ReaderNovel } from "../models";
+import { Chapter, Novel, ReaderNovel, WorkshopNovel } from "../models";
 
 export type RootStackParamList = {
     Home: any;
@@ -20,8 +20,11 @@ export type RootStackParamList = {
     Settings: any;
     ChangeEmail: any;
     ChangePassword: any;
+    ChapterPreview: {
+        chapter: Chapter;
+    };
     ChapterWorkshop: {
-        novel: Novel;
+        novelId: string;
     };
     Account: {
         novel?: ReaderNovel;
@@ -33,7 +36,7 @@ export type RootStackParamList = {
     ChapterForm: {
         mode: "create" | "edit",
         chapter?: Chapter;
-        novel: Novel;
+        novel: WorkshopNovel;
     };
     NovelDetails: {
         novel?: ReaderNovel;

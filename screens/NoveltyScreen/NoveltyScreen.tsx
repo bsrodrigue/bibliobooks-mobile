@@ -12,8 +12,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-        justifyContent: "center",
-        alignItems: "center",
     },
 });
 
@@ -26,7 +24,7 @@ export default function LibraryScreen({ navigation }: LibraryScreenProps) {
     const { getLatestNovels, latestNovels, isLoading } = useLatestNovels({
         omitMatureNovels: !isAdult
     });
-
+    
     useEffect(() => {
         getLatestNovels();
     }, []);

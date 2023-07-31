@@ -1,8 +1,8 @@
-import { DocumentData, DocumentReference, addDoc, collection, deleteDoc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
+import { DocumentData, DocumentReference, QueryConstraint, QueryOrderByConstraint, addDoc, collection, deleteDoc, getDoc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { config } from "../../config";
 import { db, storage } from "../../config/firebase";
-import { Entity, FireBaseEntityDocMap } from "../../types/models";
+import { EntityType, FireBaseEntityDocMap } from "../../types/models";
 
 const firebaseEntityDocMap: FireBaseEntityDocMap = {
     "novel": {
@@ -17,8 +17,8 @@ const firebaseEntityDocMap: FireBaseEntityDocMap = {
         root: "user_profiles",
     },
 
-    "activity": {
-        root: "activity",
+    "reading_activity": {
+        root: "reading_activities",
     },
 
     "like": {
@@ -38,33 +38,32 @@ const firebaseEntityDocMap: FireBaseEntityDocMap = {
     }
 }
 
-export function getColRefFromDocMap(entityType: Entity) {
+export function getColRefFromDocMap(entityType: EntityType) {
     const { root } = firebaseEntityDocMap[entityType];
     return collection(db, root);
 }
 
-export async function uploadUserFile(userId: string, path: string, file: Blob | File) {
-    const fileRef = ref(storage, `files/users/${userId}/${path}`);
+export async function uploadUserFile(path: string, file: Blob | File) {
+    const fileRef = ref(storage, `files/${path}`);
     const result = await uploadBytes(fileRef, file);
     const downloadUrl = await getDownloadURL(result.ref);
     return downloadUrl;
 }
 
-export async function createEntity<T extends object>(entity: T, type: Entity) {
+export async function createEntity<T extends object>(entity: T, type: EntityType) {
     const createdAt = new Date().toISOString();
-    const createdEntity =
-    {
+    const payload = {
         id: config.defaultIdGenerator.generateId(),
         createdAt,
         updatedAt: createdAt,
         ...entity
     }
-    await addDoc(getColRefFromDocMap(type), createdEntity);
-    return createdEntity;
+    await addDoc(getColRefFromDocMap(type), payload);
+    return payload;
 }
 
-export async function createAuthoredEntity<T extends object>(userId: string, entity: T, type: Entity) {
-    return createEntity({ authorId: userId, ...entity }, type);
+export async function createOwnedEntity<T extends object>(userId: string, entity: T, type: EntityType) {
+    return createEntity({ ownerId: userId, ...entity }, type);
 }
 
 export async function updateEntity<T>(reference: DocumentReference<DocumentData, DocumentData>, entity: Partial<T>) {
@@ -73,30 +72,34 @@ export async function updateEntity<T>(reference: DocumentReference<DocumentData,
         updatedAt,
         ...entity
     });
+    const { data } = await getDoc(reference);
+    return {
+        ...data,
+        ...entity,
+        updatedAt
+    }
 }
 
-export async function deleteEntity(reference) {
-    // Maybe consider adding additional checks
-    await deleteDoc(reference);
-}
-
-export async function deleteEntityById(id: string, type: Entity) {
-    const ref = await getEntityRefById({ id, type })
+export async function deleteEntityById(id: string, type: EntityType) {
+    const ref = await getEntityRefById(id, type);
     await deleteEntity(ref);
 }
 
-export async function uploadFile(file: File) {
-    return "";
+export async function deleteEntity(reference: DocumentReference<DocumentData, DocumentData>) {
+    await deleteDoc(reference);
 }
 
-export type GetEntitiesByUser = {
-    userId: string;
-    type: Entity;
+export async function getEntitiesOwnedByUser<T>(userId: string, type: EntityType): Promise<Array<T>> {
+    return await getEntitiesWhere(type, where("ownerId", "==", userId));
 }
 
-export async function getEntitiesByUser<T>({ userId, type }: GetEntitiesByUser): Promise<Array<T>> {
+export async function getPublicEntities<T>(type: EntityType): Promise<Array<T>> {
+    return await getEntitiesWhere(type, where("status", "==", "published"));
+}
+
+export async function getEntitiesWhere<T>(type: EntityType, ...queryConstraints: Array<QueryConstraint | QueryOrderByConstraint>): Promise<Array<T>> {
     const modelRef = getColRefFromDocMap(type);
-    const q = query(modelRef, where("authorId", "==", userId));
+    const q = query(modelRef, ...queryConstraints,);
     const qs = await getDocs(q);
 
     if (qs.empty) {
@@ -111,59 +114,26 @@ export async function getEntitiesByUser<T>({ userId, type }: GetEntitiesByUser):
     return result;
 }
 
-export type GetPublicEntitiesInput = {
-    type: Entity;
-}
-
-export async function getPublicEntities<T>({ type }: GetPublicEntitiesInput): Promise<Array<T>> {
-    const modelRef = getColRefFromDocMap(type);
-    const q = query(modelRef, where("status", "==", "published"));
-    const qs = await getDocs(q);
-
-    if (qs.empty) {
-        return [];
-    }
-
-    const result = [];
-    qs.docs.forEach((doc) => {
-        result.push(doc.data());
-    })
-
-    return result;
-}
-
-export type GetEntityByIdInput = {
-    id: string;
-    type: Entity;
-}
-
-export async function getEntityById<T>({ id, type }: GetEntityByIdInput): Promise<T> {
-    const modelRef = getColRefFromDocMap(type);
-
-    const q = query(modelRef, where("id", "==", id));
-    const qs = await getDocs(q);
-
-    if (qs.empty) {
-        return null;
-    }
-
+export async function getEntityById<T>(id: string, type: EntityType): Promise<T> {
+    const qs = await getEntityQuerySnapshotById(id, type);
     return qs.docs[0].data() as T;
 }
 
-export type GetEntityRefByIdInput = {
-    id: string;
-    type: Entity;
+export async function getEntityRefById(id: string, type: EntityType) {
+    const qs = await getEntityQuerySnapshotById(id, type);
+    if (qs.empty) throw new Error("Entity not found");
+    return qs.docs[0].ref;
 }
 
-export async function getEntityRefById({ id, type }: GetEntityRefByIdInput) {
-    const modelRef = getColRefFromDocMap(type);
+export async function getEntityQuerySnapshotById(id: string, type: EntityType) {
+    const collectionRef = getColRefFromDocMap(type);
 
-    const q = query(modelRef, where("id", "==", id));
+    const q = query(collectionRef, where("id", "==", id));
     const qs = await getDocs(q);
 
     if (qs.empty) {
-        return null;
+        throw new Error("Entity not found");
     }
 
-    return qs.docs[0].ref;
+    return qs;
 }

@@ -4,37 +4,45 @@ import { useRef, useState } from "react";
 import { ScrollView, View } from "react-native";
 import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { Button, TextInput } from "../../components";
+import initialCSSText from "../../config/richtext";
 import { useChapterWorkshop } from "../../hooks/api/workshop";
 import { useSession } from "../../providers";
+import { useWorkshop } from "../../providers/WorkshopProvider";
 import { RootStackParamList } from "../../types";
+import { Chapter } from "../../types/models";
 
 type ChapterFormScreenProps = NativeStackScreenProps<RootStackParamList, 'ChapterForm'>;
 
-export default function ChapterFormScreen({ navigation, route: { params: { mode, novel: { id }, chapter } } }: ChapterFormScreenProps) {
-    const { theme: { colors: { greyOutline, primary } } } = useTheme();
+export default function ChapterFormScreen({ navigation, route: { params: { mode, novel, chapter } } }: ChapterFormScreenProps) {
+    const { theme: { colors: { primary } } } = useTheme();
     const { session: { userProfile: { userId } } } = useSession();
     const { create, edit, isCreateLoading, isEditLoading } = useChapterWorkshop();
+    const { updateWorkshopNovel, updateWorkshopChapter } = useWorkshop();
     const loading = isCreateLoading || isEditLoading;
 
     const [content, setContent] = useState(chapter?.body || "");
     const [title, setTitle] = useState(chapter?.title || "");
-    const _editor = useRef(null);
+    const _editor = useRef(null)
 
     return (
         <View style={{ flex: 1, backgroundColor: "white" }}>
             <View style={{ padding: 20, flex: 1 }}>
                 <TextInput onChangeText={setTitle} value={title} label="Titre du chapitre" placeholder="Veuillez saisir le titre du chapitre" />
-                <ScrollView style={{ flex: 1, paddingVertical: 5 }}>
+                <ScrollView
+                    contentContainerStyle={{
+                        flex: 1
+                    }}
+                >
                     <RichEditor
                         scrollEnabled
                         useContainer
+                        placeholder="Commencez à écrire une belle histoire..."
                         androidLayerType="hardware"
                         initialContentHTML={content}
+                        editorStyle={initialCSSText}
                         ref={_editor}
                         style={{
                             flex: 1,
-                            borderWidth: 1,
-                            borderColor: greyOutline,
                         }}
                         onChange={(text) => {
                             setContent(text)
@@ -49,9 +57,11 @@ export default function ChapterFormScreen({ navigation, route: { params: { mode,
                     onPress={async () => {
                         if (!title || !content) return;
                         if (mode === "create") {
-                            await create({ title, body: content, novelId: id, order: 0, userId })
+                            const newChapter = await create({ title, body: content, novelId: novel.id, order: novel.chapters.length + 1, userId }) as Chapter;
+                            updateWorkshopNovel(novel.id, { chapters: [...novel.chapters, newChapter] });
                         } else {
-                            await edit({ title, body: content, chapterId: chapter.id })
+                            const editedChapter = await edit({ title, body: content, chapterId: chapter.id }) as Chapter;
+                            updateWorkshopChapter(novel, chapter.id, editedChapter);
                         }
                         navigation.pop();
                     }}

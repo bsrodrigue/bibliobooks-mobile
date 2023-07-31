@@ -15,6 +15,9 @@ export default function NovelList({ novels, onPressItem, refreshing, onRefresh }
         <FlatList
             data={novels}
             showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+                flex: 1
+            }}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             renderItem={({ index, item }) =>
             (

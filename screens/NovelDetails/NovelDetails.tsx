@@ -4,7 +4,11 @@ import { useTheme } from "@rneui/themed";
 import { useState } from "react";
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { addToLibrary, removeFromLibrary } from "../../api/novels";
 import { useNovelStats } from "../../hooks/api/reader";
+import { notify } from "../../lib";
+import { useSession } from "../../providers";
+import { useLibrary } from "../../providers/LibraryProvider";
 import { RootStackParamList } from "../../types";
 
 const styles = StyleSheet.create({
@@ -21,7 +25,12 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
     const { title, description, coverUrl, chapters, id, genre, isMature, author: { avatarUrl, pseudo }, authorNovels } = novel;
     const { theme: { colors: { black, primary } } } = useTheme();
     const [chapterListIsVisible, setChapterListIsVisible] = useState(false);
+    const { session: { userProfile: { userId } } } = useSession();
+    const { novelIdentifiers, addLibraryNovel, removeLibraryNovel } = useLibrary();
     const { reads, likes, comments, isLoading } = useNovelStats({ novelId: novel.id });
+    const [isLibraryLoading, setIsLibraryLoading] = useState(false);
+
+    const isInLibrary = () => novelIdentifiers.includes(novel.id);
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: black }]}>
@@ -102,8 +111,33 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                     </View>
 
                 </Card>
-                <FAB color={black} onPress={() => { }}
-                    icon={<Icon color="white" name="plus" type="font-awesome-5" />}
+                <FAB
+                    color={black}
+                    loading={isLibraryLoading}
+                    disabled={isLibraryLoading}
+                    icon={<Icon color="white" name={isInLibrary() ? "minus" : "plus"} type="font-awesome-5" />}
+                    onPress={async () => {
+                        try {
+                            setIsLibraryLoading(true);
+                            const callback =
+                                isInLibrary() ?
+                                    async () => {
+                                        await removeFromLibrary({ novelId: novel.id, userId })
+                                        removeLibraryNovel(novel.id);
+                                    } :
+                                    async () => {
+                                        await addToLibrary({ novelId: novel.id, userId })
+                                        addLibraryNovel(novel);
+                                    }
+
+                            await callback();
+                        } catch (error) {
+                            notify.error("Une erreur est survenue...");
+                        } finally {
+                            setIsLibraryLoading(false);
+                        }
+
+                    }}
                     placement="right"
                     style={{ bottom: 75, }}
                     containerStyle={{ borderRadius: 10 }}

@@ -1,7 +1,7 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { BackHandler, View } from "react-native";
+import { BackHandler, KeyboardAvoidingView, Platform, View } from "react-native";
 import { SetupAccountInput } from "../../api/auth";
 import { AuthForm } from "../../components";
 import { RootStackParamList } from "../../types";
@@ -61,14 +61,18 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
     ]
 
     return (
-        <AuthForm
-            title={steps[currentStepIndex].title}
-            subtitle={steps[currentStepIndex].subtitle}>
-            <View style={{ flex: 1, paddingVertical: 15, justifyContent: "space-between" }}>
-                <View style={{ flex: 1 }}>
-                    {steps[currentStepIndex].component}
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios"
+            ? "padding"
+            : "height"}>
+            <AuthForm
+                title={steps[currentStepIndex].title}
+                subtitle={steps[currentStepIndex].subtitle}>
+                <View style={{ flex: 1, paddingVertical: 15, justifyContent: "space-between" }}>
+                    <View style={{ flex: 1 }}>
+                        {steps[currentStepIndex].component}
+                    </View>
                 </View>
-            </View>
-        </AuthForm>
+            </AuthForm>
+        </KeyboardAvoidingView>
     )
 }

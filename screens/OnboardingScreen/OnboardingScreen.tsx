@@ -49,8 +49,7 @@ export default function OnboardingScreen({ navigation }: OnboardingScreenProps) 
                     horizontal pagingEnabled
                     data={slides}
                     onViewableItemsChanged={viewableItemsChanged}
-                    renderItem={(item) => (<OnboardingItem
-                        {...item} />)} />
+                    renderItem={(item) => (<OnboardingItem {...item} />)} />
             </View>
             <View style={styles.footer}>
                 <Button title={"Suivant"} titleStyle={styles.next} color="black" size="lg" radius={5} onPress={scrollToNext} />

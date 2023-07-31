@@ -1,7 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { NovelGrid } from "../../components";
+import { useLibrary } from "../../providers/LibraryProvider";
 import { RootStackParamList } from "../../types";
+import { LibraryNovel } from "../../types/models";
 
 const styles = StyleSheet.create({
     container: {
@@ -14,11 +17,24 @@ const styles = StyleSheet.create({
 type NoveltyScreenProps = NativeStackScreenProps<RootStackParamList, 'Novelty'>;
 
 export default function NoveltyScreen({ navigation }: NoveltyScreenProps) {
+    const { fetchLibraryNovels, libraryNovels, isLoading } = useLibrary();
+
+    useEffect(() => {
+        fetchLibraryNovels();
+    }, []);
+
     return (
         <View style={styles.container}>
-            <NovelGrid novels={[]} onNovelPress={() => { }} onLastItemPress={() => {
-                navigation.navigate("Novelty");
-            }} />
+            <NovelGrid
+                refreshing={isLoading}
+                onRefresh={fetchLibraryNovels}
+                novels={libraryNovels}
+                onNovelPress={(novel: LibraryNovel) => {
+                    navigation.navigate("Reader", { novel, chapter: novel.chapters[0] })
+                }}
+                onLastItemPress={() => {
+                    navigation.navigate("Novelty");
+                }} />
         </View>
     )
 }

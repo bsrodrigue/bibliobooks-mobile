@@ -1,4 +1,4 @@
-import { createChapter, deleteChapter, editChapter } from "../../../api/novels";
+import { createChapter, deleteChapter, editChapter } from "../../../api/chapters";
 import useCall from "../../../api/useCall";
 
 export function useChapterWorkshop() {

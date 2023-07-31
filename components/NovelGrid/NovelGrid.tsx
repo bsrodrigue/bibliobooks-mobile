@@ -1,11 +1,11 @@
 import { useRef } from "react";
 import { Dimensions, FlatList, RefreshControl, TouchableOpacity } from "react-native";
-import { Novel } from "../../types/models";
+import { LibraryNovel, Novel } from "../../types/models";
 import { AddNovel } from "../AddNovel";
 import { BasicNovel } from "../BasicNovel";
 
 type NovelGridProps = {
-    novels: Novel[] | { last: boolean }[];
+    novels: Array<LibraryNovel> | Novel[] | { last: boolean }[];
     onNovelPress?: (novel: Novel) => void;
     onNovelLongPress?: (novel: Novel) => void;
     onLastItemPress?: () => void;

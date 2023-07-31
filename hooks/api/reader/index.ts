@@ -25,8 +25,8 @@ export function useLatestNovels({ omitMatureNovels }: UseLatestNovelsProps) {
             for (const novel of novels) {
                 const chapters = await getPublicChaptersFromNovel({ novelId: novel.id });
                 if (chapters.length !== 0) {
-                    const author = await getUserProfile({ userId: novel.authorId });
-                    const authorNovels = await getUserNovels({ userId: novel.authorId });
+                    const author = await getUserProfile({ userId: novel.ownerId });
+                    const authorNovels = await getUserNovels({ userId: novel.ownerId });
                     author && readerNovels.push({ ...novel, chapters, author: author.userProfile, authorNovels });
                 }
 
@@ -58,7 +58,7 @@ export function useNovelStats({ novelId }: UseNovelStatsProps) {
         const fetch = async () => {
             try {
                 setIsLoading(true);
-                const chapters = await getNovelChapters({ novelId });
+                const chapters = await getNovelChapters(novelId);
                 if (!chapters.length) return;
 
                 let readsCount = 0;

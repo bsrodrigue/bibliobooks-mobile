@@ -3,14 +3,14 @@ import { Divider, FAB, Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { useEffect, useState } from "react";
 import { FlatList, RefreshControl, Text, TouchableOpacity, View } from "react-native";
-import { getNovelChapters, updateChapterStatus } from "../../api/novels";
+import { updateChapterStatus } from "../../api/chapters";
 import useCall from "../../api/useCall";
 import { ActionBottomSheet, WorkshopTabs } from "../../components";
-import { useSession } from "../../providers";
-import { RootStackParamList } from "../../types";
-import { Chapter } from "../../types/models";
-import { getWordCount } from "../../lib/utils";
 import { mom } from "../../lib/moment";
+import { getWordCount } from "../../lib/utils";
+import { useWorkshop } from "../../providers/WorkshopProvider";
+import { RootStackParamList } from "../../types";
+import { Chapter, WorkshopNovel } from "../../types/models";
 
 const tabs = [
     { label: "Publications", },
@@ -26,29 +26,26 @@ const filters = {
 
 type ChapterWorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'ChapterWorkshop'>;
 
-export default function ChapterWorkshopScreen({ navigation, route: { params: { novel } } }: ChapterWorkshopScreenProps) {
+export default function ChapterWorkshopScreen({ navigation, route: { params: { novelId } } }: ChapterWorkshopScreenProps) {
+    const { workshopNovels, fetchWorkshopNovels, isLoading, updateWorkshopChapter } = useWorkshop();
     const [chapters, setChapters] = useState<Array<Chapter>>([]);
+    const [novel, setNovel] = useState<WorkshopNovel>(null);
     const [chapter, setChapter] = useState<Chapter>(null);
-    const { session: { userProfile: { userId } } } = useSession();
-    const { call, isLoading } = useCall(getNovelChapters, {
+
+    const { call, isLoading: isUpdateChapterStatusLoading } = useCall(updateChapterStatus, {
         onSuccess(result) {
-            setChapters(result)
+            updateWorkshopChapter(novel, chapter.id, result);
         },
     });
-    const { call: callUpdateChapterStatus, isLoading: isUpdateChapterStatusLoading } = useCall(updateChapterStatus, {
-        onSuccess(result) {
-            call({ novelId: novel.id });
-        },
-    });
-    const loading = isLoading || isUpdateChapterStatusLoading;
+    const refreshing = isLoading || isUpdateChapterStatusLoading;
     const [selectedTab, setSelectedTab] = useState(tabs[0].label);
     const [actionsIsVisible, setActionsIsVisible] = useState(false);
     const { theme: { colors: { primary } } } = useTheme();
 
-    const onArchive = async (chapter: Chapter) => await callUpdateChapterStatus({ chapterId: chapter.id, status: "archived" })
-    const onPublish = async (chapter: Chapter) => await callUpdateChapterStatus({ chapterId: chapter.id, status: "published" })
-    const onUnPublish = async (chapter: Chapter) => await callUpdateChapterStatus({ chapterId: chapter.id, status: "draft" })
-    const onEdit = (chapter: Chapter) => navigation.navigate("ChapterForm", { mode: "edit", novel, chapter })
+    const onArchive = async (chapter: Chapter) => await call({ chapterId: chapter.id, status: "archived" })
+    const onPublish = async (chapter: Chapter) => await call({ chapterId: chapter.id, status: "published" })
+    const onUnPublish = async (chapter: Chapter) => await call({ chapterId: chapter.id, status: "draft" })
+    const onEdit = (chapter: Chapter) => navigation.navigate("ChapterForm", { mode: "edit", novel: novel, chapter })
 
     const archiveAction = {
         icon: "archive",
@@ -92,18 +89,20 @@ export default function ChapterWorkshopScreen({ navigation, route: { params: { n
     }
 
     useEffect(() => {
-        call({ novelId: novel.id })
-    }, []);
+        const novel = workshopNovels.filter((novel) => novel.id === novelId)[0];
+        setNovel(novel);
+        setChapters(novel.chapters);
+    }, [workshopNovels]);
 
     return (
         <>
             <WorkshopTabs items={tabs} selectedItem={selectedTab} onPressTab={(label) => setSelectedTab(label)} />
             <View style={{ flexDirection: "row", justifyContent: "center", flex: 1, paddingHorizontal: 20, paddingTop: 40, backgroundColor: "white" }}>
                 <FlatList
-                    refreshControl={<RefreshControl refreshing={loading} onRefresh={() => call({ novelId: novel.id })} />}
+                    refreshControl={<RefreshControl refreshing={refreshing} onRefresh={fetchWorkshopNovels} />}
                     data={chapters.filter((chapter) => filters[selectedTab] === chapter.status)}
                     ListEmptyComponent={<View style={{ flex: 1, justifyContent: "center", alignItems: "center", opacity: 0.5 }}>
-                        <Text style={{ fontFamily: "Quicksand-700", fontSize: 16 }}>{novel.title}</Text>
+                        <Text style={{ fontFamily: "Quicksand-700", fontSize: 16 }}>{novel?.title}</Text>
                         <Text style={{ fontFamily: "Quicksand-500", fontSize: 16 }}>n'a aucun chapitre dans cette section</Text>
                     </View>}
                     contentContainerStyle={{ gap: 15 }}
@@ -111,6 +110,10 @@ export default function ChapterWorkshopScreen({ navigation, route: { params: { n
                     showsVerticalScrollIndicator={false}
                     renderItem={({ index, item }) => (
                         <TouchableOpacity
+                            key={index}
+                            onPress={() => {
+                                navigation.navigate("ChapterPreview", { chapter: item })
+                            }}
                             onLongPress={() => {
                                 setChapter(item)
                                 setActionsIsVisible(true);
@@ -133,13 +136,13 @@ export default function ChapterWorkshopScreen({ navigation, route: { params: { n
                 placement="right"
                 color={primary}
                 icon={<Icon color="white" name="plus" type="font-awesome-5" />}
-                onPress={() => navigation.navigate("ChapterForm", { mode: "create", novel })}
+                onPress={() => navigation.navigate("ChapterForm", { mode: "create", novel: novel })}
             />
             <ActionBottomSheet
                 item={chapter}
                 actions={[...actionFilters[selectedTab], ...commonActions]}
                 isVisible={actionsIsVisible}
                 onBackdropPress={() => setActionsIsVisible(false)} />
-        </>
+        </>// 
     )
 }

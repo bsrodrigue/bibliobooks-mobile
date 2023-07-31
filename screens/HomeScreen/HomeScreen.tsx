@@ -1,15 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useTheme } from "@rneui/themed";
-import { useEffect, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet } from "react-native";
-import { getNovel, getReaderNovelFromNovel, getUserActivities } from "../../api/novels";
-import useCall from "../../api/useCall";
-import { LatestReadCard, RecommendationCarousel, StoryRecommendation } from "../../components";
-import { notify } from "../../lib";
-import { mom } from "../../lib/moment";
-import { useSession } from "../../providers";
+import { useState } from "react";
+import { ScrollView, StyleSheet } from "react-native";
+import { RecommendationCarousel, StoryRecommendation } from "../../components";
 import { RootStackParamList } from "../../types";
-import { Activity, ReaderNovel } from "../../types/models";
+import { ReaderNovel } from "../../types/models";
 
 const styles = StyleSheet.create({
     container: {
@@ -65,40 +60,10 @@ type HomeScreenProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 export default function HomeScreen({ navigation }: HomeScreenProps) {
     const { theme: { colors: { primary } } } = useTheme();
     const [latestRead, setLatestRead] = useState<ReaderNovel>(null);
-    const [latestActivity, setLatestActivity] = useState<Activity>(null);
-    const [loading, setLoading] = useState(false);
-    const { session: { userProfile: { userId, birthdate } } } = useSession();
-    const { call: callGetUserActivities, isLoading: isGetUserActivitiesLoading } = useCall(getUserActivities, {
-        async onSuccess(activities) {
-            if (activities.length) {
-                try {
-                    setLoading(true);
-                    const latestActivity = activities[activities.length - 1];
-                    setLatestActivity(latestActivity);
-                    const novel = await getNovel({ novelId: latestActivity.entityId });
-                    const readerNovel = await getReaderNovelFromNovel(novel);
-                    readerNovel && setLatestRead(readerNovel);
-                } catch (error) {
-                    notify.error(error?.message || "Une erreur est survenue...");
-                } finally {
-                    setLoading(false);
-                }
-            }
-        },
-    });
-
-    const refreshing = isGetUserActivitiesLoading || loading;
-
-    useEffect(() => {
-        callGetUserActivities({ userId });
-    }, []);
 
     return (
-        <ScrollView refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {
-            callGetUserActivities({ userId })
-        }} />} style={styles.container}>
-            {
-                latestRead &&
+        <ScrollView style={styles.container}>
+            {/* {
                 <LatestReadCard
                     title="Dernière lecture"
                     time={mom(latestActivity.createdAt).fromNow()}
@@ -107,7 +72,8 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
                         const result = novel.chapters.filter((chapter) => chapter.id === latestActivity.options?.chapterId)
                         result.length && navigation.navigate("Reader", { novel, chapter: result[0] });
                     }}
-                />}
+                />
+            } */}
 
             <StoryRecommendation
                 title="Le jardin des plaisirs"

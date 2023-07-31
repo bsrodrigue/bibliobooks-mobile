@@ -12,7 +12,7 @@ export function useOnboardingStyles() {
         },
 
         header: {
-            flex: 0.3,
+            flex: 0.2,
             alignItems: "center"
         },
 
@@ -23,7 +23,7 @@ export function useOnboardingStyles() {
         },
 
         body: {
-            flex: 0.5,
+            flex: 0.6,
         },
 
         footer: {

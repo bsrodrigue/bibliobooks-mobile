@@ -1,9 +1,10 @@
-import { User, createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from "firebase/auth";
+import { User, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { getDocs, query, where } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { auth, storage } from "../../config/firebase";
 import { UserProfile } from "../../types/auth";
-import { createEntity, getColRefFromDocMap, updateEntity } from "../base";
+import { createEntity, createOwnedEntity, getColRefFromDocMap, updateEntity } from "../base";
+import { createLibrary } from "../novels";
 
 export type GetUserProfileInput = {
     userId: string;
@@ -20,7 +21,7 @@ export async function getUserProfile({ userId }: GetUserProfileInput): Promise<G
     const qs = await getDocs(q);
 
     if (qs.empty) {
-        throw new Error("User does not have a user profile");
+        throw new Error("User profile not found");
     }
 
     const userProfile = qs.docs[0].data() as UserProfile;
@@ -33,22 +34,19 @@ export type RegisterInput = {
     password: string;
 };
 
-export type RegisterOutput = UserProfile;
-
-export async function register({ email, password }: RegisterInput): Promise<RegisterOutput> {
+export async function register({ email, password }: RegisterInput) {
     const { user } = await createUserWithEmailAndPassword(auth, email, password);
-    await sendEmailVerification(user);
     return await createUserProfile(user);
 }
 
-export async function createUserProfile(user: User): Promise<UserProfile> {
-    const profile = {
+export async function createUserProfile(user: User) {
+    const payload = {
         userId: user.uid,
         isAccountSetup: false,
         email: user.email,
     }
 
-    return await createEntity(profile, "user_profile");
+    return await createEntity(payload, "user_profile");
 }
 
 export type UpdateUserProfile = {
@@ -88,7 +86,7 @@ export type SetupAccountInput = {
     userId?: string;
     firstName: string;
     lastName: string;
-    birthdate: Date;
+    birthdate: string;
     pseudo: string;
     bio: string;
     gender: "male" | "female";

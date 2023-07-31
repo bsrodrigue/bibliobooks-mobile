@@ -1,27 +1,57 @@
-import { query, where, getDocs } from "firebase/firestore";
-import { Entity } from "../../types/models";
-import { getColRefFromDocMap } from "../base";
+import { where } from "firebase/firestore";
+import { Chapter, ChapterStatus, EntityType } from "../../types/models";
+import { createOwnedEntity, deleteEntityById, getEntitiesWhere, getEntityRefById, updateEntity } from "../base";
+
+export type CreateChapterInput = {
+    title: string;
+    body: string;
+    novelId: string;
+    order: number;
+    userId: string;
+}
+
+export async function createChapter({ userId, ...input }: CreateChapterInput) {
+    const payload = { status: "draft", ...input };
+    const result = await createOwnedEntity(userId, payload, "chapter");
+    return result;
+}
+
+export type EditChapterInput = {
+    chapterId: string;
+    title?: string;
+    body?: string;
+}
+
+export async function editChapter({ chapterId, ...input }: EditChapterInput) {
+    const chapterRef = await getEntityRefById(chapterId, "chapter");
+    return await updateEntity<Chapter>(chapterRef, input);
+}
+
+export type DeleteChapterInput = {
+    chapterId: string;
+}
+
+export async function deleteChapter({ chapterId }: DeleteChapterInput) {
+    await deleteEntityById(chapterId, "chapter");
+}
+
+export type UpdateChapterStatusInput = {
+    chapterId: string;
+    status: ChapterStatus;
+}
+
+export async function updateChapterStatus({ chapterId, status }: UpdateChapterStatusInput) {
+    const chapterRef = await getEntityRefById(chapterId, "chapter");
+    return await updateEntity<Chapter>(chapterRef, { status })
+}
 
 export type GetEntitiesByChapter = {
     chapterId: string;
-    type: Entity;
+    type: EntityType;
 }
 
 export async function getEntitiesByChapter<T>({ chapterId, type }: GetEntitiesByChapter) {
-    const modelRef = getColRefFromDocMap(type);
-    const q = query(modelRef, where("chapterId", "==", chapterId));
-    const qs = await getDocs(q);
-
-    if (qs.empty) {
-        return [];
-    }
-
-    const result = [];
-    qs.docs.forEach((doc) => {
-        result.push(doc.data());
-    })
-
-    return result as Array<T>;
+    return await getEntitiesWhere(type, where("entityId", "==", chapterId));
 }
 
 export type GetReadsByChapter = {

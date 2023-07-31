@@ -57,7 +57,7 @@ export default function PreferencesStep({ formValues, navigation }: PreferencesS
         >
             {({ handleChange, handleSubmit }) => (
                 <>
-                    <View style={{ marginBottom: 20 }}>
+                    <View>
                         <Text style={{ fontFamily: "Quicksand-700", fontSize: 20 }}>Quels genres d’histoires aimez-vous?</Text>
                         <Text style={{ fontFamily: "Quicksand-600", opacity: 0.5 }}>Vous pourrez toujours changer ça plus tard</Text>
                     </View>

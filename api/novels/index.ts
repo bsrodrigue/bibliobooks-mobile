@@ -1,84 +1,14 @@
-import { getDocs, query, where } from "firebase/firestore";
-import { Activity, ActivityType, Chapter, ChapterStatus, Entity, Like, Novel, NovelGenre, NovelStatus, Read } from "../../types/models";
+import { arrayRemove, arrayUnion, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { Chapter, EntityType, Library, Like, Novel, NovelGenre, NovelStatus, Read } from "../../types/models";
 import { getUserProfile } from "../auth";
-import { createAuthoredEntity, deleteEntityById, getColRefFromDocMap, getEntitiesByUser, getEntityById, getEntityRefById, getPublicEntities, updateEntity, uploadUserFile } from "../base";
+import { createOwnedEntity, deleteEntityById, getColRefFromDocMap, getEntitiesOwnedByUser, getEntitiesWhere, getEntityById, getEntityRefById, getPublicEntities, updateEntity, uploadUserFile } from "../base";
 
-export type CreateChapterInput = {
-    title: string;
-    body: string;
-    novelId: string;
-    order: number;
-    userId: string;
+export async function uploadNovelCover(title: string, coverImg: File | Blob) {
+    return await uploadUserFile(`covers/covers/${title.split(" ").join("_")}.jpeg`, coverImg);
 }
 
-export type CreateChapterOutput = Promise<Chapter>;
-
-export async function createChapter({ userId, ...input }: CreateChapterInput): CreateChapterOutput {
-    const payload: Chapter = { status: "draft", ...input };
-    const result = await createAuthoredEntity(userId, payload, "chapter");
-    return result;
-}
-
-export type EditChapterInput = {
-    chapterId: string;
-    title?: string;
-    body?: string;
-}
-
-export type EditChapterOutput = Promise<void>;
-
-export async function editChapter({ chapterId, ...input }: EditChapterInput): EditChapterOutput {
-    const chapterRef = await getEntityRefById({ id: chapterId, type: "chapter" });
-    if (!chapterRef) throw new Error("Error: Chapter not found");
-    await updateEntity(chapterRef, input);
-}
-
-export type DeleteChapterInput = {
-    chapterId: string;
-}
-
-export type DeleteChapterOutput = Promise<void>;
-
-export async function deleteChapter({ chapterId }: DeleteChapterInput): DeleteChapterOutput {
-    await deleteEntityById(chapterId, "chapter");
-}
-
-export type UpdateChapterStatusInput = {
-    chapterId: string;
-    status: ChapterStatus;
-}
-
-export async function updateChapterStatus({ chapterId, status }: UpdateChapterStatusInput) {
-    const chapterRef = await getEntityRefById({ id: chapterId, type: "chapter" });
-
-    if (!chapterRef) {
-        throw new Error("Chapitre Introuvable");
-    }
-
-    await updateEntity<Chapter>(chapterRef, {
-        status
-    })
-}
-
-export type GetNovelChapters = {
-    novelId: string;
-}
-
-export async function getNovelChapters({ novelId }: GetNovelChapters): Promise<Array<Chapter>> {
-    const modelRef = getColRefFromDocMap("chapter");
-    const q = query(modelRef, where("novelId", "==", novelId));
-    const qs = await getDocs(q);
-
-    if (qs.empty) {
-        return [];
-    }
-
-    const result = [];
-    qs.docs.forEach((doc) => {
-        result.push(doc.data());
-    })
-
-    return result;
+export async function getNovelChapters(novelId: string): Promise<Array<Chapter>> {
+    return await getEntitiesWhere("chapter", where("novelId", "==", novelId))
 }
 
 export type CreateNovelInput = {
@@ -90,18 +20,10 @@ export type CreateNovelInput = {
     userId?: string;
 }
 
-export type CreateNovelOutput = Promise<Novel>;
-
-export async function uploadNovelCover(userId: string, title: string, coverImg: File | Blob) {
-    return await uploadUserFile(userId, `covers/covers/${title.split(" ").join("_")}.jpeg`, coverImg);
-}
-
-export async function createNovel({ userId, ...input }: CreateNovelInput): CreateNovelOutput {
-    let coverUrl = input?.coverImg ? await uploadNovelCover(userId, input.title, input.coverImg) : "";
-    delete input.coverImg;
-    const payload: Novel = { status: "draft", coverUrl, ...input };
-    const result = await createAuthoredEntity(userId, payload, "novel");
-    return result;
+export async function createNovel({ userId, coverImg, ...input }: CreateNovelInput) {
+    const coverUrl = coverImg ? await uploadNovelCover(input.title, coverImg) : "";
+    const payload = { status: "draft", coverUrl, ...input };
+    return await createOwnedEntity(userId, payload, "novel");
 }
 
 export type EditNovelInput = {
@@ -114,34 +36,20 @@ export type EditNovelInput = {
     coverImg?: Blob | File;
 }
 
-export type EditNovelOutput = Promise<void>;
+export type EditNovelOutput = Promise<Novel>;
 
-export async function editNovel({ novelId, ...input }: EditNovelInput): EditNovelOutput {
-    const novelRef = await getEntityRefById({ id: novelId, type: "novel" });
-    if (!novelRef) throw new Error("Error: Novel not found");
-
-    let coverUrl = input?.coverImg ? await uploadNovelCover(input.userId, input.title, input.coverImg) : "";
-
-    delete input.coverImg;
-
-    let payload: any = {
-        ...input
-    }
-
-    if (coverUrl) {
-        payload = { ...payload, coverUrl }
-    }
-
-    await updateEntity(novelRef, payload);
+export async function editNovel({ novelId, userId, coverImg, ...input }: EditNovelInput): EditNovelOutput {
+    const novelRef = await getEntityRefById(novelId, "novel");
+    const coverUrl = coverImg ? await uploadNovelCover(input.title, coverImg) : "";
+    const payload = { ...input, coverUrl };
+    return await updateEntity<Novel>(novelRef, payload) as Novel;
 }
 
 export type DeleteNovelInput = {
     novelId: string;
 }
 
-export type DeleteNovelOutput = Promise<void>;
-
-export async function deleteNovel({ novelId }: DeleteNovelInput): DeleteNovelOutput {
+export async function deleteNovel({ novelId }: DeleteNovelInput) {
     await deleteEntityById(novelId, "novel");
 }
 
@@ -151,15 +59,8 @@ export type UpdateNovelStatusInput = {
 }
 
 export async function updateNovelStatus({ novelId, status }: UpdateNovelStatusInput) {
-    const novelRef = await getEntityRefById({ id: novelId, type: "novel" });
-
-    if (!novelRef) {
-        throw new Error("Histoire Introuvable");
-    }
-
-    await updateEntity<Novel>(novelRef, {
-        status
-    })
+    const novelRef = await getEntityRefById(novelId, "novel");
+    return await updateEntity<Novel>(novelRef, { status });
 }
 
 export type GetUserNovelsInput = {
@@ -169,16 +70,33 @@ export type GetUserNovelsInput = {
 export type GetUserNovelsOutput = Promise<Array<Novel>>
 
 export async function getUserNovels({ userId }: GetUserNovelsInput): Promise<GetUserNovelsOutput> {
-    return await getEntitiesByUser<Novel>({ userId, type: "novel" })
+    return await getEntitiesOwnedByUser<Novel>(userId, "novel");
 }
 
-export type GetPublicNovelsInput = {
+export type GetUserLibraryInput = {
+    userId: string;
 }
 
-export type GetPublicNovelsOutput = Promise<Array<Novel>>
+export async function getLibrary({ userId }: GetUserLibraryInput) {
+    const library = await getEntitiesOwnedByUser<Library>(userId, "library");
 
-export async function getPublicNovels(): Promise<GetPublicNovelsOutput> {
-    return await getPublicEntities<Novel>({ type: "novel" })
+    if (!library.length) {
+        return await createLibrary({ userId });
+    }
+
+    return library[0];
+}
+
+export type CreateLibraryInput = {
+    userId: string;
+}
+
+export async function createLibrary({ userId }: CreateLibraryInput) {
+    return await createOwnedEntity(userId, { novels: [] }, "library");
+}
+
+export async function getPublicNovels() {
+    return await getPublicEntities<Novel>("novel");
 }
 
 export type GetPublicChaptersFromNovelInput = {
@@ -204,31 +122,6 @@ export async function getPublicChaptersFromNovel({ novelId }: GetPublicChaptersF
     return result;
 }
 
-export type CreateActivityInput = {
-    userId: string;
-    activityType: ActivityType;
-    entityId: string;
-    options?: any;
-}
-
-export type CreateActivityOutput = Promise<Activity>
-
-export async function createActivity({ userId, activityType, entityId, options }: CreateActivityInput): CreateActivityOutput {
-    return await createAuthoredEntity(userId, {
-        entityId,
-        type: activityType,
-        options
-    }, "activity");
-}
-
-export type GetUserActivitiesInput = {
-    userId: string;
-}
-
-export async function getUserActivities({ userId }: GetUserActivitiesInput) {
-    return await getEntitiesByUser<Activity>({ userId, type: "activity" });
-}
-
 export type GetNovelInput = {
     novelId: string;
 }
@@ -236,32 +129,47 @@ export type GetNovelInput = {
 export type GetNovelOutput = Promise<Novel>;
 
 export async function getNovel({ novelId }: GetNovelInput): GetNovelOutput {
-    return await getEntityById({ id: novelId, type: "novel" });
+    return await getEntityById(novelId, "novel");
 }
 
 export async function getReaderNovelFromNovel(novel: Novel) {
     const chapters = await getPublicChaptersFromNovel({ novelId: novel.id });
     if (chapters.length !== 0) {
-        const author = await getUserProfile({ userId: novel.authorId });
-        const authorNovels = await getUserNovels({ userId: novel.authorId });
+        const author = await getUserProfile({ userId: novel.ownerId });
+        const authorNovels = await getUserNovels({ userId: novel.ownerId });
         return { ...novel, chapters, author: author.userProfile, authorNovels };
     }
     return null;
 }
 
-export type GetNovelRecommendationsInput = {
-    latestActivities: Array<Activity>;
-    favouriteGenres: Array<NovelGenre>;
+export type AddToLibraryInput = {
+    novelId: string;
+    userId: string;
 }
 
-export async function getNovelRecommendations({ latestActivities, favouriteGenres }: GetNovelRecommendationsInput) {
-    // TODO: Implement
+export async function addToLibrary({ novelId, userId }: AddToLibraryInput) {
+    const library = await getLibrary({ userId });
+    const libraryRef = await getEntityRefById(library.id, "library");
+    await updateDoc(libraryRef, {
+        novels: arrayUnion(novelId)
+    });
+}
+export type RemoveFromLibraryInput = {
+    novelId: string;
+    userId: string;
+}
+export async function removeFromLibrary({ novelId, userId }: RemoveFromLibraryInput) {
+    const library = await getLibrary({ userId });
+    const libraryRef = await getEntityRefById(library.id, "library");
+    await updateDoc(libraryRef, {
+        novels: arrayRemove(novelId)
+    });
 }
 
 export type GetUniqueChapterEntityByUserInput = {
     userId: string;
     chapterId: string;
-    type: Entity;
+    type: EntityType;
 }
 
 export async function getUniqueChapterEntityByUser<T>({ userId, chapterId, type }: GetUniqueChapterEntityByUserInput) {
@@ -294,7 +202,6 @@ export async function getLikeByUser({ userId, chapterId }: GetLikeByUserInput) {
     return await getUniqueChapterEntityByUser<Like>({ userId, chapterId, type: "like" });
 }
 
-
 export type CreateReadInput = {
     userId: string;
     chapterId: string;
@@ -304,7 +211,7 @@ export async function createRead({ userId, chapterId }: CreateReadInput) {
     const existingRead = await getReadByUser({ userId, chapterId });
     if (existingRead) return;
 
-    return await createAuthoredEntity<Read>(userId, { chapterId }, "read");
+    return await createOwnedEntity(userId, { entityId: chapterId }, "read");
 }
 
 export type LikeInput = {
@@ -319,6 +226,6 @@ export async function like({ userId, chapterId }: LikeInput) {
         return false;
     }
 
-    await createAuthoredEntity<Like>(userId, { chapterId }, "like");
+    await createOwnedEntity(userId, { entityId: chapterId }, "like");
     return true;
 }

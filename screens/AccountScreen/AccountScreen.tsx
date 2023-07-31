@@ -4,6 +4,7 @@ import { Avatar, useTheme } from "@rneui/themed";
 import { Formik } from "formik";
 import { useState } from "react";
 import { Text, View } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as Yup from "yup";
 import { updateUserProfile } from "../../api/auth";
 import useCall from "../../api/useCall";
@@ -22,7 +23,7 @@ const accountSchema = Yup.object().shape({
 type AccountScreenProps = NativeStackScreenProps<RootStackParamList, 'Account'>;
 
 export default function AccountScreen({ navigation, route: { params } }: AccountScreenProps) {
-    const { theme: { colors: { primary, greyOutline, black } } } = useTheme();
+    const { theme: { colors: { primary, greyOutline } } } = useTheme();
     const [isEditMode, setIsEditMode] = useState(false);
     const { session, updateSession } = useSession();
     const { userProfile: { pseudo, firstName, lastName, bio, avatarUrl, gender } } = session;
@@ -39,14 +40,14 @@ export default function AccountScreen({ navigation, route: { params } }: Account
         <View style={{ flex: 1, backgroundColor: primary, justifyContent: "space-between" }}>
             {
                 !isEditMode && (
-                    <FAB color="white" onPress={toggleEditMode} placement="right" >
-                        <Icon name="pen" type="font-awesome-5" />
+                    <FAB style={{ zIndex: 2 }} color={primary} onPress={toggleEditMode} placement="right" >
+                        <Icon name="pen" type="font-awesome-5" color="white" />
                     </FAB>
                 )
             }
             {
                 !isEditMode ? (
-                    <View style={{ position: "relative" }}>
+                    <View style={{ position: "relative", flex: 1 }}>
                         <View
                             style={{
                                 alignItems: "center",
@@ -58,23 +59,23 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                             <Avatar
                                 size={120}
                                 rounded
-                                containerStyle={{ backgroundColor: primary, padding: 2 }}
+                                containerStyle={{ backgroundColor: greyOutline, padding: 2 }}
                                 source={{ uri: avatarUrl }}
                             />
                             <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 5, gap: 15 }}>
                                 <Text style={{ fontFamily: "Quicksand-700", fontSize: 25 }}>{firstName}</Text>
                                 <Text style={{ fontFamily: "Quicksand-700", fontSize: 25 }}>{lastName}</Text>
-                            </View>
-                            <View style={{ alignItems: "center" }}>
                                 <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
                                     <Icon type="font-awesome-5" name={gender === "male" ? "male" : "female"} />
                                     <Text style={{ opacity: 0.5, fontStyle: "italic" }}>{gender === "male" ? "Homme" : "Femme"}</Text>
                                 </View>
-                                <Text style={{ fontFamily: "Quicksand-600", fontSize: 20 }}>{pseudo}</Text>
+                            </View>
+                            <View style={{ alignItems: "center" }}>
+                                <Text style={{ fontFamily: "Quicksand-500", fontSize: 14 }}>{pseudo}</Text>
                             </View>
                         </View>
-                        <View>
-                            <View style={{ marginVertical: 5, paddingHorizontal: 15 }}>
+                        <View style={{ flex: 1 }}>
+                            <View style={{ flex: 0.3, marginVertical: 5, paddingHorizontal: 15 }}>
 
                                 <View style={{ flexDirection: "row", justifyContent: "space-around", paddingVertical: 10 }}>
                                     <View style={{ alignItems: "center" }}>
@@ -100,12 +101,11 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                                     </View>
                                 </View>
 
-                                <View>
-                                    <Text style={{ marginVertical: 15, color: "white", textAlign: "center", fontFamily: "Quicksand-500" }}>BIO</Text>
-                                    <View style={{ backgroundColor: "white", borderRadius: 5, padding: 15, }}>
-                                        <Text style={{ textAlign: "left", fontFamily: "Quicksand-500" }}>{bio}</Text>
-                                    </View>
-                                </View>
+
+                            </View>
+                            <View style={{ flex: 0.7, backgroundColor: "white", paddingHorizontal: 15 }}>
+                                <Text style={{ marginVertical: 15, textAlign: "center", fontFamily: "Quicksand-500" }}>BIO</Text>
+                                <Text style={{ textAlign: "left", fontFamily: "Quicksand-500" }}>{bio}</Text>
                             </View>
                         </View>
                     </View>
@@ -126,7 +126,7 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                                 source={{ uri: imgUri || avatarUrl }}
                             />
                         </View>
-                        <View>
+                        <KeyboardAwareScrollView>
                             <Formik
                                 validationSchema={accountSchema}
                                 onSubmit={async (values) => {
@@ -158,7 +158,7 @@ export default function AccountScreen({ navigation, route: { params } }: Account
 
                                 )}
                             </Formik>
-                        </View>
+                        </KeyboardAwareScrollView>
                     </View>
                 )
             }

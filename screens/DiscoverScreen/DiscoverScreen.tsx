@@ -18,7 +18,8 @@ export default function DiscoverScreen({ navigation }: DiscoverScreenProps) {
         <View style={{ flex: 1 }}>
             <Tab.Navigator
                 sceneContainerStyle={{
-                    paddingTop: 30
+                    flex: 1,
+                    paddingTop: 25
                 }}
                 screenOptions={{
                     headerShown: false,
@@ -30,7 +31,6 @@ export default function DiscoverScreen({ navigation }: DiscoverScreenProps) {
                     tabBarIconStyle: {
                         display: "none"
                     },
-
                     tabBarActiveTintColor: primary,
                     tabBarLabel: ({ focused, children }) => (
                         <View style={{ alignItems: "center" }}>

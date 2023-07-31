@@ -2,6 +2,7 @@ export { AccountScreen } from "./AccountScreen";
 export { ChangeEmailScreen } from "./ChangeEmailScreen";
 export { ChangePasswordScreen } from "./ChangePasswordScreen";
 export { ChapterFormScreen } from "./ChapterFormScreen";
+export { ChapterPreviewScreen } from "./ChapterPreviewScreen";
 export { ChapterWorkshopScreen } from "./ChapterWorkshopScreen";
 export { ChaptersScreen } from "./ChaptersScreen";
 export { DiscoverScreen } from "./DiscoverScreen";

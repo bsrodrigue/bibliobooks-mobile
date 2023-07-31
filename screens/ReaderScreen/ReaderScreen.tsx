@@ -4,13 +4,11 @@ import { useTheme } from "@rneui/themed";
 import { useEffect, useRef, useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { RichEditor } from "react-native-pell-rich-editor";
-import { createActivity, createRead, getLikeByUser, like } from "../../api/novels";
+import { createRead, getLikeByUser, like } from "../../api/novels";
 import useCall from "../../api/useCall";
 import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
-import FontFamilyStylesheet from "./stylesheet";
-const fontFamily = 'EB Garamond';
-const initialCSSText = { initialCSSText: `${FontFamilyStylesheet}`, contentCSSText: `font-family: ${fontFamily}` }
+import initialCSSText from "../../config/richtext";
 
 type ReaderScreenProps = NativeStackScreenProps<RootStackParamList, 'Reader'>;
 
@@ -22,7 +20,6 @@ export default function ReaderScreen({ navigation, route: { params: { novel, cha
     const [currentChapterIndex, setCurrentChapterIndex] = useState(novel.chapters.indexOf(currentChapter));
     const [liked, setLiked] = useState(false);
     const readerRef = useRef(null);
-    const { call } = useCall(createActivity);
     const { call: getUserLike, isLoading: isGetUserLikeLoading } = useCall(getLikeByUser, {
         onSuccess(result) {
             setLiked(Boolean(result));
@@ -43,11 +40,6 @@ export default function ReaderScreen({ navigation, route: { params: { novel, cha
     }, [currentChapter, chapters]);
 
     useEffect(() => {
-        call({
-            userId, activityType: "reading", entityId: novel.id, options: {
-                chapterId: currentChapter.id
-            }
-        })
         getUserLike({ chapterId: currentChapter.id, userId });
         createRead({ userId, chapterId: currentChapter.id });
     }, [currentChapter]);

@@ -1,11 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useTheme } from "@rneui/themed";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { deleteNovel, getUserNovels, updateNovelStatus } from "../../api/novels";
+import { deleteNovel, updateNovelStatus } from "../../api/novels";
 import useCall from "../../api/useCall";
 import { WorkshopNovelGrid, WorkshopTabs } from "../../components";
-import { useSession } from "../../providers";
+import { useWorkshop } from "../../providers/WorkshopProvider";
 import { RootStackParamList } from "../../types";
 import { Novel } from "../../types/models";
 
@@ -24,25 +23,19 @@ const filters = {
 type NovelWorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'NovelWorkshop'>;
 
 export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenProps) {
-    const [novels, setNovels] = useState<Array<Novel>>([]);
+    const { workshopNovels, isLoading, fetchWorkshopNovels } = useWorkshop();
     const [novelToBeDeleted, setNovelToBeDeleted] = useState<Novel>(null)
-    const { session: { userProfile: { userId } } } = useSession();
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-    const { call, isLoading } = useCall(getUserNovels, {
-        onSuccess(result) {
-            setNovels(result)
-        },
-    });
 
     const { call: callUpdateNovelStatus, isLoading: updateNovelIsLoading } = useCall(updateNovelStatus, {
-        onSuccess(result) {
-            call({ userId });
+        onSuccess() {
+            fetchWorkshopNovels()
         },
     });
 
     const { call: callDeleteNovel, isLoading: isDeleteNovelLoading } = useCall(deleteNovel);
 
-    const loading = isLoading || updateNovelIsLoading;
+    const loading = isLoading || updateNovelIsLoading || isDeleteNovelLoading;
 
     const onArchive = async (novel: Novel) => await callUpdateNovelStatus({ novelId: novel.id, status: "archived" })
     const onPublish = async (novel: Novel) => await callUpdateNovelStatus({ novelId: novel.id, status: "published" })
@@ -95,11 +88,6 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
     }
 
     const [selectedTab, setSelectedTab] = useState(tabs[0].label);
-    const { theme: { colors: { primary } } } = useTheme();
-
-    useEffect(() => {
-        call({ userId })
-    }, []);
 
     return (
         <View style={{ flex: 1 }}>
@@ -108,10 +96,11 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
                 <View style={{ alignItems: "flex-start", flex: 1, }}>
                     <WorkshopNovelGrid
                         refreshing={loading}
-                        onRefresh={() => call({ userId })}
+                        onRefresh={fetchWorkshopNovels}
                         actions={[...actionFilters[selectedTab], ...commonActions]}
-                        novels={novels.filter((novel) => filters[selectedTab] === novel.status)}
-                        navigation={navigation} onLastItemPress={() => {
+                        novels={workshopNovels.filter((novel) => filters[selectedTab] === novel.status)}
+                        navigation={navigation}
+                        onLastItemPress={() => {
                             navigation.navigate("NovelForm", { mode: "create" });
                         }}
                         onBackdropPress={() => {
@@ -120,10 +109,10 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
                         }
                         }
                         confirm={isConfirmationOpen}
-                        loading={isDeleteNovelLoading}
+                        loading={loading}
                         onConfirm={async () => {
                             await callDeleteNovel({ novelId: novelToBeDeleted.id });
-                            call({ userId })
+                            fetchWorkshopNovels()
                             setIsConfirmationOpen(false)
                         }}
                     />

@@ -1,13 +1,13 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useState } from "react";
 import { Action, RootStackParamList } from "../../types";
-import { Novel } from "../../types/models";
+import { WorkshopNovel } from "../../types/models";
 import { ActionBottomSheet } from "../ActionBottomSheet";
 import { NovelGrid } from "../NovelGrid";
 
 type WorkshopNovelGridProps = {
     actions: Action[];
-    novels: Array<Novel>;
+    novels: Array<WorkshopNovel>;
     onLastItemPress?: () => void;
     navigation: NativeStackNavigationProp<RootStackParamList, "NovelWorkshop", undefined>;
     refreshing?: boolean;
@@ -33,8 +33,8 @@ export default function WorkshopNovelGrid({
                 onRefresh={onRefresh}
                 novels={novels}
                 onLastItemPress={onLastItemPress}
-                onNovelPress={(novel: Novel) => {
-                    navigation.navigate("ChapterWorkshop", { novel });
+                onNovelPress={(novel: WorkshopNovel) => {
+                    navigation.navigate("ChapterWorkshop", { novelId: novel.id });
                 }}
                 onNovelLongPress={(novel) => {
                     setCurrentNovel(novel);
