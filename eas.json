@@ -21,7 +21,12 @@
     "preview3": {
       "developmentClient": true
     },
-    "production": {}
+    "production": {
+      "distribution": "store",
+      "android": {
+        "buildType": "apk"
+      }
+    }
   },
   "submit": {
     "production": {}

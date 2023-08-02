@@ -21,6 +21,7 @@ export { PublicationsScreen } from "./PublicationsScreen";
 export { ReaderScreen } from "./ReaderScreen";
 export { RegisterScreen } from "./RegisterScreen";
 export { RegisterSuccessScreen } from "./RegisterSuccessScreen";
+export { SearchScreen } from "./SearchScreen";
 export { SettingsScreen } from "./SettingsScreen";
 export { SetupAccountScreen } from "./SetupAccountScreen";
 export { SetupAccountSuccessScreen } from "./SetupAccountSuccessScreen";

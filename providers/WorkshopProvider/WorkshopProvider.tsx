@@ -30,6 +30,7 @@ export default function WorkshopProvider({ children }: WorkshopProviderProps) {
             const result = await Promise.all(tasks);
             setWorkshopNovels(result)
         } catch (error) {
+            console.error(error);
             notify.error("Erreur survenue en chargeant vos histoires");
         } finally {
             setIsLoading(false);
@@ -50,6 +51,8 @@ export default function WorkshopProvider({ children }: WorkshopProviderProps) {
         setWorkshopNovels((prev) => prev.map((novel) => {
             if (novel.id === id) {
                 novel = { ...novel, ...payload };
+
+                novel.chapters = novel.chapters.sort((chap1, chap2) => chap1.order - chap2.order)
             }
             return novel;
         }));

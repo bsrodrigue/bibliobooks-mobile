@@ -12,6 +12,7 @@ import { Button, TextInput } from "../../components";
 import { useImagePicker } from "../../hooks";
 import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
+import { useWorkshop } from "../../providers/WorkshopProvider";
 
 const accountSchema = Yup.object().shape({
     firstName: Yup.string().required("Champ requis"),
@@ -23,8 +24,9 @@ const accountSchema = Yup.object().shape({
 type AccountScreenProps = NativeStackScreenProps<RootStackParamList, 'Account'>;
 
 export default function AccountScreen({ navigation, route: { params } }: AccountScreenProps) {
-    const { theme: { colors: { primary, greyOutline } } } = useTheme();
+    const { theme: { colors: { primary, greyOutline, black } } } = useTheme();
     const [isEditMode, setIsEditMode] = useState(false);
+    const { workshopNovels } = useWorkshop();
     const { session, updateSession } = useSession();
     const { userProfile: { pseudo, firstName, lastName, bio, avatarUrl, gender } } = session;
     const { call, isLoading } = useCall(updateUserProfile, {
@@ -37,7 +39,7 @@ export default function AccountScreen({ navigation, route: { params } }: Account
     const toggleEditMode = () => setIsEditMode(!isEditMode);
 
     return (
-        <View style={{ flex: 1, backgroundColor: primary, justifyContent: "space-between" }}>
+        <View style={{ flex: 1, backgroundColor: black, justifyContent: "space-between" }}>
             {
                 !isEditMode && (
                     <FAB style={{ zIndex: 2 }} color={primary} onPress={toggleEditMode} placement="right" >
@@ -76,10 +78,9 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                         </View>
                         <View style={{ flex: 1 }}>
                             <View style={{ flex: 0.3, marginVertical: 5, paddingHorizontal: 15 }}>
-
                                 <View style={{ flexDirection: "row", justifyContent: "space-around", paddingVertical: 10 }}>
                                     <View style={{ alignItems: "center" }}>
-                                        <Text style={{ color: "white", fontFamily: "Quicksand-700", fontSize: 25 }}>12</Text>
+                                        <Text style={{ color: "white", fontFamily: "Quicksand-700", fontSize: 25 }}>{workshopNovels.length}</Text>
                                         <Text style={{
                                             color: "white", fontFamily: "Quicksand-600",
                                             textTransform: "uppercase", fontSize: 15, opacity: 0.8

@@ -37,7 +37,7 @@ export default function GenreScreen({ navigation }: GenreScreenProps) {
 
     return (
         <>
-            <Card containerStyle={{ margin: 0, padding: 0 }}>
+            <Card containerStyle={{ margin: 0, padding: 0, paddingVertical: 5 }}>
                 <FlatList
                     showsHorizontalScrollIndicator={false}
                     horizontal

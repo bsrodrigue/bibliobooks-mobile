@@ -11,6 +11,7 @@ import { AccountScreen } from "../AccountScreen";
 import { DiscoverScreen } from "../DiscoverScreen";
 import { LibraryScreen } from "../LibraryScreen";
 import { MainWorkshopScreen } from "../MainWorkshopScreen";
+import { SearchScreen } from "../SearchScreen";
 
 const styles = StyleSheet.create({
     container: {
@@ -72,16 +73,19 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                 },
                 tabBarActiveTintColor: primary,
                 header: ({ route, options }) => {
-                    return route.name === "Discover" ? <Header onPressSettings={() => navigation.navigate("Settings")} /> : <SimpleHeader
-                        label={options.tabBarLabel.toString()}
-                        rightIcon={route.name === "Account" ? (
-                            <TouchableOpacity onPress={() => {
-                                setLogoutDialogIsVisible(true);
-                            }}>
-                                <Icon size={20} name="logout" type="ant-design" />
-                            </TouchableOpacity>
-                        ) : null}
-                    />
+                    return route.name === "Discover" ?
+                        <Header
+                            onSearchPress={() => navigation.navigate("Search")}
+                            onPressSettings={() => navigation.navigate("Settings")} /> : <SimpleHeader
+                            label={options.tabBarLabel.toString()}
+                            rightIcon={route.name === "Account" ? (
+                                <TouchableOpacity onPress={() => {
+                                    setLogoutDialogIsVisible(true);
+                                }}>
+                                    <Icon size={20} name="logout" type="ant-design" />
+                                </TouchableOpacity>
+                            ) : null}
+                        />
                 }
             }}>
                 <Tab.Screen
@@ -91,6 +95,17 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
                     }}
                     name="Discover"
                     component={DiscoverScreen} />
+                <Tab.Screen
+                    options={{
+                        headerShown: false,
+                        tabBarLabel: "Recherche",
+                        tabBarIcon: () => ((<Icon name="search" type="font-awesome-5" />)),
+                        tabBarItemStyle: {
+                            display: "none"
+                        }
+                    }}
+                    name="Search"
+                    component={SearchScreen} />
                 <Tab.Screen
                     options={{
                         tabBarLabel: "Bibliothèque",

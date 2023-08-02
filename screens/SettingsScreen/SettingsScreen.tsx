@@ -63,8 +63,8 @@ export default function SettingsScreen({ navigation }: SettingsScreenProps) {
                                 data={children} renderItem={({ index, item }) => (
                                     <TouchableOpacity
                                         onPress={item.onPress}
-                                        style={{ opacity: 0.5, marginVertical: 10 }} key={index}>
-                                        <Text style={{ fontFamily: "Quicksand-700", color: item?.danger ? error : "black" }}>{item.title}</Text>
+                                        style={{ marginVertical: 10 }} key={index}>
+                                        <Text style={{ fontFamily: "Quicksand-600", color: item?.danger ? error : "black" }}>{item.title}</Text>
                                     </TouchableOpacity>
                                 )} />
                         </View>

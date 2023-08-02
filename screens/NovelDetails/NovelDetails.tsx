@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Avatar, BottomSheet, Card, Divider, FAB, Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { useState } from "react";
-import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { addToLibrary, removeFromLibrary } from "../../api/novels";
 import { useNovelStats } from "../../hooks/api/reader";
@@ -75,7 +75,9 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                                 </View>
                                 <Divider style={{ marginVertical: 15, opacity: 0.5 }} />
                                 <Text style={{ fontSize: 18, fontFamily: "Quicksand-700", marginBottom: 10 }}>Synopsis</Text>
-                                <Text style={{ opacity: 0.6, lineHeight: 16, fontFamily: "Quicksand" }}>{description}</Text>
+                                <ScrollView style={{ maxHeight: 90 }}>
+                                    <Text style={{ opacity: 0.6, lineHeight: 16, fontFamily: "Quicksand", }}>{description}</Text>
+                                </ScrollView>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginVertical: 10 }}>
                                     <Text style={{ fontFamily: "Quicksand-700", fontSize: 18 }}>{chapters.length}{" "}chapitres</Text>
                                     <TouchableOpacity onPress={() => setChapterListIsVisible(true)} >

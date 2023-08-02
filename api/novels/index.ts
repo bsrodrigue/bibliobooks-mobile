@@ -1,4 +1,4 @@
-import { arrayRemove, arrayUnion, getDocs, query, updateDoc, where } from "firebase/firestore";
+import { arrayRemove, arrayUnion, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { Chapter, EntityType, Library, Like, Novel, NovelGenre, NovelStatus, Read } from "../../types/models";
 import { getUserProfile } from "../auth";
 import { createOwnedEntity, deleteEntityById, getColRefFromDocMap, getEntitiesOwnedByUser, getEntitiesWhere, getEntityById, getEntityRefById, getPublicEntities, updateEntity, uploadUserFile } from "../base";
@@ -8,7 +8,20 @@ export async function uploadNovelCover(title: string, coverImg: File | Blob) {
 }
 
 export async function getNovelChapters(novelId: string): Promise<Array<Chapter>> {
-    return await getEntitiesWhere("chapter", where("novelId", "==", novelId))
+    const modelRef = getColRefFromDocMap("chapter");
+    const q = query(modelRef, where("novelId", "==", novelId), orderBy("order", "asc"));
+    const qs = await getDocs(q);
+
+    if (qs.empty) {
+        return [];
+    }
+
+    const result = [];
+    qs.docs.forEach((doc) => {
+        result.push(doc.data());
+    })
+
+    return result;
 }
 
 export type CreateNovelInput = {
@@ -107,7 +120,7 @@ export type GetPublicChaptersFromNovelOutput = Promise<Array<Chapter>>
 
 export async function getPublicChaptersFromNovel({ novelId }: GetPublicChaptersFromNovelInput): GetPublicChaptersFromNovelOutput {
     const modelRef = getColRefFromDocMap("chapter");
-    const q = query(modelRef, where("status", "==", "published"), where("novelId", "==", novelId));
+    const q = query(modelRef, where("status", "==", "published"), where("novelId", "==", novelId), orderBy("order"));
     const qs = await getDocs(q);
 
     if (qs.empty) {
@@ -174,7 +187,7 @@ export type GetUniqueChapterEntityByUserInput = {
 
 export async function getUniqueChapterEntityByUser<T>({ userId, chapterId, type }: GetUniqueChapterEntityByUserInput) {
     const modelRef = getColRefFromDocMap(type);
-    const q = query(modelRef, where("chapterId", "==", chapterId), where("authorId", "==", userId));
+    const q = query(modelRef, where("chapterId", "==", chapterId), where("ownerId", "==", userId));
     const qs = await getDocs(q);
 
     if (qs.empty) {

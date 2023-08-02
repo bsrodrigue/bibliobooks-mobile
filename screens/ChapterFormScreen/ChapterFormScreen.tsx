@@ -22,12 +22,16 @@ export default function ChapterFormScreen({ navigation, route: { params: { mode,
 
     const [content, setContent] = useState(chapter?.body || "");
     const [title, setTitle] = useState(chapter?.title || "");
+    const [order, setOrder] = useState(chapter?.order.toString() || (novel.chapters.length + 1).toString())
     const _editor = useRef(null)
 
     return (
         <View style={{ flex: 1, backgroundColor: "white" }}>
             <View style={{ padding: 20, flex: 1 }}>
-                <TextInput onChangeText={setTitle} value={title} label="Titre du chapitre" placeholder="Veuillez saisir le titre du chapitre" />
+                <View style={{ flexDirection: "row", gap: 5 }}>
+                    <TextInput containerStyle={{ flex: 0.9 }} onChangeText={setTitle} value={title} label="Titre du chapitre" placeholder="Veuillez saisir le titre du chapitre" />
+                    <TextInput containerStyle={{ flex: 0.1 }} keyboardType="numeric" onChangeText={setOrder} value={order} label="#" />
+                </View>
                 <ScrollView
                     contentContainerStyle={{
                         flex: 1
@@ -57,10 +61,10 @@ export default function ChapterFormScreen({ navigation, route: { params: { mode,
                     onPress={async () => {
                         if (!title || !content) return;
                         if (mode === "create") {
-                            const newChapter = await create({ title, body: content, novelId: novel.id, order: novel.chapters.length + 1, userId }) as Chapter;
+                            const newChapter = await create({ title, body: content, novelId: novel.id, order: parseInt(order), userId }) as Chapter;
                             updateWorkshopNovel(novel.id, { chapters: [...novel.chapters, newChapter] });
                         } else {
-                            const editedChapter = await edit({ title, body: content, chapterId: chapter.id }) as Chapter;
+                            const editedChapter = await edit({ title, body: content, chapterId: chapter.id, order: parseInt(order) }) as Chapter;
                             updateWorkshopChapter(novel, chapter.id, editedChapter);
                         }
                         navigation.pop();

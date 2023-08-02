@@ -4,7 +4,6 @@ import { useTheme } from "@rneui/themed";
 import { Text, View } from "react-native";
 import { RootStackParamList } from "../../types";
 import { GenreScreen } from "../GenreScreen";
-import { HomeScreen } from "../HomeScreen";
 import { NoveltyScreen } from "../NoveltyScreen";
 
 const Tab = createBottomTabNavigator();
@@ -44,7 +43,6 @@ export default function DiscoverScreen({ navigation }: DiscoverScreenProps) {
                         </View>
                     )
                 }}>
-                <Tab.Screen component={HomeScreen} name="Home" options={{ title: "Découverte" }} />
                 <Tab.Screen component={NoveltyScreen} name="Novelty" options={{ title: "Nouveautés" }} />
                 <Tab.Screen component={GenreScreen} name="Genres" options={{ title: "Catégories" }} />
             </Tab.Navigator>

@@ -1,4 +1,4 @@
-import { DocumentData, DocumentReference, QueryConstraint, QueryOrderByConstraint, addDoc, collection, deleteDoc, getDoc, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
+import { DocumentData, DocumentReference, QueryCompositeFilterConstraint, QueryConstraint, QueryOrderByConstraint, addDoc, collection, deleteDoc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { config } from "../../config";
 import { db, storage } from "../../config/firebase";
@@ -100,6 +100,23 @@ export async function getPublicEntities<T>(type: EntityType): Promise<Array<T>> 
 export async function getEntitiesWhere<T>(type: EntityType, ...queryConstraints: Array<QueryConstraint | QueryOrderByConstraint>): Promise<Array<T>> {
     const modelRef = getColRefFromDocMap(type);
     const q = query(modelRef, ...queryConstraints,);
+    const qs = await getDocs(q);
+
+    if (qs.empty) {
+        return [];
+    }
+
+    const result = [];
+    qs.docs.forEach((doc) => {
+        result.push(doc.data());
+    })
+
+    return result;
+}
+
+export async function getEntitiesWhereOr<T>(type: EntityType, queryConstraints: QueryCompositeFilterConstraint): Promise<Array<T>> {
+    const modelRef = getColRefFromDocMap(type);
+    const q = query(modelRef, queryConstraints,);
     const qs = await getDocs(q);
 
     if (qs.empty) {

@@ -20,6 +20,7 @@ export type EditChapterInput = {
     chapterId: string;
     title?: string;
     body?: string;
+    order?: number
 }
 
 export async function editChapter({ chapterId, ...input }: EditChapterInput) {

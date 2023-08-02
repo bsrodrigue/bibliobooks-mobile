@@ -16,6 +16,7 @@ export type RootStackParamList = {
     Workshop: any;
     Publications: any;
     Chapters: any;
+    Search: any;
     NovelWorkshop: any;
     Settings: any;
     ChangeEmail: any;
