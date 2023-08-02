@@ -33,7 +33,7 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
         onSuccess(result) {
             const payload = result as Novel;
             addWorkshopNovel({ ...payload, chapters: [] })
-            navigation.replace("ChapterWorkshop", { novelId: novel.id });
+            navigation.replace("ChapterWorkshop", { novelId: result.id });
         },
         successMessage: "Nouvelle histoire créée avec succès!"
     });
