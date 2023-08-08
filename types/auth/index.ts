@@ -10,9 +10,9 @@ export type UserProfile = {
     favouriteGenres?: Array<string>;
     gender: "male" | "female";
     isAccountSetup: boolean;
-    userId: string;
 };
 
 export type UserSession = {
+    token: string;
     userProfile: UserProfile;
 }

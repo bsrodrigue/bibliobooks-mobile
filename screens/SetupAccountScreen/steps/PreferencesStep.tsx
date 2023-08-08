@@ -4,28 +4,31 @@ import { Formik } from "formik";
 import { useRef, useState } from "react";
 import { FlatList, ImageBackground, Text, TouchableOpacity, View } from "react-native";
 import * as Yup from "yup";
-import { setupAccount } from "../../../api/auth";
+import { SetupAccountInput, setupAccount } from "../../../api/auth";
 import useCall from "../../../api/useCall";
 import { Button } from "../../../components";
 import { config } from "../../../config";
-import { useSession } from "../../../providers";
-import { RootStackParamList } from "../../../types";
+import { RootStackParamList, UIGenre } from "../../../types";
 
 const preferencesSchema = Yup.object().shape({
-    favouriteGenres: Yup.string().required("Champ requis"),
+    favouriteGenres: Yup.string().optional(),
 });
 
 type PreferencesStepProps = {
-    formValues?: any;
     navigation?: NativeStackNavigationProp<RootStackParamList, "SetupAccount", undefined>;
+    formValues: SetupAccountInput;
 };
 
 export default function PreferencesStep({ formValues, navigation }: PreferencesStepProps) {
     const { theme: { colors: { primary } } } = useTheme();
-    const { session: { userProfile: { userId } } } = useSession();
-    const { call, isLoading } = useCall(setupAccount);
+    const { call, isLoading } = useCall(setupAccount, {
+        onSuccess(result) {
+            console.log(result);
+            navigation.replace("SetupAccountSuccess", { userProfile: result });
+        },
+    });
     const numColumns = useRef(2);
-    const [genres, setGenres] = useState(config.genres.map(genre => ({
+    const [genres, setGenres] = useState<Array<UIGenre & { selected: boolean }>>(config.genres.map(genre => ({
         selected: false, ...genre,
     })))
 
@@ -48,11 +51,8 @@ export default function PreferencesStep({ formValues, navigation }: PreferencesS
                 favouriteGenres: "",
             }}
             onSubmit={async (values) => {
-                const favs = JSON.parse(values.favouriteGenres);
-                const genres = favs.map((fav) => fav.value);
-                values.favouriteGenres = genres;
-                const result = await call({ ...values, ...formValues, userId });
-                result && navigation.replace("SetupAccountSuccess", { userProfile: result });
+                const genres = values.favouriteGenres ? JSON.parse(values.favouriteGenres).map((fav) => fav.value) : [];
+                await call({ ...formValues, favouriteGenres: genres });
             }}
         >
             {({ handleChange, handleSubmit }) => (
@@ -65,7 +65,7 @@ export default function PreferencesStep({ formValues, navigation }: PreferencesS
                         numColumns={numColumns.current}
                         data={genres}
                         columnWrapperStyle={{ gap: 15 }}
-                        renderItem={({ item: { title, cover, value, selected } }) => (
+                        renderItem={({ item: { value, cover, selected, title } }) => (
                             <TouchableOpacity
                                 style={{ flex: 1, marginVertical: 10 }}
                                 onPress={() => {

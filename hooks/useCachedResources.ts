@@ -2,10 +2,13 @@ import { loadAsync } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect, useState } from "react";
 import { useAsyncStorage } from "../lib/storage";
+import { UserSession } from "../types/auth";
+import { getJwtExpirationDate } from "../lib/jwt";
+import client from "../api/client";
 
 export default function useCachedResources() {
     const [isLoadingComplete, setLoadingComplete] = useState(false);
-    const [session, setSession] = useState();
+    const [session, setSession] = useState<UserSession>();
     const [onboarding, setOnboarding] = useState();
     const { getData } = useAsyncStorage();
 
@@ -26,8 +29,22 @@ export default function useCachedResources() {
                     ...quicksandFontConfig,
                 });
 
-                const session = await getData("session");
-                setSession(JSON.parse(session));
+                const jsonSession = await getData("session");
+                let session: UserSession = JSON.parse(jsonSession);
+
+                let expirationDate = null;
+
+                if (session?.token) {
+                    expirationDate = getJwtExpirationDate(session.token);
+                }
+
+                if (expirationDate === null || new Date() >= expirationDate) {
+                    setSession(null);
+                } else {
+                    client.defaults.headers.common.Authorization = `Bearer ${session.token}`
+                    setSession(session);
+                }
+
 
                 const onboarding = await getData("onboarding");
                 setOnboarding(JSON.parse(onboarding));

@@ -43,7 +43,7 @@ export type RootStackParamList = {
         novel?: ReaderNovel;
     };
     RegisterSuccess: {
-        userProfile: UserProfile;
+        token: string;
     };
     SetupAccountSuccess: {
         userProfile: UserProfile;

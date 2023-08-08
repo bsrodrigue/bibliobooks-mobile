@@ -9,16 +9,15 @@ import { notify } from "../../../lib";
 const informationSchema = Yup.object().shape({
     firstName: Yup.string().required("Champ requis"),
     lastName: Yup.string().required("Champ requis"),
-    gender: Yup.string().required("Champ requis"),
-    birthdate: Yup.date().required("Champ requis"),
+    gender: Yup.string().optional(),
+    birthdate: Yup.date().optional(),
 });
 
 type InformationsStepProps = {
-    formValues?: object;
     onNext?: (values: object) => void;
 };
 
-export default function InformationsStep({ formValues, onNext }: InformationsStepProps) {
+export default function InformationsStep({ onNext }: InformationsStepProps) {
     const [birthdate, setBirthdate] = useState(new Date());
 
     return (
@@ -27,11 +26,11 @@ export default function InformationsStep({ formValues, onNext }: InformationsSte
             initialValues={{
                 firstName: "",
                 lastName: "",
-                gender: "male",
+                gender: "MALE",
                 birthdate: new Date(),
             }}
             onSubmit={(values) => {
-                onNext?.({ ...formValues, ...values, birthdate: values.birthdate.toISOString() })
+                onNext?.({ ...values, birthdate: values.birthdate.toISOString() })
             }}
         >
             {({ handleChange, handleSubmit, values, errors }) => (

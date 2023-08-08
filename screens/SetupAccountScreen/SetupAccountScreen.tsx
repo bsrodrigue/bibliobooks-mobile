@@ -1,7 +1,7 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import React, { useState } from "react";
-import { BackHandler, KeyboardAvoidingView, Platform, View } from "react-native";
+import { BackHandler, View } from "react-native";
 import { SetupAccountInput } from "../../api/auth";
 import { AuthForm } from "../../components";
 import { RootStackParamList } from "../../types";
@@ -15,18 +15,17 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [formValues, setFormValues] = useState<SetupAccountInput>();
 
-    const next = (values: SetupAccountInput) => {
-        setFormValues(values);
+    const updateFormValues = (values: Partial<SetupAccountInput>) => {
+        setFormValues((prev) => ({ ...prev, ...values }));
+    }
 
-        if (currentStepIndex < steps.length - 1) {
-            setCurrentStepIndex(currentStepIndex + 1)
-            return;
-        }
+    const next = (values: Partial<SetupAccountInput>) => {
+        updateFormValues(values);
+        (currentStepIndex < steps.length - 1) && setCurrentStepIndex(currentStepIndex + 1)
     };
 
     const previous = () => {
-        currentStepIndex !== 0 &&
-            setCurrentStepIndex(currentStepIndex - 1)
+        currentStepIndex !== 0 && setCurrentStepIndex(currentStepIndex - 1)
     };
 
     useFocusEffect(
@@ -46,12 +45,12 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
         {
             title: "Informations",
             subtitle: "Configurez vos informations personelles",
-            component: <InformationsStep formValues={formValues} onNext={next} />
+            component: <InformationsStep onNext={next} />
         },
         {
             title: "Compte",
             subtitle: "Configurez votre compte",
-            component: <AccountStep formValues={formValues} onNext={next} />
+            component: <AccountStep onNext={next} />
         },
         {
             title: "Préférences",
@@ -61,9 +60,7 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
     ]
 
     return (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios"
-            ? "padding"
-            : "height"}>
+        <View style={{ flex: 1 }}>
             <AuthForm
                 title={steps[currentStepIndex].title}
                 subtitle={steps[currentStepIndex].subtitle}>
@@ -73,6 +70,6 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
                     </View>
                 </View>
             </AuthForm>
-        </KeyboardAvoidingView>
+        </View>
     )
 }

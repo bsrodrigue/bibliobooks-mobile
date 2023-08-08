@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useState } from "react";
-import { auth } from "../../config/firebase";
+import client from "../../api/client";
+import { getJwtUser } from "../../lib/jwt";
 import { useAsyncStorage } from "../../lib/storage";
 import { UserSession } from "../../types/auth";
 import SessionContext from "./SessionContext";
@@ -18,13 +19,20 @@ export default function SessionProvider({ children, uSession }: SessionProviderP
     }, [session]);
 
     const updateSession = async (session: Partial<UserSession>) => {
-        setSession((prev: UserSession) => ({ ...prev, ...session }));
+        const token = session?.token;
+        let user = null;
+        if (token) {
+            user = getJwtUser(token);
+            client.defaults.headers.common.Authorization = `Bearer ${token}`
+        }
+        setSession((prev: UserSession) => ({ token: token || prev?.token, userProfile: user || prev?.userProfile }));
     }
 
     const stopSession = async () => {
-        await auth.signOut();
         await removeData("session");
         await removeData("account-setup");
+
+        client.defaults.headers.common.Authorization = '';
         setSession(null);
     }
 

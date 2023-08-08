@@ -27,8 +27,8 @@ type LoginScreenProps = NativeStackScreenProps<RootStackParamList, 'Login'>;
 export default function LoginScreen({ navigation }: LoginScreenProps) {
     const { updateSession } = useSession();
     const { call, isLoading } = useCall(login, {
-        onSuccess(userProfile) {
-            updateSession({ userProfile });
+        onSuccess(token) {
+            updateSession({ token });
         },
     });
 

@@ -59,7 +59,6 @@ const TextInput = forwardRef(({ onChange, inputStyle, errorStyle, ...props }: Te
                 borderColor: props.errorMessage ? error : "#CCCCCC",
                 borderWidth: 1,
                 borderRadius: 10,
-                paddingVertical: 5,
                 paddingHorizontal: 10,
                 marginHorizontal: -10
             }}

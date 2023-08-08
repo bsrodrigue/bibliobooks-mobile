@@ -1,47 +1,47 @@
 import Crypto from "../lib/crypto";
-import { RadioInputOption } from "../types";
+import { RadioInputOption, UIGenre } from "../types";
 
 const genderOptions: RadioInputOption[] = [
-    { label: "Homme", value: "male", imgSrc: require("../assets/illustrations/male.png") },
-    { label: "Femme", value: "female", imgSrc: require("../assets/illustrations/female.png") },
+    { label: "Homme", value: "MALE", imgSrc: require("../assets/illustrations/male.png") },
+    { label: "Femme", value: "FEMALE", imgSrc: require("../assets/illustrations/female.png") },
 ]
 
 const genreTitleMap = {
-    "action": "Action",
-    "adventure": "Aventure",
-    "fantasy": "Fantasy",
-    "romance": "Romance",
-    "traditional": "Traditionnel",
+    "ACTION": "Action",
+    "ADVENTURE": "Aventure",
+    "FANTASY": "Fantasy",
+    "ROMANCE": "Romance",
+    "TRADITIONAL": "Traditionnel",
 };
 
-const genres = [
+const genres: Array<UIGenre> = [
     {
         title: "Action",
-        value: "action",
+        value: "ACTION",
         description: "",
         cover: require("../assets/images/action.jpg")
     },
     {
         title: "Aventure",
-        value: "adventure",
+        value: "ADVENTURE",
         description: "",
         cover: require("../assets/images/adventure.jpg")
     },
     {
         title: "Fantasy",
-        value: "fantasy",
+        value: "FANTASY",
         description: "",
         cover: require("../assets/images/fantasy.jpg")
     },
     {
         title: "Romance",
-        value: "romance",
+        value: "ROMANCE",
         description: "",
         cover: require("../assets/images/romance.jpg")
     },
     {
         title: "Traditionnel",
-        value: "traditional",
+        value: "TRADITIONAL",
         description: "",
         cover: require("../assets/images/traditional.jpg")
     },
