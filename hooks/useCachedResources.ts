@@ -45,7 +45,6 @@ export default function useCachedResources() {
                     setSession(session);
                 }
 
-
                 const onboarding = await getData("onboarding");
                 setOnboarding(JSON.parse(onboarding));
 

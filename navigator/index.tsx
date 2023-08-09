@@ -1,11 +1,9 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSession } from "../providers";
-import { WorkshopProvider } from "../providers/WorkshopProvider";
 import { ChangeEmailScreen, ChangePasswordScreen, ChapterPreviewScreen, ForgotPasswordScreen, LoginScreen, MainScreen, OnboardingScreen, ReaderScreen, RegisterScreen, RegisterSuccessScreen, SettingsScreen, SetupAccountScreen, SetupAccountSuccessScreen } from "../screens";
 import NovelDetailsScreen from "../screens/NovelDetails/NovelDetails";
 import { UserSession } from "../types/auth";
-import { LibraryProvider } from "../providers/LibraryProvider";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,7 +30,7 @@ type PrivateStackProps = {
 };
 
 function PrivateStack({ session }: PrivateStackProps) {
-    const initialRouteName = !Boolean(session?.userProfile) ? "SetupAccount" : "Main";
+    const initialRouteName = !session.userProfile.isAccountSetup ? "SetupAccount" : "Main";
     return (
         // <WorkshopProvider>
         // <LibraryProvider>

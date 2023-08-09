@@ -15,6 +15,7 @@ if (typeof atob === 'undefined') {
 export default function App() {
   const { isLoadingComplete, session, onboarding } = useCachedResources();
 
+
   if (!isLoadingComplete) {
     return null;
   }

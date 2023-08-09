@@ -33,9 +33,6 @@ export default function Footer({ submitTitle,
             <Button
                 title={submitTitle}
                 titleStyle={styles.submit}
-                color="black"
-                size="lg"
-                radius={5}
                 onPress={onPressTitle}
                 loading={loading}
                 containerStyle={{
