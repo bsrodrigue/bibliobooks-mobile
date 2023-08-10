@@ -1,12 +1,10 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { signInWithEmailAndPassword, updateEmail } from "firebase/auth";
 import { Formik } from "formik";
-import { useState } from "react";
 import { View } from "react-native";
 import * as Yup from "yup";
+import { changeEmail } from "../../api/auth";
+import useCall from "../../api/useCall";
 import { AuthForm, Button, TextInput } from "../../components";
-import { auth } from "../../config/firebase";
-import { notify } from "../../lib";
 import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 
@@ -18,14 +16,19 @@ const changeEmailSchema = Yup.object().shape({
 type ChangeEmailScreenProps = NativeStackScreenProps<RootStackParamList, 'ChangeEmail'>;
 
 export default function ChangeEmailScreen({ navigation }: ChangeEmailScreenProps) {
-    const { session: { userProfile }, updateSession } = useSession();
-    const [isLoading, setIsLoading] = useState(false);
+    const { updateSession } = useSession();
+    const { call, isLoading } = useCall(changeEmail, {
+        successMessage: "Votre adresse email a été changée avec succès",
+        onSuccess(email) {
+            updateSession({ profile: { email } });
+            navigation.pop();
+        },
+    })
 
     return (
         <AuthForm
             title={"Configuration"}
-            subtitle="Changement d'adresse email"
-        >
+            subtitle="Changement d'adresse email">
             <Formik
                 validationSchema={changeEmailSchema}
                 initialValues={{
@@ -33,23 +36,9 @@ export default function ChangeEmailScreen({ navigation }: ChangeEmailScreenProps
                     password: "",
                 }}
                 onSubmit={
-                    async (values) => {
-
-                        try {
-                            setIsLoading(true)
-                            const recentLoggedUser = await signInWithEmailAndPassword(auth, userProfile.email, values.password);
-                            await updateEmail(recentLoggedUser.user, values.email);
-                            await updateSession({ userProfile: { ...userProfile, email: values.email } })
-                            notify.success("Votre adresse email a été changée avec succès")
-                            navigation.pop();
-                        } catch (error) {
-                            notify.error(error.message);
-                        } finally {
-                            setIsLoading(false)
-                        }
-
-                    }}
-            >
+                    async ({ email, password }) => {
+                        await call({ email, password });
+                    }}>
                 {({ values, errors, handleChange, handleSubmit }) => (
                     <View style={{ flex: 1, justifyContent: "space-between" }}>
                         <View>

@@ -1,119 +1,82 @@
-import { User, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { getDocs, query, where } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { auth, storage } from "../../config/firebase";
 import { UserProfile } from "../../types/auth";
-import { createEntity, createOwnedEntity, getColRefFromDocMap, updateEntity } from "../base";
-import { createLibrary } from "../novels";
+import { uploadFile } from "../base";
+import client from "../client";
 
-export type GetUserProfileInput = {
-    userId: string;
-}
-
-export type GetUserProfileOutput = {
-    userProfile: UserProfile;
-    userProfileRef: any;
-};
-
-export async function getUserProfile({ userId }: GetUserProfileInput): Promise<GetUserProfileOutput> {
-    const userProfilesRef = getColRefFromDocMap("user_profile");
-    const q = query(userProfilesRef, where("userId", "==", userId));
-    const qs = await getDocs(q);
-
-    if (qs.empty) {
-        throw new Error("User profile not found");
-    }
-
-    const userProfile = qs.docs[0].data() as UserProfile;
-
-    return { userProfile, userProfileRef: qs.docs[0].ref };
-}
+//TODO: Type Request Responses
 
 export type RegisterInput = {
     email: string;
     password: string;
 };
 
-export async function register({ email, password }: RegisterInput) {
-    const { user } = await createUserWithEmailAndPassword(auth, email, password);
-    return await createUserProfile(user);
+export async function register({ email, password }: RegisterInput): Promise<string> {
+    const result = await client.post("auth/register", { email, password });
+    return result.data["access_token"];
 }
 
-export async function createUserProfile(user: User) {
-    const payload = {
-        userId: user.uid,
-        isAccountSetup: false,
-        email: user.email,
-    }
+export type LoginInput = RegisterInput;
 
-    return await createEntity(payload, "user_profile");
-}
-
-export type UpdateUserProfile = {
-    userId: string;
-    profile: Partial<UserProfile>;
-    avatarImg?: Blob | File;
-}
-
-export async function updateUserProfile({ userId, profile, avatarImg }: UpdateUserProfile) {
-    const { userProfileRef } = await getUserProfile({ userId });
-
-    if (avatarImg) {
-        const avatarRef = ref(storage, `files/users/${userId}/avatar/avatar.jpeg`);
-        const result = await uploadBytes(avatarRef, avatarImg);
-        const downloadUrl = await getDownloadURL(result.ref);
-        profile.avatarUrl = downloadUrl;
-    }
-
-    await updateEntity(userProfileRef, { ...profile });
-    return profile;
-}
-
-export type LoginInput = {
-    email: string;
-    password: string;
-}
-
-export type LoginOutput = UserProfile;
-
-export async function login({ email, password }: RegisterInput): Promise<LoginOutput> {
-    const { user } = await signInWithEmailAndPassword(auth, email, password);
-    const { userProfile } = await getUserProfile({ userId: user.uid });
-    return userProfile;
+export async function login({ email, password }: LoginInput): Promise<string> {
+    const result = await client.post("auth/login", { email, password });
+    return result.data["access_token"];
 }
 
 export type SetupAccountInput = {
-    userId?: string;
     firstName: string;
     lastName: string;
     birthdate: string;
-    pseudo: string;
-    bio: string;
-    gender: "male" | "female";
+    username: string;
+    bio?: string;
+    gender: "MALE" | "FEMALE";
     avatarImg?: File | Blob;
     favouriteGenres?: Array<string>;
 }
 
-export type SetupAccountOutput = UserProfile;
-
-export async function setupAccount(input: SetupAccountInput): Promise<SetupAccountOutput> {
-    const { userProfile, userProfileRef } = await getUserProfile({ userId: input.userId });
-
+export async function setupAccount({ avatarImg, ...payload }: SetupAccountInput): Promise<any> {
     let avatarUrl = "";
-    if (input.avatarImg) {
-        const avatarRef = ref(storage, `files/users/${input.userId}/avatar/avatar.jpeg`);
-        const result = await uploadBytes(avatarRef, input.avatarImg);
-        const downloadUrl = await getDownloadURL(result.ref);
-        avatarUrl = downloadUrl;
+    if (avatarImg) {
+        avatarUrl = await uploadFile(avatarImg);
     }
 
-    delete input.userId;
-    delete input.avatarImg;
+    const result = await client.post("users/me/setupAccount", { avatarUrl, ...payload });
+    return result.data.user;
+}
 
-    const result: SetupAccountOutput = {
-        ...userProfile, ...input, avatarUrl, isAccountSetup: true
+export type UpdateUserProfile = {
+    profile: Partial<UserProfile>;
+    avatarImg?: Blob | File;
+}
+
+export async function updateUserProfile({ profile, avatarImg }: UpdateUserProfile) {
+    let avatarUrl = "";
+    if (avatarImg) {
+        avatarUrl = await uploadFile(avatarImg);
     }
 
-    await updateEntity(userProfileRef, result);
-    return result;
+    const result = await client.post("users/me/updateUserProfile", { avatarUrl, ...profile });
+    return result.data.user;
+}
+
+export async function getUserProfile({ }) {
+    const result = await client.get("auth/getUserProfile");
+    return result.data
+}
+
+export type ChangeEmailInput = {
+    email: string;
+    password: string;
+};
+
+export async function changeEmail({ email, password }: ChangeEmailInput) {
+    await client.post("auth/changeEmail", { email, password });
+    return email;
+}
+
+export type ChangePasswordInput = {
+    oldPassword: string;
+    password: string;
+};
+
+export async function changePassword({ oldPassword, password }: ChangePasswordInput) {
+    await client.post("auth/changePassword", { oldPassword, password });
 }

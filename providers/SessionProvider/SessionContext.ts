@@ -1,10 +1,11 @@
 import { createContext } from "react";
-import { UserSession } from "../../types/auth";
+import { Session, UserProfile } from "../../types/auth";
 
+export type SessionUpdateParams = Partial<{ token?: string; profile?: Partial<UserProfile> }>;
 
 type SessionContextType = {
-    session: UserSession;
-    updateSession: (session: Partial<UserSession>) => Promise<void>;
+    session?: Session;
+    updateSession: (session: SessionUpdateParams) => void;
     stopSession: () => void;
 }
 

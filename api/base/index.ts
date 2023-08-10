@@ -154,3 +154,9 @@ export async function getEntityQuerySnapshotById(id: string, type: EntityType) {
 
     return qs;
 }
+
+export async function uploadFile(file: Blob | File, path?: string) {
+    const fileRef = ref(storage, `files/uploads/${path}`);
+    const result = await uploadBytes(fileRef, file);
+    return await getDownloadURL(result.ref);
+}

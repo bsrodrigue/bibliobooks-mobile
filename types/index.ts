@@ -26,3 +26,9 @@ export type TabItem = {
     label: string;
 }
 
+export type UIGenre = {
+    title: string,
+    value: string,
+    description: string,
+    cover: ImageSourcePropType;
+}

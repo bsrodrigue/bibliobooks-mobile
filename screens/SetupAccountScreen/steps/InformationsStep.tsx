@@ -5,33 +5,34 @@ import * as Yup from "yup";
 import { Button, DateTimePicker, RadioInputGroup, TextInput } from "../../../components";
 import { config } from "../../../config";
 import { notify } from "../../../lib";
+import { SetupAccountInput } from "../../../api/auth";
 
 const informationSchema = Yup.object().shape({
     firstName: Yup.string().required("Champ requis"),
     lastName: Yup.string().required("Champ requis"),
-    gender: Yup.string().required("Champ requis"),
-    birthdate: Yup.date().required("Champ requis"),
+    gender: Yup.string().optional(),
+    birthdate: Yup.date().optional(),
 });
 
 type InformationsStepProps = {
-    formValues?: object;
     onNext?: (values: object) => void;
+    formValues: Partial<SetupAccountInput>;
 };
 
-export default function InformationsStep({ formValues, onNext }: InformationsStepProps) {
+export default function InformationsStep({ onNext, formValues }: InformationsStepProps) {
     const [birthdate, setBirthdate] = useState(new Date());
 
     return (
         <Formik
             validationSchema={informationSchema}
             initialValues={{
-                firstName: "",
-                lastName: "",
-                gender: "male",
+                firstName: formValues?.firstName || "",
+                lastName: formValues?.lastName || "",
+                gender: formValues?.gender || "MALE",
                 birthdate: new Date(),
             }}
             onSubmit={(values) => {
-                onNext?.({ ...formValues, ...values, birthdate: values.birthdate.toISOString() })
+                onNext?.({ ...values, birthdate: values.birthdate.toISOString() })
             }}
         >
             {({ handleChange, handleSubmit, values, errors }) => (
@@ -53,7 +54,7 @@ export default function InformationsStep({ formValues, onNext }: InformationsSte
                             label="Votre genre"
                             name="gender"
                             options={config.genderOptions}
-                            onChange={(_) => handleChange("gender")}
+                            onChange={(gender) => handleChange("gender")(gender)}
                         />
                         <DateTimePicker
                             date={birthdate} mode="date" onChange={(value) => {

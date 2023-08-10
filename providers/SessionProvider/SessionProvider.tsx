@@ -1,30 +1,33 @@
 import { ReactNode, useEffect, useState } from "react";
-import { auth } from "../../config/firebase";
+import client from "../../api/client";
 import { useAsyncStorage } from "../../lib/storage";
-import { UserSession } from "../../types/auth";
-import SessionContext from "./SessionContext";
+import { Session } from "../../types/auth";
+import SessionContext, { SessionUpdateParams } from "./SessionContext";
 
 type SessionProviderProps = {
     children?: ReactNode;
-    uSession?: UserSession;
+    initialSession?: Session;
 }
 
-export default function SessionProvider({ children, uSession }: SessionProviderProps) {
-    const [session, setSession] = useState(uSession);
+export default function SessionProvider({ children, initialSession }: SessionProviderProps) {
+    const [session, setSession] = useState(initialSession);
     const { storeData, removeData } = useAsyncStorage();
 
     useEffect(() => {
         session && storeData("session", session);
     }, [session]);
 
-    const updateSession = async (session: Partial<UserSession>) => {
-        setSession((prev: UserSession) => ({ ...prev, ...session }));
+    const updateSession = (params: SessionUpdateParams) => {
+        if (params.token) {
+            client.defaults.headers.common.Authorization = `Bearer ${params.token}`;
+        }
+        setSession((prev) => ({ token: params?.token || prev?.token, profile: { ...prev?.profile, ...params?.profile } }));
     }
 
+
     const stopSession = async () => {
-        await auth.signOut();
+        client.defaults.headers.common.Authorization = '';
         await removeData("session");
-        await removeData("account-setup");
         setSession(null);
     }
 

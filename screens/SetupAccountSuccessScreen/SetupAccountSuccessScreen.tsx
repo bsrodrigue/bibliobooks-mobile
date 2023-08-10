@@ -1,6 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Image, StyleSheet, Text, View } from "react-native";
-import useCall from "../../api/useCall";
 import { Button } from "../../components";
 import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
@@ -39,11 +38,13 @@ const styles = StyleSheet.create({
 
 type SuccessScreenProps = NativeStackScreenProps<RootStackParamList, 'SetupAccountSuccess'>;
 
-export default function SuccessScreen({ route, navigation }: SuccessScreenProps) {
+export default function SuccessScreen({ route: { params: { userProfile } }, navigation }: SuccessScreenProps) {
     const dimension = 165
     const { updateSession } = useSession();
-    const { call, isLoading } = useCall(updateSession);
-    const { userProfile } = route.params;
+
+    const storeUserProfile = () => {
+        updateSession({ profile: userProfile })
+    }
 
     return (
         <View style={styles.container}>
@@ -59,10 +60,9 @@ export default function SuccessScreen({ route, navigation }: SuccessScreenProps)
             </View>
             <Button
                 onPress={async () => {
-                    await call({ userProfile });
+                    await storeUserProfile();
                     navigation.replace("Main");
                 }}
-                loading={isLoading}
                 buttonStyle={{ backgroundColor: "white" }}
                 titleStyle={styles.confirm}>D'accord</Button>
         </View>

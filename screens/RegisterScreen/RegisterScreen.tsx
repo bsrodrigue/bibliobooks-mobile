@@ -25,18 +25,8 @@ type RegisterScreenProps = NativeStackScreenProps<RootStackParamList, 'Register'
 
 export default function RegisterScreen({ navigation }: RegisterScreenProps) {
     const { call, isLoading } = useCall(register, {
-        onSuccess(userProfile) {
-            navigation.replace("RegisterSuccess", {
-                userProfile: {
-                    ...userProfile,
-                    bio: "",
-                    firstName: "",
-                    lastName: "",
-                    birthdate: new Date().toISOString(),
-                    pseudo: "",
-                    gender: "male"
-                }
-            });
+        onSuccess(token) {
+            navigation.replace("RegisterSuccess", { token });
         },
     });
 
