@@ -16,13 +16,12 @@ export async function getWorkshopNovelFromNovel(novel: Novel): Promise<WorkshopN
 
 export default function WorkshopProvider({ children }: WorkshopProviderProps) {
     const [isLoading, setIsLoading] = useState(false);
-    const { session: { userProfile: { userId } } } = useSession();
     const [workshopNovels, setWorkshopNovels] = useState<Array<WorkshopNovel>>([]);
 
     const fetchWorkshopNovels = async () => {
         try {
             setIsLoading(true);
-            const novels = await getUserNovels({ userId });
+            const novels = await getUserNovels();
             const tasks = [];
             for (const novel of novels) {
                 tasks.push(getWorkshopNovelFromNovel(novel));
