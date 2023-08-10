@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useSession } from "../providers";
 import { ChangeEmailScreen, ChangePasswordScreen, ChapterPreviewScreen, ForgotPasswordScreen, LoginScreen, MainScreen, OnboardingScreen, ReaderScreen, RegisterScreen, RegisterSuccessScreen, SettingsScreen, SetupAccountScreen, SetupAccountSuccessScreen } from "../screens";
 import NovelDetailsScreen from "../screens/NovelDetails/NovelDetails";
-import { UserSession } from "../types/auth";
+import { UserProfile } from "../types/auth";
 
 const Stack = createNativeStackNavigator();
 
@@ -26,11 +26,11 @@ function PublicStack({ skipOnboarding }: PublicStackProps) {
 }
 
 type PrivateStackProps = {
-    session: UserSession;
+    userProfile: UserProfile;
 };
 
-function PrivateStack({ session }: PrivateStackProps) {
-    const initialRouteName = !session.userProfile.isAccountSetup ? "SetupAccount" : "Main";
+function PrivateStack({ userProfile }: PrivateStackProps) {
+    const initialRouteName = !userProfile.isAccountSetup ? "SetupAccount" : "Main";
     return (
         // <WorkshopProvider>
         // <LibraryProvider>
@@ -59,7 +59,7 @@ export default function RootStackNavigator({ skipOnboarding }: RootStackNavigato
 
     return (
         <NavigationContainer>
-            {session ? (<PrivateStack session={session} />) : (<PublicStack skipOnboarding={skipOnboarding} />)}
+            {session ? (<PrivateStack userProfile={session.profile} />) : (<PublicStack skipOnboarding={skipOnboarding} />)}
         </NavigationContainer>
     )
 }

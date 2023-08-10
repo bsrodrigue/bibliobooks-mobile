@@ -14,14 +14,13 @@ const styles = StyleSheet.create({
     },
 
     title: {
-        fontSize: 40,
+        fontSize: 35,
         fontFamily: "Quicksand-700",
     },
 
     subtitle: {
-        fontSize: 20,
+        fontSize: 18,
         fontFamily: "Quicksand-500",
-        fontStyle: "italic",
         opacity: 0.5
     },
 

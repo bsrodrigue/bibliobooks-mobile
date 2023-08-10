@@ -26,12 +26,12 @@ type AccountScreenProps = NativeStackScreenProps<RootStackParamList, 'Account'>;
 export default function AccountScreen({ navigation, route: { params } }: AccountScreenProps) {
     const { theme: { colors: { primary, greyOutline, black } } } = useTheme();
     const [isEditMode, setIsEditMode] = useState(false);
-    const { workshopNovels } = useWorkshop();
+    // const { workshopNovels } = useWorkshop();
     const { session, updateSession } = useSession();
-    const { userProfile: { pseudo, firstName, lastName, bio, avatarUrl, gender } } = session;
+    const { userProfile: { id, pseudo, firstName, lastName, bio, avatarUrl, gender } } = session;
     const { call, isLoading } = useCall(updateUserProfile, {
         async onSuccess(result) {
-            await updateSession({ userProfile: { ...session.userProfile, ...result } });
+            // await updateSession({ userProfile: { ...session.userProfile, ...result } });
             toggleEditMode();
         },
     })
@@ -80,7 +80,7 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                             <View style={{ flex: 0.3, marginVertical: 5, paddingHorizontal: 15 }}>
                                 <View style={{ flexDirection: "row", justifyContent: "space-around", paddingVertical: 10 }}>
                                     <View style={{ alignItems: "center" }}>
-                                        <Text style={{ color: "white", fontFamily: "Quicksand-700", fontSize: 25 }}>{workshopNovels.length}</Text>
+                                        <Text style={{ color: "white", fontFamily: "Quicksand-700", fontSize: 25 }}>{0}</Text>
                                         <Text style={{
                                             color: "white", fontFamily: "Quicksand-600",
                                             textTransform: "uppercase", fontSize: 15, opacity: 0.8
@@ -136,7 +136,7 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                                         const result = await fetch(imgUri);
                                         avatarImg = await result.blob();
                                     }
-                                    await call({ userId: session.userProfile.userId, profile: { ...values }, avatarImg });
+                                    await call({ userId: id, profile: { ...values }, avatarImg });
                                 }}
                                 initialValues={{
                                     firstName,
@@ -153,7 +153,7 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                                             <TextInput errorMessage={errors.pseudo} label="Pseudo" onChangeText={handleChange("pseudo")} value={values.pseudo} />
 
                                             <TextInput errorMessage={errors.bio} multiline numberOfLines={5} label="Bio" onChangeText={handleChange("bio")} value={values.bio} />
-                                            <Button loading={isLoading} onPress={handleSubmit}>Confirmer</Button>
+                                            <Button loading={isLoading} onPress={() => handleSubmit()}>Confirmer</Button>
                                         </View>
                                     </>
 

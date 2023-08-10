@@ -19,9 +19,10 @@ const accountSchema = Yup.object().shape({
 
 type AccountStepProps = {
     onNext?: (values: Partial<SetupAccountInput>) => void;
+    formValues: Partial<SetupAccountInput>;
 };
 
-export default function AccountStep({ onNext }: AccountStepProps) {
+export default function AccountStep({ onNext, formValues }: AccountStepProps) {
     const { theme: { colors: { black, greyOutline, } } } = useTheme();
     const { imgUri, pickImage } = useImagePicker();
 
@@ -29,8 +30,8 @@ export default function AccountStep({ onNext }: AccountStepProps) {
         <Formik
             validationSchema={accountSchema}
             initialValues={{
-                username: "",
-                bio: "",
+                username: formValues?.username || "",
+                bio: formValues?.bio || "",
             }}
             onSubmit={async (values) => {
                 let blob = null;
@@ -57,7 +58,7 @@ export default function AccountStep({ onNext }: AccountStepProps) {
                                 <Avatar
                                     size={125}
                                     rounded
-                                    containerStyle={{ backgroundColor: "black", marginBottom: 10, padding: 2 }}
+                                    containerStyle={{ backgroundColor: black, marginBottom: 10, padding: 2 }}
                                     source={{ uri: imgUri }}
                                 />
                             </View>

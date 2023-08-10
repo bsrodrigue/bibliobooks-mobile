@@ -23,7 +23,6 @@ export default function PreferencesStep({ formValues, navigation }: PreferencesS
     const { theme: { colors: { primary } } } = useTheme();
     const { call, isLoading } = useCall(setupAccount, {
         onSuccess(result) {
-            console.log(result);
             navigation.replace("SetupAccountSuccess", { userProfile: result });
         },
     });

@@ -4,6 +4,7 @@ import { Button } from "../../components";
 import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 import { styles } from "./styles";
+import { getJwtUser } from "../../lib/jwt";
 
 type SuccessScreenProps = NativeStackScreenProps<RootStackParamList, 'RegisterSuccess'>;
 
@@ -11,8 +12,9 @@ export default function SuccessScreen({ route: { params: { token } } }: SuccessS
     const dimension = 165
     const { updateSession } = useSession();
 
-    const initSession = async () => {
-        await updateSession({ token });
+    const initSession = () => {
+        const profile = getJwtUser(token);
+        updateSession({ token, profile });
     }
 
     return (

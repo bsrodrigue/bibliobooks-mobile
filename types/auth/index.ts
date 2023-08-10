@@ -12,7 +12,7 @@ export type UserProfile = {
     isAccountSetup: boolean;
 };
 
-export type UserSession = {
-    token: string;
-    userProfile: UserProfile;
-}
+export type Session = {
+    token?: string;
+    profile?: UserProfile;
+};

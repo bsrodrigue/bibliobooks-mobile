@@ -8,6 +8,7 @@ import useCall from "../../api/useCall";
 import { AuthForm, BaseAuthFormFooter, TextInput } from "../../components";
 import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
+import { getJwtUser } from "../../lib/jwt";
 
 const styles = StyleSheet.create({
     forgotPassword: {
@@ -28,7 +29,8 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
     const { updateSession } = useSession();
     const { call, isLoading } = useCall(login, {
         onSuccess(token) {
-            updateSession({ token });
+            const profile = getJwtUser(token);
+            updateSession({ token, profile });
         },
     });
 

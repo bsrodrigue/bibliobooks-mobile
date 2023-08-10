@@ -5,6 +5,7 @@ import * as Yup from "yup";
 import { Button, DateTimePicker, RadioInputGroup, TextInput } from "../../../components";
 import { config } from "../../../config";
 import { notify } from "../../../lib";
+import { SetupAccountInput } from "../../../api/auth";
 
 const informationSchema = Yup.object().shape({
     firstName: Yup.string().required("Champ requis"),
@@ -15,18 +16,19 @@ const informationSchema = Yup.object().shape({
 
 type InformationsStepProps = {
     onNext?: (values: object) => void;
+    formValues: Partial<SetupAccountInput>;
 };
 
-export default function InformationsStep({ onNext }: InformationsStepProps) {
+export default function InformationsStep({ onNext, formValues }: InformationsStepProps) {
     const [birthdate, setBirthdate] = useState(new Date());
 
     return (
         <Formik
             validationSchema={informationSchema}
             initialValues={{
-                firstName: "",
-                lastName: "",
-                gender: "MALE",
+                firstName: formValues?.firstName || "",
+                lastName: formValues?.lastName || "",
+                gender: formValues?.gender || "MALE",
                 birthdate: new Date(),
             }}
             onSubmit={(values) => {

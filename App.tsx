@@ -15,7 +15,6 @@ if (typeof atob === 'undefined') {
 export default function App() {
   const { isLoadingComplete, session, onboarding } = useCachedResources();
 
-
   if (!isLoadingComplete) {
     return null;
   }
@@ -26,7 +25,7 @@ export default function App() {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios"
           ? "padding"
           : "height"}>
-          <SessionProvider uSession={session}>
+          <SessionProvider initialSession={session}>
             <RootStackNavigator skipOnboarding={Boolean(onboarding)} />
           </SessionProvider>
           <Toast />

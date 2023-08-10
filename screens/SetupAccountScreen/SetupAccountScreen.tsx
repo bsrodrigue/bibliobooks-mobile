@@ -45,12 +45,12 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
         {
             title: "Informations",
             subtitle: "Configurez vos informations personelles",
-            component: <InformationsStep onNext={next} />
+            component: <InformationsStep formValues={formValues} onNext={next} />
         },
         {
             title: "Compte",
             subtitle: "Configurez votre compte",
-            component: <AccountStep onNext={next} />
+            component: <AccountStep formValues={formValues} onNext={next} />
         },
         {
             title: "Préférences",
@@ -64,7 +64,7 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
             <AuthForm
                 title={steps[currentStepIndex].title}
                 subtitle={steps[currentStepIndex].subtitle}>
-                <View style={{ flex: 1, paddingVertical: 15, justifyContent: "space-between" }}>
+                <View style={{ flex: 1, paddingVertical: 5, justifyContent: "space-between" }}>
                     <View style={{ flex: 1 }}>
                         {steps[currentStepIndex].component}
                     </View>

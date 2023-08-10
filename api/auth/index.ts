@@ -2,6 +2,8 @@ import { UserProfile } from "../../types/auth";
 import { uploadFile } from "../base";
 import client from "../client";
 
+//TODO: Type Request Responses
+
 export type RegisterInput = {
     email: string;
     password: string;
@@ -25,7 +27,7 @@ export type SetupAccountInput = {
     birthdate: string;
     username: string;
     bio?: string;
-    gender: "male" | "female";
+    gender: "MALE" | "FEMALE";
     avatarImg?: File | Blob;
     favouriteGenres?: Array<string>;
 }
@@ -48,4 +50,9 @@ export type UpdateUserProfile = {
 
 export async function updateUserProfile({ userId, profile, avatarImg }: UpdateUserProfile) {
     return ""
+}
+
+export async function getUserProfile({ }) {
+    const result = await client.get("auth/getUserProfile");
+    return result.data
 }
