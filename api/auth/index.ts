@@ -61,3 +61,13 @@ export async function getUserProfile({ }) {
     const result = await client.get("auth/getUserProfile");
     return result.data
 }
+
+export type ChangeEmailInput = {
+    email: string;
+    password: string;
+};
+
+export async function changeEmail({ email, password }: ChangeEmailInput) {
+    await client.post("auth/changeEmail", { email, password });
+    return email;
+}
