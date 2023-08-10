@@ -1,4 +1,4 @@
-{
+module.exports = {
   "expo": {
     "name": "Bibliobooks",
     "slug": "bibliobooks",
@@ -33,7 +33,13 @@
       "eas": {
         "projectId": "e5e15686-405f-4ad5-bda8-ad23272610e9"
       },
-      "API_URL": "http://192.168.1.69:3000/api"
+      "API_URL": "http://192.168.1.69:3000/api",
+      "FIREBASE_API_KEY": process.env['EXPO_PUBLIC_FIREBASE_API_KEY'],
+      "FIREBASE_AUTH_DOMAIN": process.env['EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN'],
+      "FIREBASE_PROJECT_ID": process.env['EXPO_PUBLIC_FIREBASE_PROJECT_ID'],
+      "FIREBASE_STORAGE_BUCKET": process.env['EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET'],
+      "FIREBASE_MESSAGING_SENDER_ID": process.env['EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID'],
+      "FIREBASE_APP_ID": process.env['EXPO_PUBLIC_FIREBASE_APP_ID']
     }
   }
 }

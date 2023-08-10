@@ -82,8 +82,8 @@ export type GetUserNovelsInput = {
 
 export type GetUserNovelsOutput = Promise<Array<Novel>>
 
-export async function getUserNovels({ userId }: GetUserNovelsInput): Promise<GetUserNovelsOutput> {
-    return await getEntitiesOwnedByUser<Novel>(userId, "novel");
+export async function getUserNovels(): Promise<GetUserNovelsOutput> {
+    return [];
 }
 
 export type GetUserLibraryInput = {
@@ -149,7 +149,7 @@ export async function getReaderNovelFromNovel(novel: Novel) {
     const chapters = await getPublicChaptersFromNovel({ novelId: novel.id });
     if (chapters.length !== 0) {
         const author = await getUserProfile({ userId: novel.ownerId });
-        const authorNovels = await getUserNovels({ userId: novel.ownerId });
+        const authorNovels = await getUserNovels();
         return { ...novel, chapters, author: author.userProfile, authorNovels };
     }
     return null;
