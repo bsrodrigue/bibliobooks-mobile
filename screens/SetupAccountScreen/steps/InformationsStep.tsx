@@ -54,7 +54,7 @@ export default function InformationsStep({ onNext, formValues }: InformationsSte
                             label="Votre genre"
                             name="gender"
                             options={config.genderOptions}
-                            onChange={(_) => handleChange("gender")}
+                            onChange={(gender) => handleChange("gender")(gender)}
                         />
                         <DateTimePicker
                             date={birthdate} mode="date" onChange={(value) => {

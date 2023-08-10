@@ -32,24 +32,29 @@ export type SetupAccountInput = {
     favouriteGenres?: Array<string>;
 }
 
-export async function setupAccount({ avatarImg, ...input }: SetupAccountInput): Promise<any> {
+export async function setupAccount({ avatarImg, ...payload }: SetupAccountInput): Promise<any> {
     let avatarUrl = "";
     if (avatarImg) {
         avatarUrl = await uploadFile(avatarImg);
     }
 
-    const result = await client.post("auth/setupAccount", { avatarUrl, ...input });
-    return result.data;
+    const result = await client.post("users/me/setupAccount", { avatarUrl, ...payload });
+    return result.data.user;
 }
 
 export type UpdateUserProfile = {
-    userId: string;
     profile: Partial<UserProfile>;
     avatarImg?: Blob | File;
 }
 
-export async function updateUserProfile({ userId, profile, avatarImg }: UpdateUserProfile) {
-    return ""
+export async function updateUserProfile({ profile, avatarImg }: UpdateUserProfile) {
+    let avatarUrl = "";
+    if (avatarImg) {
+        avatarUrl = await uploadFile(avatarImg);
+    }
+
+    const result = await client.post("users/me/updateUserProfile", { avatarUrl, ...profile });
+    return result.data.user;
 }
 
 export async function getUserProfile({ }) {

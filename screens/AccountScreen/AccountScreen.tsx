@@ -8,16 +8,18 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import * as Yup from "yup";
 import { updateUserProfile } from "../../api/auth";
 import useCall from "../../api/useCall";
-import { Button, TextInput } from "../../components";
+import { Button, RadioInputGroup, TextInput } from "../../components";
 import { useImagePicker } from "../../hooks";
 import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
-import { useWorkshop } from "../../providers/WorkshopProvider";
+import { UserProfile } from "../../types/auth";
+import { config } from "../../config";
 
 const accountSchema = Yup.object().shape({
     firstName: Yup.string().required("Champ requis"),
     lastName: Yup.string().required("Champ requis"),
-    pseudo: Yup.string().required("Champ requis"),
+    username: Yup.string().required("Champ requis"),
+    gender: Yup.string().required("Champ requis"),
     bio: Yup.string().required("Champ requis"),
 });
 
@@ -28,10 +30,10 @@ export default function AccountScreen({ navigation, route: { params } }: Account
     const [isEditMode, setIsEditMode] = useState(false);
     // const { workshopNovels } = useWorkshop();
     const { session, updateSession } = useSession();
-    const { userProfile: { id, pseudo, firstName, lastName, bio, avatarUrl, gender } } = session;
+    const { profile: { username, firstName, lastName, bio, avatarUrl, gender } } = session;
     const { call, isLoading } = useCall(updateUserProfile, {
-        async onSuccess(result) {
-            // await updateSession({ userProfile: { ...session.userProfile, ...result } });
+        onSuccess(profile: UserProfile) {
+            updateSession({ profile });
             toggleEditMode();
         },
     })
@@ -42,7 +44,7 @@ export default function AccountScreen({ navigation, route: { params } }: Account
         <View style={{ flex: 1, backgroundColor: black, justifyContent: "space-between" }}>
             {
                 !isEditMode && (
-                    <FAB style={{ zIndex: 2 }} color={primary} onPress={toggleEditMode} placement="right" >
+                    <FAB style={{ zIndex: 2 }} color={black} onPress={toggleEditMode} placement="right" >
                         <Icon name="pen" type="font-awesome-5" color="white" />
                     </FAB>
                 )
@@ -68,12 +70,12 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                                 <Text style={{ fontFamily: "Quicksand-700", fontSize: 25 }}>{firstName}</Text>
                                 <Text style={{ fontFamily: "Quicksand-700", fontSize: 25 }}>{lastName}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-                                    <Icon type="font-awesome-5" name={gender === "male" ? "male" : "female"} />
-                                    <Text style={{ opacity: 0.5, fontStyle: "italic" }}>{gender === "male" ? "Homme" : "Femme"}</Text>
+                                    <Icon type="font-awesome-5" name={gender === "MALE" ? "male" : "female"} />
+                                    <Text style={{ opacity: 0.5, fontStyle: "italic" }}>{gender === "MALE" ? "Homme" : "Femme"}</Text>
                                 </View>
                             </View>
                             <View style={{ alignItems: "center" }}>
-                                <Text style={{ fontFamily: "Quicksand-500", fontSize: 14 }}>{pseudo}</Text>
+                                <Text style={{ fontFamily: "Quicksand-500", fontSize: 14 }}>{username}</Text>
                             </View>
                         </View>
                         <View style={{ flex: 1 }}>
@@ -118,12 +120,12 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                                 rounded
                                 onPress={() => pickImage()}
                                 icon={{ name: "pencil", type: "font-awesome" }}
-                                containerStyle={{ backgroundColor: greyOutline, position: "absolute", zIndex: 1, right: "25%" }}
+                                containerStyle={{ backgroundColor: black, position: "absolute", zIndex: 1, right: "30%" }}
                             />
                             <Avatar
                                 size={120}
                                 rounded
-                                containerStyle={{ backgroundColor: primary, marginBottom: 10, padding: 5, }}
+                                containerStyle={{ backgroundColor: black, marginBottom: 10, padding: 2, }}
                                 source={{ uri: imgUri || avatarUrl }}
                             />
                         </View>
@@ -136,24 +138,33 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                                         const result = await fetch(imgUri);
                                         avatarImg = await result.blob();
                                     }
-                                    await call({ userId: id, profile: { ...values }, avatarImg });
+                                    call({ profile: values, avatarImg });
                                 }}
                                 initialValues={{
                                     firstName,
                                     lastName,
-                                    pseudo,
+                                    username,
                                     bio,
+                                    gender,
                                 }}
                             >
                                 {({ errors, values, handleSubmit, handleChange }) => (
                                     <>
                                         <View>
+                                            <RadioInputGroup
+                                                errorMessage={errors.gender}
+                                                value={values.gender}
+                                                label="Votre genre"
+                                                name="gender"
+                                                options={config.genderOptions}
+                                                onChange={(gender) => handleChange("gender")(gender)}
+                                            />
                                             <TextInput errorMessage={errors.firstName} label="Nom de famille" onChangeText={handleChange("firstName")} value={values.firstName} />
                                             <TextInput errorMessage={errors.lastName} label="Prénom" onChangeText={handleChange("lastName")} value={values.lastName} />
-                                            <TextInput errorMessage={errors.pseudo} label="Pseudo" onChangeText={handleChange("pseudo")} value={values.pseudo} />
+                                            <TextInput errorMessage={errors.username} label="Nom d'utilisateur" onChangeText={handleChange("username")} value={values.username} />
 
                                             <TextInput errorMessage={errors.bio} multiline numberOfLines={5} label="Bio" onChangeText={handleChange("bio")} value={values.bio} />
-                                            <Button loading={isLoading} onPress={() => handleSubmit()}>Confirmer</Button>
+                                            <Button loading={isLoading} onPress={handleSubmit}>Confirmer</Button>
                                         </View>
                                     </>
 

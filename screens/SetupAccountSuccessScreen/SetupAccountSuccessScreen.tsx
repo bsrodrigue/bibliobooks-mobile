@@ -42,8 +42,8 @@ export default function SuccessScreen({ route: { params: { userProfile } }, navi
     const dimension = 165
     const { updateSession } = useSession();
 
-    const storeUserProfile = async () => {
-        await updateSession({ userProfile })
+    const storeUserProfile = () => {
+        updateSession({ profile: userProfile })
     }
 
     return (

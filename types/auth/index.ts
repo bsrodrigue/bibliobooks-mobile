@@ -5,10 +5,10 @@ export type UserProfile = {
     firstName: string;
     lastName: string;
     birthdate: string;
-    pseudo: string;
+    username: string;
     bio: string;
     favouriteGenres?: Array<string>;
-    gender: "male" | "female";
+    gender: "MALE" | "FEMALE";
     isAccountSetup: boolean;
 };
 

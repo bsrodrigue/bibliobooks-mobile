@@ -17,11 +17,11 @@ export default function SessionProvider({ children, initialSession }: SessionPro
         session && storeData("session", session);
     }, [session]);
 
-    const updateSession = (session: SessionUpdateParams) => {
-        if (session.token) {
-            client.defaults.headers.common.Authorization = `Bearer ${session.token}`;
+    const updateSession = (params: SessionUpdateParams) => {
+        if (params.token) {
+            client.defaults.headers.common.Authorization = `Bearer ${params.token}`;
         }
-        setSession((prev) => ({ token: session?.token || prev?.token, profile: { ...prev?.profile, ...session?.profile } }));
+        setSession((prev) => ({ token: params?.token || prev?.token, profile: { ...prev?.profile, ...params?.profile } }));
     }
 
 
