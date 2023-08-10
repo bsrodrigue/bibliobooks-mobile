@@ -1,14 +1,11 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Formik } from "formik";
-import { useState } from "react";
 import { View } from "react-native";
 import * as Yup from "yup";
+import { changePassword } from "../../api/auth";
+import useCall from "../../api/useCall";
 import { AuthForm, Button, TextInput } from "../../components";
-import { auth } from "../../config/firebase";
-import { notify } from "../../lib";
-import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
-import { signInWithEmailAndPassword, updatePassword } from "firebase/auth";
 
 const changePasswordSchema = Yup.object().shape({
     oldPassword: Yup.string().required("Champ requis"),
@@ -20,14 +17,17 @@ const changePasswordSchema = Yup.object().shape({
 type ChangePasswordScreenProps = NativeStackScreenProps<RootStackParamList, 'ChangePassword'>;
 
 export default function ChangePasswordScreen({ navigation }: ChangePasswordScreenProps) {
-    const { session: { userProfile }, updateSession } = useSession();
-    const [isLoading, setIsLoading] = useState(false);
+    const { call, isLoading } = useCall(changePassword, {
+        successMessage: "Votre mot de passe a été changé avec succès",
+        onSuccess() {
+            navigation.pop();
+        },
+    })
 
     return (
         <AuthForm
             title={"Changement"}
-            subtitle="Changer votre mot de passe"
-        >
+            subtitle="Changer votre mot de passe">
             <Formik
                 validationSchema={changePasswordSchema}
                 initialValues={{
@@ -36,22 +36,9 @@ export default function ChangePasswordScreen({ navigation }: ChangePasswordScree
                     password2: "",
                 }}
                 onSubmit={
-                    async (values) => {
-
-                        try {
-                            setIsLoading(true)
-                            const creds = await signInWithEmailAndPassword(auth, userProfile.email, values.oldPassword);
-                            await updatePassword(creds.user, values.password);
-                            notify.success("Votre mot de passe a été changée avec succès")
-                            navigation.pop();
-                        } catch (error) {
-                            notify.error(error.message);
-                        } finally {
-                            setIsLoading(false)
-                        }
-
-                    }}
-            >
+                    async ({ oldPassword, password }) => {
+                        await call({ oldPassword, password });
+                    }}>
                 {({ values, errors, handleChange, handleSubmit }) => (
                     <View style={{ flex: 1, justifyContent: "space-between" }}>
                         <View>

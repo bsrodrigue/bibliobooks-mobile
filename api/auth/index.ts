@@ -71,3 +71,12 @@ export async function changeEmail({ email, password }: ChangeEmailInput) {
     await client.post("auth/changeEmail", { email, password });
     return email;
 }
+
+export type ChangePasswordInput = {
+    oldPassword: string;
+    password: string;
+};
+
+export async function changePassword({ oldPassword, password }: ChangePasswordInput) {
+    await client.post("auth/changePassword", { oldPassword, password });
+}
