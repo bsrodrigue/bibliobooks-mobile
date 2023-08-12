@@ -2,14 +2,25 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Avatar, BottomSheet, Card, Divider, FAB, Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { useState } from "react";
-import { ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { addToLibrary, removeFromLibrary } from "../../api/novels";
-import { useNovelStats } from "../../hooks/api/reader";
-import { notify } from "../../lib";
-import { useSession } from "../../providers";
-import { useLibrary } from "../../providers/LibraryProvider";
 import { RootStackParamList } from "../../types";
+import { ReaderNovel } from "../../types/models";
+
+function getNovelStats(novel: ReaderNovel) {
+    let reads = 0;
+    let likes = 0;
+    let comments = 0;
+
+    console.log(novel);
+    for (const chapter of novel.chapters) {
+        reads += chapter.reads?.length || 0;
+        likes += chapter.likes?.length || 0;
+        comments += chapter.comments?.length || 0;
+    }
+
+    return { reads, likes, comments };
+}
 
 const styles = StyleSheet.create({
     container: {
@@ -22,15 +33,14 @@ type NovelDetailsScreenProps = NativeStackScreenProps<RootStackParamList, 'Novel
 
 export default function NovelDetailsScreen({ navigation, route }: NovelDetailsScreenProps) {
     const { novel } = route.params;
-    const { title, description, coverUrl, chapters, id, genre, isMature, author: { avatarUrl, pseudo }, authorNovels } = novel;
+    const { title, description, coverUrl, chapters, id, genre, isMature, owner: { avatarUrl, username, creations } } = novel;
     const { theme: { colors: { black, primary } } } = useTheme();
     const [chapterListIsVisible, setChapterListIsVisible] = useState(false);
-    const { session: { userProfile: { userId } } } = useSession();
-    const { novelIdentifiers, addLibraryNovel, removeLibraryNovel } = useLibrary();
-    const { reads, likes, comments, isLoading } = useNovelStats({ novelId: novel.id });
+    // const { novelIdentifiers, addLibraryNovel, removeLibraryNovel } = useLibrary();
     const [isLibraryLoading, setIsLibraryLoading] = useState(false);
+    const { reads, likes, comments } = getNovelStats(novel);
 
-    const isInLibrary = () => novelIdentifiers.includes(novel.id);
+    // const isInLibrary = () => novelIdentifiers.includes(novel.id);
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: black }]}>
@@ -39,7 +49,7 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                     <View style={{ justifyContent: "space-between" }}>
                         <View>
                             <Text style={{ width: 150, fontSize: 18, color: "white", fontFamily: "Quicksand-700", marginBottom: 10 }}>{title}</Text>
-                            <Text style={{ color: "white", fontSize: 16, opacity: 0.5 }}>{pseudo}</Text>
+                            <Text style={{ color: "white", fontSize: 16, opacity: 0.5 }}>{username}</Text>
                         </View>
                         <Text style={{ color: "white", fontStyle: "italic" }}>{genre}</Text>
 
@@ -52,26 +62,20 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                     <View>
                         <View >
                             <View style={{ paddingHorizontal: 40 }}>
-                                <View style={{ flexDirection: "row", justifyContent: isLoading ? "center" : "space-between", marginVertical: 10 }}>
+                                <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10 }}>
+                                    <View style={{ width: 50, }}>
+                                        <Icon name="eye" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
+                                        <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>{reads}</Text>
+                                    </View>
+                                    <View style={{ width: 50, }}>
+                                        <Icon name="star" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
+                                        <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>{likes}</Text>
+                                    </View>
+                                    <View style={{ width: 50, }}>
+                                        <Icon name="comments" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
+                                        <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>{comments}</Text>
+                                    </View>
 
-                                    {
-                                        isLoading ? (<ActivityIndicator size="large" color={primary} />) : (
-                                            <>
-                                                <View style={{ width: 50, }}>
-                                                    <Icon name="eye" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
-                                                    <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>{reads}</Text>
-                                                </View>
-                                                <View style={{ width: 50, }}>
-                                                    <Icon name="star" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
-                                                    <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>{likes}</Text>
-                                                </View>
-                                                <View style={{ width: 50, }}>
-                                                    <Icon name="comments" solid type="font-awesome-5" size={20} containerStyle={{ alignSelf: "flex-start" }} />
-                                                    <Text style={{ alignSelf: "flex-end", fontFamily: "Quicksand-700", fontSize: 16 }}>{comments}</Text>
-                                                </View>
-                                            </>
-                                        )
-                                    }
                                 </View>
                                 <Divider style={{ marginVertical: 15, opacity: 0.5 }} />
                                 <Text style={{ fontSize: 18, fontFamily: "Quicksand-700", marginBottom: 10 }}>Synopsis</Text>
@@ -99,8 +103,8 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                                         />
 
                                         <View>
-                                            <Text style={{ fontSize: 18, fontFamily: "Quicksand-700" }}>{pseudo}</Text>
-                                            <Text style={{ opacity: 0.6, fontFamily: "Quicksand" }}>{authorNovels?.length} oeuvres</Text>
+                                            <Text style={{ fontSize: 18, fontFamily: "Quicksand-700" }}>{username}</Text>
+                                            <Text style={{ opacity: 0.6, fontFamily: "Quicksand" }}>{creations?.length} oeuvres</Text>
                                         </View>
 
                                     </View>
@@ -113,7 +117,7 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                     </View>
 
                 </Card>
-                <FAB
+                {/* <FAB
                     color={black}
                     loading={isLibraryLoading}
                     disabled={isLibraryLoading}
@@ -124,11 +128,11 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                             const callback =
                                 isInLibrary() ?
                                     async () => {
-                                        await removeFromLibrary({ novelId: novel.id, userId })
+                                        // await removeFromLibrary({ novelId: novel.id, userId })
                                         removeLibraryNovel(novel.id);
                                     } :
                                     async () => {
-                                        await addToLibrary({ novelId: novel.id, userId })
+                                        // await addToLibrary({ novelId: novel.id, userId })
                                         addLibraryNovel(novel);
                                     }
 
@@ -143,7 +147,7 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                     placement="right"
                     style={{ bottom: 75, }}
                     containerStyle={{ borderRadius: 10 }}
-                />
+                /> */}
                 <FAB color={black}
                     onPress={() => {
                         navigation.navigate("Reader", { novel, chapter: novel.chapters[0] })

@@ -95,12 +95,13 @@ export type FireBaseEntityDocMap = Record<EntityType, FireBaseEntityDoc>
 
 export interface ReaderNovel
     extends Novel {
-    chapters: Array<Chapter>;
-    author: UserProfile;
-    authorNovels: Array<Novel>;
-    likes?: Array<Like>;
-    reads?: Array<Read>;
-    comments?: Array<Comment>;
+    chapters: Array<Chapter & { reads: any[]; likes: any[]; comments: any[] }>;
+    owner: UserProfile & {
+        creations?: {
+            id: number;
+            title: string;
+        }[]
+    };
 }
 
 export interface WorkshopNovel

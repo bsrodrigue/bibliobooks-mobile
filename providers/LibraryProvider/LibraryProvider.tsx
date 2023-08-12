@@ -3,24 +3,28 @@ import { getEntityById } from "../../api/base";
 import { getLibrary, getReaderNovelFromNovel } from "../../api/novels";
 import { notify } from "../../lib";
 import { LibraryNovel, Novel } from "../../types/models";
-import { useSession } from "../SessionProvider";
 import SessionContext from "./LibraryContext";
+import { useAsyncStorage } from "../../lib/storage";
 
 type LibraryProviderProps = {
     children?: ReactNode;
 }
 
-
 export default function LibraryProvider({ children }: LibraryProviderProps) {
     const [isLoading, setIsLoading] = useState(false);
+    const [library, setLibrary] = useState(null);
+    const { storeData } = useAsyncStorage();
     const [novelIdentifiers, setNovelIdentifiers] = useState<Array<string>>([])
-    const { session: { userProfile: { userId } } } = useSession();
     const [libraryNovels, setLibraryNovels] = useState<Array<LibraryNovel>>([]);
+
+    useEffect(() => {
+        storeData("library", library);
+    }, [library]);
 
     const fetchLibraryNovels = async () => {
         try {
             setIsLoading(true);
-            const library = await getLibrary({ userId });
+            const library = await getLibrary();
             setNovelIdentifiers(library.novels);
 
             const fetchNovelsTasks: Array<Promise<Novel>> = [];

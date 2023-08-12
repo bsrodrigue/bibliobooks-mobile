@@ -109,7 +109,8 @@ export async function createLibrary({ userId }: CreateLibraryInput) {
 }
 
 export async function getPublicNovels() {
-    return await getPublicEntities<Novel>("novel");
+    const result = await client.get("novels");
+    return result.data;
 }
 
 export type GetPublicChaptersFromNovelInput = {
