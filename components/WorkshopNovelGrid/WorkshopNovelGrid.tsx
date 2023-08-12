@@ -50,6 +50,7 @@ export default function WorkshopNovelGrid({
                 loading={loading}
                 item={currentNovel}
                 actions={actions}
+                onActionFinished={() => setActionsIsVisible(false)}
                 isVisible={actionsIsVisible}
                 onBackdropPress={() => {
                     onBackdropPress?.();

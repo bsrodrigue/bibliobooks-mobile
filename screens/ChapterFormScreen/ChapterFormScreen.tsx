@@ -6,7 +6,6 @@ import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
 import { Button, TextInput } from "../../components";
 import initialCSSText from "../../config/richtext";
 import { useChapterWorkshop } from "../../hooks/api/workshop";
-import { useSession } from "../../providers";
 import { useWorkshop } from "../../providers/WorkshopProvider";
 import { RootStackParamList } from "../../types";
 import { Chapter } from "../../types/models";
@@ -15,7 +14,6 @@ type ChapterFormScreenProps = NativeStackScreenProps<RootStackParamList, 'Chapte
 
 export default function ChapterFormScreen({ navigation, route: { params: { mode, novel, chapter } } }: ChapterFormScreenProps) {
     const { theme: { colors: { primary } } } = useTheme();
-    const { session: { userProfile: { userId } } } = useSession();
     const { create, edit, isCreateLoading, isEditLoading } = useChapterWorkshop();
     const { updateWorkshopNovel, updateWorkshopChapter } = useWorkshop();
     const loading = isCreateLoading || isEditLoading;
@@ -61,7 +59,7 @@ export default function ChapterFormScreen({ navigation, route: { params: { mode,
                     onPress={async () => {
                         if (!title || !content) return;
                         if (mode === "create") {
-                            const newChapter = await create({ title, body: content, novelId: novel.id, order: parseInt(order), userId }) as Chapter;
+                            const newChapter = await create({ title, body: content, novelId: novel.id, order: parseInt(order) }) as Chapter;
                             updateWorkshopNovel(novel.id, { chapters: [...novel.chapters, newChapter] });
                         } else {
                             const editedChapter = await edit({ title, body: content, chapterId: chapter.id, order: parseInt(order) }) as Chapter;

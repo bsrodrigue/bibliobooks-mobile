@@ -10,7 +10,8 @@ import { mom } from "../../lib/moment";
 import { getWordCount } from "../../lib/utils";
 import { useWorkshop } from "../../providers/WorkshopProvider";
 import { RootStackParamList } from "../../types";
-import { Chapter, WorkshopNovel } from "../../types/models";
+import { Chapter, NovelStatus, WorkshopNovel } from "../../types/models";
+import { useChapterWorkshop } from "../../hooks/api/workshop";
 
 const tabs = [
     { label: "Publications", },
@@ -18,17 +19,20 @@ const tabs = [
     { label: "Archives", },
 ];
 
-const filters = {
-    "Publications": "published",
-    "Brouillons": "draft",
-    "Archives": "archived",
+const filters: Record<string, NovelStatus> = {
+    "Publications": "PUBLISHED",
+    "Brouillons": "DRAFT",
+    "Archives": "ARCHIVED",
 }
 
 type ChapterWorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'ChapterWorkshop'>;
 
 export default function ChapterWorkshopScreen({ navigation, route: { params: { novelId } } }: ChapterWorkshopScreenProps) {
-    const { workshopNovels, fetchWorkshopNovels, isLoading, updateWorkshopChapter } = useWorkshop();
+    const { workshopNovels, fetchWorkshopNovels, isLoading, updateWorkshopChapter, updateWorkshopNovel } = useWorkshop();
+    const { del, isDelLoading } = useChapterWorkshop();
     const [chapters, setChapters] = useState<Array<Chapter>>([]);
+    const [chapterToBeDeleted, setChapterToBeDeleted] = useState<Chapter>(null);
+    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
     const [novel, setNovel] = useState<WorkshopNovel>(null);
     const [chapter, setChapter] = useState<Chapter>(null);
 
@@ -37,15 +41,33 @@ export default function ChapterWorkshopScreen({ navigation, route: { params: { n
             updateWorkshopChapter(novel, chapter.id, result);
         },
     });
-    const refreshing = isLoading || isUpdateChapterStatusLoading;
+
+    const refreshing = isLoading || isUpdateChapterStatusLoading || isDelLoading;
     const [selectedTab, setSelectedTab] = useState(tabs[0].label);
     const [actionsIsVisible, setActionsIsVisible] = useState(false);
     const { theme: { colors: { primary } } } = useTheme();
 
-    const onArchive = async (chapter: Chapter) => await call({ chapterId: chapter.id, status: "archived" })
-    const onPublish = async (chapter: Chapter) => await call({ chapterId: chapter.id, status: "published" })
-    const onUnPublish = async (chapter: Chapter) => await call({ chapterId: chapter.id, status: "draft" })
-    const onEdit = (chapter: Chapter) => navigation.navigate("ChapterForm", { mode: "edit", novel: novel, chapter })
+    const onPublish = async (chapter: Chapter) => {
+        await call({ chapterId: chapter.id, status: "PUBLISHED" })
+        setSelectedTab(tabs[0].label);
+    }
+
+    const onUnPublish = async (chapter: Chapter) => {
+        await call({ chapterId: chapter.id, status: "DRAFT" })
+        setSelectedTab(tabs[1].label);
+    }
+
+    const onArchive = async (chapter: Chapter) => {
+        await call({ chapterId: chapter.id, status: "ARCHIVED" })
+        setSelectedTab(tabs[2].label);
+    }
+
+    const onEdit = (chapter: Chapter) => navigation.navigate("ChapterForm", { mode: "edit", novel: novel, chapter });
+
+    const onDelete = (chapter: Chapter) => {
+        setChapterToBeDeleted(chapter);
+        setIsConfirmationOpen(true);
+    }
 
     const archiveAction = {
         icon: "archive",
@@ -69,7 +91,7 @@ export default function ChapterWorkshopScreen({ navigation, route: { params: { n
         {
             icon: "trash",
             title: "Supprimer",
-            onPress: () => { },
+            onPress: onDelete,
         },
         {
             icon: "pen",
@@ -142,7 +164,22 @@ export default function ChapterWorkshopScreen({ navigation, route: { params: { n
                 item={chapter}
                 actions={[...actionFilters[selectedTab], ...commonActions]}
                 isVisible={actionsIsVisible}
-                onBackdropPress={() => setActionsIsVisible(false)} />
+                confirm={isConfirmationOpen}
+                loading={refreshing}
+                onActionFinished={() => setActionsIsVisible(false)}
+                onConfirm={async () => {
+                    await del({ chapterId: chapterToBeDeleted.id });
+                    novel.chapters = novel.chapters.filter((chapter) => chapter.id !== chapterToBeDeleted.id);
+                    updateWorkshopNovel(novel.id, novel);
+                    setChapterToBeDeleted(null);
+                    setIsConfirmationOpen(false)
+                    setActionsIsVisible(false);
+                }}
+                onBackdropPress={() => {
+                    setChapterToBeDeleted(null);
+                    setIsConfirmationOpen(false)
+                    setActionsIsVisible(false);
+                }} />
         </>// 
     )
 }
