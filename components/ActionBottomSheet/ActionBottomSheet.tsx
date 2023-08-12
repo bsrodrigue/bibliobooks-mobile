@@ -15,9 +15,14 @@ type ActionBottomSheetProps = {
     confirm?: boolean;
     onConfirm?: () => void;
     loading?: boolean;
+    onActionFinished?: () => void;
 }
 
-export default function ActionBottomSheet({ item: entity, isVisible, onBackdropPress, actions, confirm, onConfirm, loading }: ActionBottomSheetProps) {
+export default function ActionBottomSheet({
+    item: entity, isVisible, onBackdropPress,
+    actions, confirm, onConfirm, loading,
+    onActionFinished }: ActionBottomSheetProps) {
+
     const { theme: { colors: { greyOutline, error } } } = useTheme();
     const { width: screenWidth } = Dimensions.get("screen");
     const columns = useRef(3);
@@ -30,7 +35,12 @@ export default function ActionBottomSheet({ item: entity, isVisible, onBackdropP
                 columnWrapperStyle={{ gap: 15 }}
                 data={actions} renderItem={({ item: { title, icon, onPress } }) => (
                     <TouchableOpacity
-                        onPress={() => !loading && onPress(entity)}
+                        onPress={
+                            async () => {
+                                !loading && await onPress(entity)
+                                onActionFinished?.();
+                            }
+                        }
                         style={{
                             borderWidth: 1,
                             borderColor: greyOutline,

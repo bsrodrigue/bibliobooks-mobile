@@ -1,31 +1,31 @@
 import { where } from "firebase/firestore";
 import { Chapter, ChapterStatus, EntityType } from "../../types/models";
 import { createOwnedEntity, deleteEntityById, getEntitiesWhere, getEntityRefById, updateEntity } from "../base";
+import client from "../client";
 
 export type CreateChapterInput = {
     title: string;
     body: string;
     novelId: string;
     order: number;
-    userId: string;
 }
 
-export async function createChapter({ userId, ...input }: CreateChapterInput) {
-    const payload = { status: "draft", ...input };
-    const result = await createOwnedEntity(userId, payload, "chapter");
-    return result;
+export async function createChapter(payload: CreateChapterInput) {
+    const result = await client.post("workshop/createChapter", payload);
+    return result.data;
 }
 
 export type EditChapterInput = {
     chapterId: string;
     title?: string;
     body?: string;
-    order?: number
+    order?: number;
+    status?: ChapterStatus;
 }
 
-export async function editChapter({ chapterId, ...input }: EditChapterInput) {
-    const chapterRef = await getEntityRefById(chapterId, "chapter");
-    return await updateEntity<Chapter>(chapterRef, input);
+export async function editChapter(payload: EditChapterInput) {
+    const result = await client.post("workshop/updateChapter", payload);
+    return result.data;
 }
 
 export type DeleteChapterInput = {
@@ -33,7 +33,7 @@ export type DeleteChapterInput = {
 }
 
 export async function deleteChapter({ chapterId }: DeleteChapterInput) {
-    await deleteEntityById(chapterId, "chapter");
+    await client.post("workshop/deleteChapter", { chapterId });
 }
 
 export type UpdateChapterStatusInput = {
@@ -42,8 +42,7 @@ export type UpdateChapterStatusInput = {
 }
 
 export async function updateChapterStatus({ chapterId, status }: UpdateChapterStatusInput) {
-    const chapterRef = await getEntityRefById(chapterId, "chapter");
-    return await updateEntity<Chapter>(chapterRef, { status })
+    return await editChapter({ chapterId, status });
 }
 
 export type GetEntitiesByChapter = {

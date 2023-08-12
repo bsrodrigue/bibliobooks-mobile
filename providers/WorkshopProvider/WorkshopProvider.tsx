@@ -1,35 +1,29 @@
 import { ReactNode, useEffect, useState } from "react";
-import { getNovelChapters, getUserNovels } from "../../api/novels";
+import { getUserNovels } from "../../api/novels";
 import { notify } from "../../lib";
-import { Chapter, Novel, WorkshopNovel } from "../../types/models";
-import { useSession } from "../SessionProvider";
+import { useAsyncStorage } from "../../lib/storage";
+import { Chapter, WorkshopNovel } from "../../types/models";
 import SessionContext from "./WorkshopContext";
 
 type WorkshopProviderProps = {
     children?: ReactNode;
 }
 
-export async function getWorkshopNovelFromNovel(novel: Novel): Promise<WorkshopNovel> {
-    const chapters = await getNovelChapters(novel.id);
-    return { ...novel, chapters };
-}
-
 export default function WorkshopProvider({ children }: WorkshopProviderProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [workshopNovels, setWorkshopNovels] = useState<Array<WorkshopNovel>>([]);
+    const { storeData } = useAsyncStorage();
+
+    useEffect(() => {
+        storeData("workshop", workshopNovels);
+    }, [workshopNovels]);
 
     const fetchWorkshopNovels = async () => {
         try {
             setIsLoading(true);
             const novels = await getUserNovels();
-            const tasks = [];
-            for (const novel of novels) {
-                tasks.push(getWorkshopNovelFromNovel(novel));
-            }
-            const result = await Promise.all(tasks);
-            setWorkshopNovels(result)
+            setWorkshopNovels(novels)
         } catch (error) {
-            console.error(error);
             notify.error("Erreur survenue en chargeant vos histoires");
         } finally {
             setIsLoading(false);

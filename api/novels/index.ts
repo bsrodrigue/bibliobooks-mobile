@@ -1,7 +1,8 @@
 import { arrayRemove, arrayUnion, getDocs, orderBy, query, updateDoc, where } from "firebase/firestore";
 import { Chapter, EntityType, Library, Like, Novel, NovelGenre, NovelStatus, Read } from "../../types/models";
 import { getUserProfile } from "../auth";
-import { createOwnedEntity, deleteEntityById, getColRefFromDocMap, getEntitiesOwnedByUser, getEntitiesWhere, getEntityById, getEntityRefById, getPublicEntities, updateEntity, uploadUserFile } from "../base";
+import { createOwnedEntity, deleteEntityById, getColRefFromDocMap, getEntitiesOwnedByUser, getEntityById, getEntityRefById, getPublicEntities, updateEntity, uploadUserFile } from "../base";
+import client from "../client";
 
 export async function uploadNovelCover(title: string, coverImg: File | Blob) {
     return await uploadUserFile(`covers/covers/${title.split(" ").join("_")}.jpeg`, coverImg);
@@ -30,17 +31,16 @@ export type CreateNovelInput = {
     genre: NovelGenre;
     isMature: boolean;
     coverImg?: Blob | File;
-    userId?: string;
 }
 
-export async function createNovel({ userId, coverImg, ...input }: CreateNovelInput) {
+export async function createNovel({ coverImg, ...input }: CreateNovelInput): Promise<Novel> {
     const coverUrl = coverImg ? await uploadNovelCover(input.title, coverImg) : "";
-    const payload = { status: "draft", coverUrl, ...input };
-    return await createOwnedEntity(userId, payload, "novel");
+    const payload = { coverUrl, ...input };
+    const result = await client.post("workshop/createNovel", payload);
+    return result.data;
 }
 
 export type EditNovelInput = {
-    userId: string;
     novelId: string;
     title?: string;
     description?: string;
@@ -49,13 +49,12 @@ export type EditNovelInput = {
     coverImg?: Blob | File;
 }
 
-export type EditNovelOutput = Promise<Novel>;
 
-export async function editNovel({ novelId, userId, coverImg, ...input }: EditNovelInput): EditNovelOutput {
-    const novelRef = await getEntityRefById(novelId, "novel");
+export async function editNovel({ novelId, coverImg, ...input }: EditNovelInput): Promise<Novel> {
     const coverUrl = coverImg ? await uploadNovelCover(input.title, coverImg) : "";
     const payload = { ...input, coverUrl };
-    return await updateEntity<Novel>(novelRef, payload) as Novel;
+    const result = await client.post("workshop/updateNovel", payload);
+    return result.data;
 }
 
 export type DeleteNovelInput = {
@@ -63,7 +62,7 @@ export type DeleteNovelInput = {
 }
 
 export async function deleteNovel({ novelId }: DeleteNovelInput) {
-    await deleteEntityById(novelId, "novel");
+    await client.post("workshop/deleteNovel", { novelId });
 }
 
 export type UpdateNovelStatusInput = {
@@ -72,8 +71,8 @@ export type UpdateNovelStatusInput = {
 }
 
 export async function updateNovelStatus({ novelId, status }: UpdateNovelStatusInput) {
-    const novelRef = await getEntityRefById(novelId, "novel");
-    return await updateEntity<Novel>(novelRef, { status });
+    const result = await client.post("workshop/updateNovel", { novelId, status });
+    return result.data;
 }
 
 export type GetUserNovelsInput = {
@@ -82,8 +81,9 @@ export type GetUserNovelsInput = {
 
 export type GetUserNovelsOutput = Promise<Array<Novel>>
 
-export async function getUserNovels(): Promise<GetUserNovelsOutput> {
-    return [];
+export async function getUserNovels() {
+    const result = await client.get("workshop/novels");
+    return result.data;
 }
 
 export type GetUserLibraryInput = {

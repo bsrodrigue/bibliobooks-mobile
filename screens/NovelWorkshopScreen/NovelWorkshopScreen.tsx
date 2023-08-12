@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import { deleteNovel, updateNovelStatus } from "../../api/novels";
 import useCall from "../../api/useCall";
@@ -15,9 +15,9 @@ const tabs = [
 ];
 
 const filters = {
-    "Publications": "published",
-    "Brouillons": "draft",
-    "Archives": "archived",
+    "Publications": "PUBLISHED",
+    "Brouillons": "DRAFT",
+    "Archives": "ARCHIVED",
 }
 
 type NovelWorkshopScreenProps = NativeStackScreenProps<RootStackParamList, 'NovelWorkshop'>;
@@ -37,10 +37,23 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
 
     const loading = isLoading || updateNovelIsLoading || isDeleteNovelLoading;
 
-    const onArchive = async (novel: Novel) => await callUpdateNovelStatus({ novelId: novel.id, status: "archived" })
-    const onPublish = async (novel: Novel) => await callUpdateNovelStatus({ novelId: novel.id, status: "published" })
-    const onUnPublish = async (novel: Novel) => await callUpdateNovelStatus({ novelId: novel.id, status: "draft" })
+    const onPublish = async (novel: Novel) => {
+        await callUpdateNovelStatus({ novelId: novel.id, status: "PUBLISHED" })
+        setSelectedTab(tabs[0].label)
+    }
+
+    const onUnPublish = async (novel: Novel) => {
+        await callUpdateNovelStatus({ novelId: novel.id, status: "DRAFT" })
+        setSelectedTab(tabs[1].label)
+    }
+
+    const onArchive = async (novel: Novel) => {
+        await callUpdateNovelStatus({ novelId: novel.id, status: "ARCHIVED" })
+        setSelectedTab(tabs[2].label)
+    }
+
     const onEdit = (novel: Novel) => navigation.navigate("NovelForm", { mode: "edit", novel });
+
     const onDelete = (novel: Novel) => {
         setNovelToBeDeleted(novel);
         setIsConfirmationOpen(true);

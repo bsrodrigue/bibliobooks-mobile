@@ -71,7 +71,7 @@ export interface Library
     novels: Array<Novel>;
 }
 
-export type BaseEntityStatus = "published" | "draft" | "archived" | "banned";
+export type BaseEntityStatus = "PUBLISHED" | "DRAFT" | "ARCHIVED" | "BANNED";
 
 export type ChapterStatus = BaseEntityStatus;
 

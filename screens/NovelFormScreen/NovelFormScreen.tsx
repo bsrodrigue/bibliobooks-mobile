@@ -11,7 +11,6 @@ import useCall from "../../api/useCall";
 import { Button, CardBottomSheet, CheckBox, TextInput, Wrapper } from "../../components";
 import { config } from "../../config";
 import { useImagePicker } from "../../hooks";
-import { useSession } from "../../providers";
 import { useWorkshop } from "../../providers/WorkshopProvider";
 import { RootStackParamList } from "../../types";
 import { Novel, NovelGenre } from "../../types/models";
@@ -20,7 +19,7 @@ const novelSchema = Yup.object().shape({
     title: Yup.string().required("Champ requis"),
     description: Yup.string().required("Champ requis"),
     genre: Yup.string().required("Champ requis"),
-    isMature: Yup.string(),
+    isMature: Yup.string().optional()
 });
 
 type NovelFormScreenProps = NativeStackScreenProps<RootStackParamList, 'NovelForm'>;
@@ -45,7 +44,6 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
         },
         successMessage: "Votre histoire a étée modifiée avec succès!"
     });
-    const { session: { userProfile: { userId } } } = useSession();
     const [selectedGenre, setSelectedGenre] = useState<NovelGenre>(novel?.genre);
     const [isMature, setIsMature] = useState(Boolean(novel?.isMature));
     const { imgUri, pickImage } = useImagePicker();
@@ -66,23 +64,23 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                         coverImg = await response.blob();
                     }
                     if (mode === "create") {
-                        await call({ coverImg: coverImg, ...values, userId })
+                        await call({ coverImg: coverImg, ...values })
                     } else {
                         await callEditNovel({
-                            coverImg, ...values, userId,
+                            coverImg, ...values,
                             novelId: novel.id
                         })
                     }
                 }}>
                 {
                     ({ handleSubmit, handleChange, values, errors }) => (
-                        <View style={{ flex: 1, backgroundColor: "white", justifyContent: "space-between", }}>
-                            <View style={{ flex: 0.9 }}>
-                                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 40, gap: 10, paddingVertical: 20 }}>
+                        <View style={{ flex: 1, justifyContent: "space-between", }}>
+                            <View>
+                                <View style={{ flexDirection: "column", justifyContent: "space-between", paddingHorizontal: 30, gap: 10, }}>
                                     <View style={{ flex: 0.3 }}>
                                         <TouchableOpacity onPress={() => pickImage([9, 16])}>
                                             <Avatar
-                                                containerStyle={{ backgroundColor: "grey", height: 125, width: "100%", borderRadius: 10 }}
+                                                containerStyle={{ backgroundColor: "grey", height: 125, width: 100, borderRadius: 10 }}
                                                 avatarStyle={{ borderRadius: 10, resizeMode: "cover" }}
                                                 source={{ uri: novel?.coverUrl || imgUri }}
                                             />
@@ -94,14 +92,14 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                     </View>
                                 </View>
 
-                                <Wrapper>
+                                <Wrapper horizontalPadding={30}>
                                     <TextInput errorMessage={errors.description} value={values.description} onChangeText={handleChange("description")} name="description" label="Resumé de l'histoire" placeholder="Veuillez donner le resumé de l'histoire..." multiline numberOfLines={8} />
                                     <TouchableOpacity onPress={() => setGenreSheetIsVisible(true)}>
                                         <TextInput errorMessage={errors.genre} value={config.genreTitleMap[selectedGenre]} name="genre" label="Genre de l'histoire" placeholder="Veuillez choisir le genre de l'histoire" disabled />
                                     </TouchableOpacity>
                                 </Wrapper>
 
-                                <Wrapper>
+                                <Wrapper horizontalPadding={30}>
                                     <View style={{
                                         flexDirection: "row",
                                         justifyContent: "space-between",
@@ -132,7 +130,7 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
 
                             </View>
 
-                            <View style={{ flex: 0.1, paddingHorizontal: 40 }}>
+                            <View style={{ paddingHorizontal: 30 }}>
                                 <Button loading={isLoading || isEditNovelLoading} onPress={() => handleSubmit()} buttonStyle={{ backgroundColor: "black", borderRadius: 10 }}>Sauvegarder</Button>
                             </View>
 

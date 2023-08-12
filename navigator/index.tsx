@@ -4,6 +4,7 @@ import { useSession } from "../providers";
 import { ChangeEmailScreen, ChangePasswordScreen, ChapterPreviewScreen, ForgotPasswordScreen, LoginScreen, MainScreen, OnboardingScreen, ReaderScreen, RegisterScreen, RegisterSuccessScreen, SettingsScreen, SetupAccountScreen, SetupAccountSuccessScreen } from "../screens";
 import NovelDetailsScreen from "../screens/NovelDetails/NovelDetails";
 import { UserProfile } from "../types/auth";
+import { WorkshopProvider } from "../providers/WorkshopProvider";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,21 +33,21 @@ type PrivateStackProps = {
 function PrivateStack({ userProfile }: PrivateStackProps) {
     const initialRouteName = !userProfile.isAccountSetup ? "SetupAccount" : "Main";
     return (
-        // <WorkshopProvider>
-        // <LibraryProvider>
-        <Stack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
-            <Stack.Screen name='SetupAccount' component={SetupAccountScreen} />
-            <Stack.Screen name='Main' component={MainScreen} />
-            <Stack.Screen name='NovelDetails' component={NovelDetailsScreen} />
-            <Stack.Screen name='SetupAccountSuccess' component={SetupAccountSuccessScreen} />
-            <Stack.Screen name='Reader' component={ReaderScreen} />
-            <Stack.Screen name='Settings' component={SettingsScreen} options={{ headerShown: true, headerTitle: "Paramètres" }} />
-            <Stack.Screen name='ChangeEmail' component={ChangeEmailScreen} options={{ headerShown: true, headerTitle: "Paramètres" }} />
-            <Stack.Screen name='ChangePassword' component={ChangePasswordScreen} options={{ headerShown: true, headerTitle: "Paramètres" }} />
-            <Stack.Screen name='ChapterPreview' component={ChapterPreviewScreen} />
-        </Stack.Navigator>
-        // </LibraryProvider>
-        // </WorkshopProvider>
+        <WorkshopProvider>
+            {/* // <LibraryProvider> */}
+            <Stack.Navigator initialRouteName={initialRouteName} screenOptions={{ headerShown: false }}>
+                <Stack.Screen name='SetupAccount' component={SetupAccountScreen} />
+                <Stack.Screen name='Main' component={MainScreen} />
+                <Stack.Screen name='NovelDetails' component={NovelDetailsScreen} />
+                <Stack.Screen name='SetupAccountSuccess' component={SetupAccountSuccessScreen} />
+                <Stack.Screen name='Reader' component={ReaderScreen} />
+                <Stack.Screen name='Settings' component={SettingsScreen} options={{ headerShown: true, headerTitle: "Paramètres" }} />
+                <Stack.Screen name='ChangeEmail' component={ChangeEmailScreen} options={{ headerShown: true, headerTitle: "Paramètres" }} />
+                <Stack.Screen name='ChangePassword' component={ChangePasswordScreen} options={{ headerShown: true, headerTitle: "Paramètres" }} />
+                <Stack.Screen name='ChapterPreview' component={ChapterPreviewScreen} />
+            </Stack.Navigator>
+            {/* // </LibraryProvider> */}
+        </WorkshopProvider>
     )
 }
 
