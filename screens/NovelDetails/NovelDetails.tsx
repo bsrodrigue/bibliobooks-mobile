@@ -29,7 +29,6 @@ function getNovelStats(novel: ReaderNovel) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 40,
     },
 });
 
@@ -44,47 +43,45 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
     const [isLibraryLoading, setIsLibraryLoading] = useState(false);
     const { reads, likes, comments } = getNovelStats(novel);
 
-    const isInLibrary = () => library?.novels.find((n) => n.id === novel.id) !== undefined;
+    const isInLibrary = () => library?.novels?.find((n) => n.id === novel.id) !== undefined;
 
     return (
         <SafeAreaView style={[styles.container, { backgroundColor: black }]}>
-            <View style={{ flex: 0.25, paddingHorizontal: 40 }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                    <View style={{ justifyContent: "space-between" }}>
-                        <View style={{ alignItems: "flex-start", justifyContent: "space-between" }}>
-                            <Text style={{ width: 150, fontSize: 18, color: "white", fontFamily: "Quicksand-700", marginBottom: 10 }}>{title}</Text>
-                            <Text style={{ color: "white", fontSize: 16, opacity: 0.5 }}>{chapters.length} chapitre{chapters.length > 1 ? "s" : ""}</Text>
-                            {
-                                isMature && (
-                                    <Badge status="error" value="Mature" badgeStyle={{ borderWidth: 0, marginVertical: 10 }} />
-                                )
-                            }
-                            <TouchableOpacity
-                                onPress={() => {
-                                    navigation.replace("ViewAccount", {
-                                        user: owner
-                                    })
-                                }}
-                                style={{ flexDirection: "row", alignItems: "center", gap: 10, marginVertical: 10 }}>
-                                <Avatar
-                                    size={50}
-                                    rounded
-                                    source={owner?.avatarUrl ? { uri: owner?.avatarUrl } : require("../../assets/illustrations/placeholder.png")}
-                                />
-                                <View>
-                                    <Text style={{ fontSize: 18, fontFamily: "Quicksand-700", color: "white" }}>{owner?.username}</Text>
-                                    <Text style={{ opacity: 0.6, fontFamily: "Quicksand", color: "white" }}>{owner?.creations?.length} oeuvres</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <Text style={{ color: "white", fontStyle: "italic" }}>{genre}</Text>
-                        </View>
-
+            <View style={{ paddingVertical: 20, paddingHorizontal: 40, flexDirection: "row", justifyContent: "space-between" }}>
+                <View style={{ justifyContent: "space-between" }}>
+                    <View style={{ alignItems: "flex-start", justifyContent: "space-between" }}>
+                        <Text style={{ width: 150, fontSize: 18, color: "white", fontFamily: "Quicksand-700", marginBottom: 10 }}>{title}</Text>
+                        <Text style={{ color: "white", fontSize: 16, opacity: 0.5 }}>{chapters.length} chapitre{chapters.length > 1 ? "s" : ""}</Text>
+                        {
+                            isMature && (
+                                <Badge status="error" value="Mature" badgeStyle={{ borderWidth: 0, marginVertical: 10 }} />
+                            )
+                        }
+                        <TouchableOpacity
+                            onPress={() => {
+                                navigation.replace("ViewAccount", {
+                                    user: owner
+                                })
+                            }}
+                            style={{ flexDirection: "row", alignItems: "center", gap: 10, marginVertical: 10 }}>
+                            <Avatar
+                                size={50}
+                                rounded
+                                source={owner?.avatarUrl ? { uri: owner?.avatarUrl } : require("../../assets/illustrations/placeholder.png")}
+                            />
+                            <View>
+                                <Text style={{ fontSize: 18, fontFamily: "Quicksand-700", color: "white" }}>{owner?.username}</Text>
+                                <Text style={{ opacity: 0.6, fontFamily: "Quicksand", color: "white" }}>{owner?.creations?.length} oeuvres</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <Text style={{ color: "white", fontStyle: "italic" }}>{genre}</Text>
                     </View>
-                    <Image style={{ width: 100, height: 150, borderRadius: 10, }} resizeMode="cover" source={{ uri: coverUrl }} />
+
                 </View>
+                <Image style={{ width: 100, height: 150, borderRadius: 10, }} resizeMode="cover" source={{ uri: coverUrl }} />
             </View>
-            <View style={{ flex: 0.75 }}>
-                <Card containerStyle={{ margin: 0, borderTopStartRadius: 10, borderTopEndRadius: 10, flex: 1, paddingHorizontal: 0 }}>
+            <View style={{ flex: 1 }}>
+                <Card containerStyle={{ margin: 0, borderTopStartRadius: 25, borderTopEndRadius: 25, flex: 1, paddingHorizontal: 0 }}>
                     <View>
                         <View >
                             <View style={{ paddingHorizontal: 40 }}>
@@ -102,13 +99,8 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                                         <Text style={{ fontFamily: "Quicksand-700", fontSize: 12, marginTop: 5 }}>{comments} Commentaires</Text>
                                     </View>
                                 </View>
-
                                 <View style={{ marginVertical: 20, flexDirection: "row", gap: 5 }}>
-                                    <Button
-                                        onPress={() => {
-                                            navigation.navigate("Reader", { novel })
-                                        }}
-                                        size="sm" containerStyle={{ flex: 1 }}>Lire</Button>
+                                    <Button onPress={() => { navigation.navigate("Reader", { novel }) }} size="sm" containerStyle={{ flex: 1 }}>Lire</Button>
                                     <Button disabled size="sm" buttonStyle={{ backgroundColor: primary }} containerStyle={{ flex: 1 }}>Partager</Button>
                                 </View>
 

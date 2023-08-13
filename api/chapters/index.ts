@@ -6,7 +6,7 @@ import client from "../client";
 export type CreateChapterInput = {
     title: string;
     body: string;
-    novelId: string;
+    novelId: number;
     order: number;
 }
 
@@ -16,7 +16,7 @@ export async function createChapter(payload: CreateChapterInput) {
 }
 
 export type EditChapterInput = {
-    chapterId: string;
+    chapterId: number;
     title?: string;
     body?: string;
     order?: number;
@@ -29,7 +29,7 @@ export async function editChapter(payload: EditChapterInput) {
 }
 
 export type DeleteChapterInput = {
-    chapterId: string;
+    chapterId: number;
 }
 
 export async function deleteChapter({ chapterId }: DeleteChapterInput) {
@@ -37,7 +37,7 @@ export async function deleteChapter({ chapterId }: DeleteChapterInput) {
 }
 
 export type UpdateChapterStatusInput = {
-    chapterId: string;
+    chapterId: number;
     status: ChapterStatus;
 }
 
@@ -46,7 +46,7 @@ export async function updateChapterStatus({ chapterId, status }: UpdateChapterSt
 }
 
 export type GetEntitiesByChapter = {
-    chapterId: string;
+    chapterId: number;
     type: EntityType;
 }
 

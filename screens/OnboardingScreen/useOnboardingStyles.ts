@@ -34,7 +34,6 @@ export function useOnboardingStyles() {
         },
 
         next: {
-            fontSize: 20,
             fontFamily: "Quicksand-700"
         },
 

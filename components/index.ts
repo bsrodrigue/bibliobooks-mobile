@@ -16,10 +16,10 @@ export { PasswordInput } from "./PasswordInput";
 export { RadioInput } from "./RadioInput";
 export { RadioInputGroup } from "./RadioInputGroup";
 export { RecommendationCarousel } from "./RecommendationCarousel";
+export { Richtext } from "./Richtext";
 export { Searchbar } from "./Searchbar";
 export { StoryRecommendation } from "./StoryRecommendation";
 export { WorkshopNovelGrid } from "./WorkshopNovelGrid";
 export { WorkshopTabs } from "./WorkshopTabs";
 export { Wrapper } from "./Wrapper";
 export { OnboardingItem } from "./onboarding/OnboardingItem";
-

@@ -1,10 +1,9 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useTheme } from "@rneui/themed";
 import { useRef, useState } from "react";
-import { ScrollView, View } from "react-native";
-import { RichEditor, RichToolbar } from "react-native-pell-rich-editor";
-import { Button, TextInput } from "../../components";
-import initialCSSText from "../../config/richtext";
+import { View } from "react-native";
+import { RichToolbar } from "react-native-pell-rich-editor";
+import { Button, Richtext, TextInput } from "../../components";
 import { useChapterWorkshop } from "../../hooks/api/workshop";
 import { useWorkshop } from "../../providers/WorkshopProvider";
 import { RootStackParamList } from "../../types";
@@ -30,28 +29,11 @@ export default function ChapterFormScreen({ navigation, route: { params: { mode,
                     <TextInput containerStyle={{ flex: 0.9 }} onChangeText={setTitle} value={title} label="Titre du chapitre" placeholder="Veuillez saisir le titre du chapitre" />
                     <TextInput containerStyle={{ flex: 0.1 }} keyboardType="numeric" onChangeText={setOrder} value={order} label="#" />
                 </View>
-                <ScrollView
-                    contentContainerStyle={{
-                        flex: 1
-                    }}
-                >
-                    <RichEditor
-                        scrollEnabled
-                        useContainer
-                        placeholder="Commencez à écrire une belle histoire..."
-                        androidLayerType="hardware"
-                        initialContentHTML={content}
-                        editorStyle={initialCSSText(true)}
-                        ref={_editor}
-                        style={{
-                            flex: 1,
-                        }}
-                        onChange={(text) => {
-                            setContent(text)
-                        }}
-                    />
-                </ScrollView>
-
+                <Richtext
+                    placeholder="Commencez à écrire une belle histoire..."
+                    ref={_editor}
+                    onChange={(text) => setContent(text)}
+                    lightMode initialContentHTML={content} />
                 <Button
                     title="Sauvegarder"
                     loading={loading}
