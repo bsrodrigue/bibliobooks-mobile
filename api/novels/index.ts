@@ -22,6 +22,15 @@ export async function createNovel({ coverImg, ...input }: CreateNovelInput): Pro
     return result.data;
 }
 
+export type SearchNovelInput = {
+    searchTerms: string;
+}
+
+export async function searchNovel({ searchTerms }: SearchNovelInput) {
+    const result = await client.post("novels/search", { searchTerms });
+    return result.data;
+}
+
 export type EditNovelInput = {
     novelId: number;
     title?: string;

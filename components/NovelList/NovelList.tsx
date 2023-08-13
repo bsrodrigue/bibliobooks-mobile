@@ -1,7 +1,7 @@
 import { Badge, Card } from "@rneui/base";
 import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
-import { ReaderNovel } from "../../types/models";
 import { config } from "../../config";
+import { ReaderNovel } from "../../types/models";
 
 type NovelListProps = {
     novels: Array<ReaderNovel>;
@@ -13,13 +13,7 @@ type NovelListProps = {
 export default function NovelList({ novels, onPressItem, refreshing, onRefresh }: NovelListProps) {
 
     return (
-        <FlatList
-            data={novels}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-                flex: 1
-            }}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        <FlatList data={novels} showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             renderItem={({ index, item }) =>
             (
                 <Card containerStyle={{ marginHorizontal: 0, borderRadius: 10 }}>

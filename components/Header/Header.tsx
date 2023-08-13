@@ -8,13 +8,17 @@ type HeaderProps = {
     onPressSettings?: () => void;
     onPressNotifications?: () => void;
     onChange?: (value: string) => void;
+    loading?: boolean;
 };
 
-export default function Header({ searchMode, onPressSettings, onSearchPress, onPressNotifications, onChange }: HeaderProps) {
+export default function Header({
+    searchMode, onPressSettings,
+    onSearchPress, onPressNotifications,
+    onChange, loading }: HeaderProps) {
     return (
         <View style={{ backgroundColor: "white", flexDirection: "row", paddingVertical: 10, justifyContent: "space-between" }}>
             <TouchableOpacity onPress={onSearchPress}>
-                <Searchbar searchMode={searchMode} onChange={onChange} />
+                <Searchbar loading={loading} searchMode={searchMode} onChange={onChange} />
             </TouchableOpacity>
 
             {
