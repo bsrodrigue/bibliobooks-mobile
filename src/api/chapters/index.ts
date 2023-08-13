@@ -1,6 +1,6 @@
 import { where } from "firebase/firestore";
-import { Chapter, ChapterStatus, EntityType } from "../../types/models";
-import { createOwnedEntity, deleteEntityById, getEntitiesWhere, getEntityRefById, updateEntity } from "../base";
+import { ChapterStatus, EntityType } from "../../types/models";
+import { getEntitiesWhere } from "../base";
 import client from "../client";
 
 export type CreateChapterInput = {
@@ -15,6 +15,13 @@ export async function createChapter(payload: CreateChapterInput) {
     return result.data;
 }
 
+export async function likeChapter({ chapterId }: { chapterId: number }) {
+    await client.post("likes/like", { chapterId });
+}
+
+export async function unlikeChapter({ chapterId }: { chapterId: number }) {
+    await client.post("likes/unlike", { chapterId });
+}
 export type EditChapterInput = {
     chapterId: number;
     title?: string;

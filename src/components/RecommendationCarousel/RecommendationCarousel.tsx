@@ -89,7 +89,7 @@ export default function RecommendationCarousel({
                             }}
                             style={{ opacity: selectedNovel === index ? 1 : 0.5 }} key={index}>
                             <Image resizeMode="cover" style={{ height: 110, width: 70, borderRadius: 5, marginBottom: 5 }} source={{ uri: item?.coverUrl }} />
-                            <Text style={styles.novelTitle}>{title}</Text>
+                            <Text style={styles.novelTitle}>{item?.title}</Text>
                             <Text style={styles.chapterCount}>{item?.chapters.length}{" "}chapitres</Text>
                         </TouchableOpacity>
                     )

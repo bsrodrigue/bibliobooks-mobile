@@ -4,6 +4,8 @@ import { useTheme } from "@rneui/themed";
 import { useRef, useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { Richtext } from "../../components";
+import { useChapter } from "../../hooks/api/reader";
+import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 
 type ReaderScreenProps = NativeStackScreenProps<RootStackParamList, 'Reader'>;
@@ -40,10 +42,13 @@ export default function ReaderScreen({ navigation, route: { params: { novel } } 
     const { theme: { colors: { black } } } = useTheme();
     const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
     const [chapterListIsVisible, setChapterListIsVisible] = useState(false);
+    const { session: { profile: { id } } } = useSession();
     const [lightMode, setLightMode] = useState(true);
     const chapter = novel.chapters[currentChapterIndex];
     const readerRef = useRef(null);
+    const { like, unlike, isLoading } = useChapter(chapter);
 
+    // const liked = chapter?.likes.length !== 0 && chapter.likes.find((like) => like?.owner?.id === id) !== undefined;
     const content = `<h1>${chapter?.title}</h1>${chapter?.body}`;
 
     return (
@@ -101,14 +106,13 @@ export default function ReaderScreen({ navigation, route: { params: { novel } } 
                 containerStyle={{
                     justifyContent: "center",
                     alignItems: "center",
-                    height: 50,
                     paddingVertical: 8,
                 }} disableIndicator>
-                <Tab.Item
-                    title="0"
-                    titleStyle={{ fontSize: 10, color: black }}
-                    icon={{ name: 'star-outline', type: 'ionicon' }}
-                />
+                <Tab.Item>
+                    <TouchableOpacity onPress={() => like()}>
+                        <Icon type="ionicon" name="star-outline" />
+                    </TouchableOpacity>
+                </Tab.Item>
                 <Tab.Item
                     title="0"
                     titleStyle={{ fontSize: 10, color: black }}
@@ -119,12 +123,11 @@ export default function ReaderScreen({ navigation, route: { params: { novel } } 
                     titleStyle={{ fontSize: 10, color: black }}
                     icon={{ name: 'share-social', type: 'ionicon' }}
                 />
-                <Tab.Item
-                    onPress={() => setChapterListIsVisible(true)}
-                    title="0"
-                    titleStyle={{ fontSize: 10, color: black }}
-                    icon={{ name: 'list', type: 'ionicon' }}
-                />
+                <Tab.Item>
+                    <TouchableOpacity onPress={() => setChapterListIsVisible(true)}>
+                        <Icon type="ionicon" name="list" />
+                    </TouchableOpacity>
+                </Tab.Item>
             </Tab>
         </View>
     )

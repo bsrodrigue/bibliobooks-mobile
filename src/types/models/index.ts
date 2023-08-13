@@ -43,6 +43,7 @@ export interface Novel
     isMature?: boolean;
     genre: NovelGenre;
     status: NovelStatus;
+    chapters?: Chapter[];
 }
 
 export interface Chapter
