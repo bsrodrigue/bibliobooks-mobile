@@ -26,4 +26,5 @@ export { SettingsScreen } from "./SettingsScreen";
 export { SetupAccountScreen } from "./SetupAccountScreen";
 export { SetupAccountSuccessScreen } from "./SetupAccountSuccessScreen";
 export { SuccessScreen } from "./SuccessScreen";
+export { ViewAccountScreen } from "./ViewAccountScreen";
 

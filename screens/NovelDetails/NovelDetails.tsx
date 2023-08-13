@@ -37,7 +37,7 @@ type NovelDetailsScreenProps = NativeStackScreenProps<RootStackParamList, 'Novel
 
 export default function NovelDetailsScreen({ navigation, route }: NovelDetailsScreenProps) {
     const { novel } = route.params;
-    const { title, description, coverUrl, chapters, genre, isMature, owner: { avatarUrl, username, creations } } = novel;
+    const { title, description, coverUrl, chapters, genre, isMature, owner } = novel;
     const { theme: { colors: { black, primary } } } = useTheme();
     const [chapterListIsVisible, setChapterListIsVisible] = useState(false);
     const { library, addLibraryNovel, removeLibraryNovel, isLoading } = useLibrary();
@@ -59,15 +59,21 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                                     <Badge status="error" value="Mature" badgeStyle={{ borderWidth: 0, marginVertical: 10 }} />
                                 )
                             }
-                            <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", gap: 10, marginVertical: 10 }}>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    navigation.replace("ViewAccount", {
+                                        user: owner
+                                    })
+                                }}
+                                style={{ flexDirection: "row", alignItems: "center", gap: 10, marginVertical: 10 }}>
                                 <Avatar
                                     size={50}
                                     rounded
-                                    source={{ uri: avatarUrl }}
+                                    source={owner?.avatarUrl ? { uri: owner?.avatarUrl } : require("../../assets/illustrations/placeholder.png")}
                                 />
                                 <View>
-                                    <Text style={{ fontSize: 18, fontFamily: "Quicksand-700", color: "white" }}>{username}</Text>
-                                    <Text style={{ opacity: 0.6, fontFamily: "Quicksand", color: "white" }}>{creations?.length} oeuvres</Text>
+                                    <Text style={{ fontSize: 18, fontFamily: "Quicksand-700", color: "white" }}>{owner?.username}</Text>
+                                    <Text style={{ opacity: 0.6, fontFamily: "Quicksand", color: "white" }}>{owner?.creations?.length} oeuvres</Text>
                                 </View>
                             </TouchableOpacity>
                             <Text style={{ color: "white", fontStyle: "italic" }}>{genre}</Text>
@@ -100,7 +106,7 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                                 <View style={{ marginVertical: 20, flexDirection: "row", gap: 5 }}>
                                     <Button
                                         onPress={() => {
-                                            navigation.navigate("Reader", { novel, chapter: novel.chapters[0] })
+                                            navigation.navigate("Reader", { novel })
                                         }}
                                         size="sm" containerStyle={{ flex: 1 }}>Lire</Button>
                                     <Button disabled size="sm" buttonStyle={{ backgroundColor: primary }} containerStyle={{ flex: 1 }}>Partager</Button>
@@ -175,11 +181,7 @@ export default function NovelDetailsScreen({ navigation, route }: NovelDetailsSc
                     <FlatList
                         ListHeaderComponent={<Text style={{ fontFamily: "Quicksand-700", fontSize: 18, marginVertical: 15 }}>{chapters.length}{" "}chapitres</Text>}
                         showsVerticalScrollIndicator={false} style={{ height: 300 }} data={chapters} renderItem={({ index, item }) => (
-                            <TouchableOpacity
-                                onPress={() => {
-                                    navigation.navigate("Reader", { novel, chapter: item })
-                                }}
-                                key={item.id} style={{ paddingVertical: 12 }}>
+                            <TouchableOpacity onPress={() => { navigation.navigate("Reader", { novel }) }} key={item.id} style={{ paddingVertical: 12 }}>
                                 <Text style={{ fontFamily: "Quicksand-600" }}>{item.title}</Text>
                                 <Text style={{ fontFamily: "Quicksand-500", fontSize: 12, opacity: 0.5 }}>Nombre de mots {readingTime(item.body).words}</Text>
                             </TouchableOpacity>)}

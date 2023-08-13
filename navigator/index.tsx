@@ -7,7 +7,8 @@ import {
     ChangeEmailScreen, ChangePasswordScreen, ChapterPreviewScreen,
     ForgotPasswordScreen, LoginScreen, MainScreen, OnboardingScreen, ReaderScreen,
     RegisterScreen, RegisterSuccessScreen, SettingsScreen, SetupAccountScreen,
-    SetupAccountSuccessScreen
+    SetupAccountSuccessScreen,
+    ViewAccountScreen
 } from "../screens";
 import NovelDetailsScreen from "../screens/NovelDetails/NovelDetails";
 import { UserProfile } from "../types/auth";
@@ -38,6 +39,7 @@ type PrivateStackProps = {
 
 function PrivateStack({ userProfile }: PrivateStackProps) {
     const initialRouteName = !userProfile.isAccountSetup ? "SetupAccount" : "Main";
+
     return (
         <WorkshopProvider>
             <LibraryProvider>
@@ -51,6 +53,7 @@ function PrivateStack({ userProfile }: PrivateStackProps) {
                     <Stack.Screen name='ChangeEmail' component={ChangeEmailScreen} options={{ headerShown: true, headerTitle: "Paramètres" }} />
                     <Stack.Screen name='ChangePassword' component={ChangePasswordScreen} options={{ headerShown: true, headerTitle: "Paramètres" }} />
                     <Stack.Screen name='ChapterPreview' component={ChapterPreviewScreen} />
+                    <Stack.Screen name='ViewAccount' component={ViewAccountScreen} />
                 </Stack.Navigator>
             </LibraryProvider>
         </WorkshopProvider>
