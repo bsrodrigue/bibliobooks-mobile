@@ -41,7 +41,7 @@ export async function createNovel({ coverImg, ...input }: CreateNovelInput): Pro
 }
 
 export type EditNovelInput = {
-    novelId: string;
+    novelId: number;
     title?: string;
     description?: string;
     genre?: NovelGenre;
@@ -86,18 +86,9 @@ export async function getUserNovels() {
     return result.data;
 }
 
-export type GetUserLibraryInput = {
-    userId: string;
-}
-
-export async function getLibrary({ userId }: GetUserLibraryInput) {
-    const library = await getEntitiesOwnedByUser<Library>(userId, "library");
-
-    if (!library.length) {
-        return await createLibrary({ userId });
-    }
-
-    return library[0];
+export async function getLibrary() {
+    const result = await client.get("library/me");
+    return result.data;
 }
 
 export type CreateLibraryInput = {
@@ -109,7 +100,8 @@ export async function createLibrary({ userId }: CreateLibraryInput) {
 }
 
 export async function getPublicNovels() {
-    return await getPublicEntities<Novel>("novel");
+    const result = await client.get("novels");
+    return result.data;
 }
 
 export type GetPublicChaptersFromNovelInput = {
@@ -155,28 +147,12 @@ export async function getReaderNovelFromNovel(novel: Novel) {
     return null;
 }
 
-export type AddToLibraryInput = {
-    novelId: string;
-    userId: string;
+export async function addToLibrary(novelId: number) {
+    return await client.post("library/me/add", { novelId });
 }
 
-export async function addToLibrary({ novelId, userId }: AddToLibraryInput) {
-    const library = await getLibrary({ userId });
-    const libraryRef = await getEntityRefById(library.id, "library");
-    await updateDoc(libraryRef, {
-        novels: arrayUnion(novelId)
-    });
-}
-export type RemoveFromLibraryInput = {
-    novelId: string;
-    userId: string;
-}
-export async function removeFromLibrary({ novelId, userId }: RemoveFromLibraryInput) {
-    const library = await getLibrary({ userId });
-    const libraryRef = await getEntityRefById(library.id, "library");
-    await updateDoc(libraryRef, {
-        novels: arrayRemove(novelId)
-    });
+export async function removeFromLibrary(novelId: number) {
+    return await client.post("library/me/remove", { novelId });
 }
 
 export type GetUniqueChapterEntityByUserInput = {

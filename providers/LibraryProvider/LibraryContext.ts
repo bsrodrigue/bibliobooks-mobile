@@ -1,16 +1,13 @@
 import { createContext } from "react";
-import { LibraryNovel } from "../../types/models";
+import { Library, LibraryNovel } from "../../types/models";
 
 type LibraryContextType = {
-    libraryNovels: Array<LibraryNovel>;
+    library: Library;
     isLoading?: boolean;
+    addLibraryNovel: (novel: LibraryNovel) => void;
+    removeLibraryNovel: (novelId: number) => void;
+    updateLibraryNovels: (novels: Array<LibraryNovel>) => void;
     fetchLibraryNovels: () => void;
-    addLibraryNovel: (workshopNovel: LibraryNovel) => void;
-    removeLibraryNovel: (id: string) => void;
-    updateLibraryNovels: (workshopNovels: Array<LibraryNovel>) => void;
-    novelIdentifiers: Array<string>;
-    addNovelIdentifier: (id: string) => void;
-    removeNovelIdentifier: (id: string) => void;
 }
 
 const LibraryContext = createContext<LibraryContextType | null>(null);

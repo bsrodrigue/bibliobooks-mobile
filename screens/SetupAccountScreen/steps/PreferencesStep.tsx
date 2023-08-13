@@ -3,16 +3,11 @@ import { useTheme } from "@rneui/themed";
 import { Formik } from "formik";
 import { useRef, useState } from "react";
 import { FlatList, ImageBackground, Text, TouchableOpacity, View } from "react-native";
-import * as Yup from "yup";
 import { SetupAccountInput, setupAccount } from "../../../api/auth";
 import useCall from "../../../api/useCall";
 import { Button } from "../../../components";
 import { config } from "../../../config";
-import { RootStackParamList, UIGenre } from "../../../types";
-
-const preferencesSchema = Yup.object().shape({
-    favouriteGenres: Yup.string().optional(),
-});
+import { RootStackParamList } from "../../../types";
 
 type PreferencesStepProps = {
     navigation?: NativeStackNavigationProp<RootStackParamList, "SetupAccount", undefined>;
@@ -27,10 +22,7 @@ export default function PreferencesStep({ formValues, navigation }: PreferencesS
         },
     });
     const numColumns = useRef(2);
-    const [genres, setGenres] = useState<Array<UIGenre & { selected: boolean }>>(config.genres.map(genre => ({
-        selected: false, ...genre,
-    })))
-
+    const [genres, setGenres] = useState(config.genreSelectOptions);
     const toggle = (value: string) => {
         const result = genres.map((genre) => {
             if (genre.value === value) {
@@ -45,16 +37,15 @@ export default function PreferencesStep({ formValues, navigation }: PreferencesS
 
     return (
         <Formik
-            validationSchema={preferencesSchema}
             initialValues={{
-                favouriteGenres: "",
+                favouriteGenres: [],
             }}
-            onSubmit={async (values) => {
-                const genres = values.favouriteGenres ? JSON.parse(values.favouriteGenres).map((fav) => fav.value) : [];
-                await call({ ...formValues, favouriteGenres: genres });
+            onSubmit={async () => {
+                const favouriteGenres = genres.filter((genre) => genre.selected).map((genre) => genre.value);
+                await call({ ...formValues, favouriteGenres });
             }}
         >
-            {({ handleChange, handleSubmit }) => (
+            {({ handleSubmit }) => (
                 <>
                     <View>
                         <Text style={{ fontFamily: "Quicksand-700", fontSize: 20 }}>Quels genres d’histoires aimez-vous?</Text>
@@ -68,8 +59,7 @@ export default function PreferencesStep({ formValues, navigation }: PreferencesS
                             <TouchableOpacity
                                 style={{ flex: 1, marginVertical: 10 }}
                                 onPress={() => {
-                                    const result = toggle(value);
-                                    handleChange("favouriteGenres")(JSON.stringify(result));
+                                    toggle(value);
                                 }
                                 }
                             >

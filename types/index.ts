@@ -1,5 +1,5 @@
 import { ImageSourcePropType } from "react-native";
-import { Chapter, Novel } from "./models";
+import { Chapter, Novel, NovelGenre } from "./models";
 export * from "./routing";
 
 export type Slide = {
@@ -28,7 +28,7 @@ export type TabItem = {
 
 export type UIGenre = {
     title: string,
-    value: string,
+    value: NovelGenre,
     description: string,
     cover: ImageSourcePropType;
 }

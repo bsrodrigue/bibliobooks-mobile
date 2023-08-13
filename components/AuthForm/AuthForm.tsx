@@ -9,7 +9,6 @@ const styles = StyleSheet.create({
     },
 
     header: {
-        flex: 0.2,
         marginVertical: 10
     },
 
@@ -25,8 +24,8 @@ const styles = StyleSheet.create({
     },
 
     body: {
-        flex: 0.8,
-        marginVertical: 10
+        flex: 1,
+        marginVertical: 10,
     },
 });
 
@@ -34,10 +33,9 @@ type AuthFormProps = {
     title?: string;
     subtitle?: string;
     children?: ReactNode;
-    footer?: ReactNode;
 };
 
-export default function AuthForm({ children, footer, title, subtitle }: AuthFormProps) {
+export default function AuthForm({ children, title, subtitle }: AuthFormProps) {
 
     return (
         <View style={styles.container}>

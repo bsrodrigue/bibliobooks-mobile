@@ -26,6 +26,7 @@
     "expo-dev-client": "~2.2.1",
     "expo-font": "~11.1.1",
     "expo-image-picker": "~14.1.1",
+    "expo-network": "~5.2.1",
     "expo-splash-screen": "~0.18.2",
     "expo-status-bar": "~1.4.4",
     "firebase": "^10.1.0",
@@ -43,8 +44,11 @@
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.10",
     "react-native-webview": "11.26.0",
+    "reading-time": "^1.5.0",
+    "stream": "^0.0.2",
     "typescript": "^4.9.4",
     "usehooks-ts": "^2.9.1",
+    "util": "^0.12.5",
     "yup": "^1.2.0"
   },
   "devDependencies": {

@@ -64,10 +64,8 @@ export default function SetupAccountScreen({ navigation }: SetupAccountScreenPro
             <AuthForm
                 title={steps[currentStepIndex].title}
                 subtitle={steps[currentStepIndex].subtitle}>
-                <View style={{ flex: 1, paddingVertical: 5, justifyContent: "space-between" }}>
-                    <View style={{ flex: 1 }}>
-                        {steps[currentStepIndex].component}
-                    </View>
+                <View style={{ flex: 1 }}>
+                    {steps[currentStepIndex].component}
                 </View>
             </AuthForm>
         </View>

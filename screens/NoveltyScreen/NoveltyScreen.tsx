@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { NovelList } from "../../components";
 import { useLatestNovels } from "../../hooks/api/reader";
-import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 import { ReaderNovel } from "../../types/models";
 
@@ -17,9 +16,7 @@ const styles = StyleSheet.create({
 type NoveltyScreenProps = NativeStackScreenProps<RootStackParamList, 'Novelty'>;
 
 export default function NoveltyScreen({ navigation }: NoveltyScreenProps) {
-    const { session: { userProfile } } = useSession();
-
-    const { getLatestNovels, latestNovels, isLoading } = useLatestNovels({});
+    const { getLatestNovels, latestNovels, isLoading } = useLatestNovels();
 
     useEffect(() => {
         getLatestNovels();

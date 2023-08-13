@@ -25,7 +25,7 @@ export type RootStackParamList = {
         chapter: Chapter;
     };
     ChapterWorkshop: {
-        novelId: string;
+        novelId: number;
     };
     Account: {
         novel?: ReaderNovel;
@@ -56,6 +56,5 @@ export type RootStackParamList = {
     };
     Reader: {
         novel: ReaderNovel;
-        chapter: Chapter;
     }
 };

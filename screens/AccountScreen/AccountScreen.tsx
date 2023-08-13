@@ -14,6 +14,7 @@ import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 import { UserProfile } from "../../types/auth";
 import { config } from "../../config";
+import { useWorkshop } from "../../providers/WorkshopProvider";
 
 const accountSchema = Yup.object().shape({
     firstName: Yup.string().required("Champ requis"),
@@ -26,9 +27,9 @@ const accountSchema = Yup.object().shape({
 type AccountScreenProps = NativeStackScreenProps<RootStackParamList, 'Account'>;
 
 export default function AccountScreen({ navigation, route: { params } }: AccountScreenProps) {
-    const { theme: { colors: { primary, greyOutline, black } } } = useTheme();
+    const { theme: { colors: { greyOutline, black } } } = useTheme();
     const [isEditMode, setIsEditMode] = useState(false);
-    // const { workshopNovels } = useWorkshop();
+    const { workshopNovels } = useWorkshop();
     const { session, updateSession } = useSession();
     const { profile: { username, firstName, lastName, bio, avatarUrl, gender } } = session;
     const { call, isLoading } = useCall(updateUserProfile, {
@@ -82,7 +83,7 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                             <View style={{ flex: 0.3, marginVertical: 5, paddingHorizontal: 15 }}>
                                 <View style={{ flexDirection: "row", justifyContent: "space-around", paddingVertical: 10 }}>
                                     <View style={{ alignItems: "center" }}>
-                                        <Text style={{ color: "white", fontFamily: "Quicksand-700", fontSize: 25 }}>{0}</Text>
+                                        <Text style={{ color: "white", fontFamily: "Quicksand-700", fontSize: 25 }}>{workshopNovels?.length || 0}</Text>
                                         <Text style={{
                                             color: "white", fontFamily: "Quicksand-600",
                                             textTransform: "uppercase", fontSize: 15, opacity: 0.8

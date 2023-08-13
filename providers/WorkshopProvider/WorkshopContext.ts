@@ -6,10 +6,10 @@ type WorkshopContextType = {
     isLoading?: boolean;
     fetchWorkshopNovels: () => void;
     addWorkshopNovel: (workshopNovel: WorkshopNovel) => void;
-    removeWorkshopNovel: (id: string) => void;
+    removeWorkshopNovel: (id: number) => void;
     updateWorkshopNovels: (workshopNovels: Array<WorkshopNovel>) => void;
-    updateWorkshopNovel: (id: string, payload: Partial<WorkshopNovel>) => void;
-    updateWorkshopChapter: (novel: WorkshopNovel, chapterId: string, payload: Partial<Chapter>) => void;
+    updateWorkshopNovel: (id: number, payload: Partial<WorkshopNovel>) => void;
+    updateWorkshopChapter: (novel: WorkshopNovel, chapterId: number, payload: Partial<Chapter>) => void;
 }
 
 const WorkshopContext = createContext<WorkshopContextType | null>(null);

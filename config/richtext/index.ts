@@ -1,5 +1,11 @@
 import FontFamilyStylesheet from "./stylesheet";
 const fontFamily = 'EB Garamond';
-const initialCSSText = { initialCSSText: `${FontFamilyStylesheet}`, contentCSSText: `font-family: ${fontFamily}` }
 
-export default initialCSSText;
+export default (light: boolean) => {
+    return {
+        initialCSSText: `${FontFamilyStylesheet}`,
+        contentCSSText: `font-family: ${fontFamily}`,
+        backgroundColor: "transparent",
+        color: light ? "black" : "white"
+    }
+};

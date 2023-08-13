@@ -1,3 +1,4 @@
+import * as Network from "expo-network";
 import { ReactNode, useEffect, useState } from "react";
 import { getUserNovels } from "../../api/novels";
 import { notify } from "../../lib";
@@ -12,16 +13,31 @@ type WorkshopProviderProps = {
 export default function WorkshopProvider({ children }: WorkshopProviderProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [workshopNovels, setWorkshopNovels] = useState<Array<WorkshopNovel>>([]);
-    const { storeData } = useAsyncStorage();
+    const { storeData, getData } = useAsyncStorage();
 
     useEffect(() => {
-        storeData("workshop", workshopNovels);
+        workshopNovels && storeData("workshop", workshopNovels);
     }, [workshopNovels]);
 
     const fetchWorkshopNovels = async () => {
+        const networkState = await Network.getNetworkStateAsync();
+        const localWorkshopNovelsJson = await getData("workshop");
+
+        if (!networkState.isInternetReachable) {
+            setWorkshopNovels(JSON.parse(localWorkshopNovelsJson));
+            return;
+        }
+
         try {
             setIsLoading(true);
             const novels = await getUserNovels();
+
+            // Sync
+            const novelsJson = JSON.stringify(novels);
+            if (novelsJson !== localWorkshopNovelsJson) {
+                //  TODO: Implement a sync mechanism
+            }
+
             setWorkshopNovels(novels)
         } catch (error) {
             notify.error("Erreur survenue en chargeant vos histoires");
@@ -36,11 +52,11 @@ export default function WorkshopProvider({ children }: WorkshopProviderProps) {
     const updateWorkshopNovels = (workshopNovels: Array<WorkshopNovel>) => {
         setWorkshopNovels(workshopNovels);
     }
-    const removeWorkshopNovel = (id: string) => {
+    const removeWorkshopNovel = (id: number) => {
         setWorkshopNovels((prev) => prev.filter((novel) => novel.id !== id));
     }
 
-    const updateWorkshopNovel = (id: string, payload: Partial<WorkshopNovel>) => {
+    const updateWorkshopNovel = (id: number, payload: Partial<WorkshopNovel>) => {
         setWorkshopNovels((prev) => prev.map((novel) => {
             if (novel.id === id) {
                 novel = { ...novel, ...payload };
@@ -51,7 +67,7 @@ export default function WorkshopProvider({ children }: WorkshopProviderProps) {
         }));
     }
 
-    const updateWorkshopChapter = (novel: WorkshopNovel, chapterId: string, payload: Partial<Chapter>) => {
+    const updateWorkshopChapter = (novel: WorkshopNovel, chapterId: number, payload: Partial<Chapter>) => {
         updateWorkshopNovel(novel.id, {
             chapters: novel.chapters.map((chap) => {
                 if (chap.id === chapterId) {

@@ -1,51 +1,79 @@
+import { ImageSourcePropType } from "react-native";
 import Crypto from "../lib/crypto";
-import { RadioInputOption, UIGenre } from "../types";
+import { RadioInputOption } from "../types";
+import { NovelGenre } from "../types/models";
 
 const genderOptions: RadioInputOption[] = [
     { label: "Homme", value: "MALE", imgSrc: require("../assets/illustrations/male.png") },
     { label: "Femme", value: "FEMALE", imgSrc: require("../assets/illustrations/female.png") },
 ]
 
-const genreTitleMap = {
-    "ACTION": "Action",
-    "ADVENTURE": "Aventure",
-    "FANTASY": "Fantasy",
-    "ROMANCE": "Romance",
-    "TRADITIONAL": "Traditionnel",
-};
+const baseGenreCoverUrl = "../assets/images";
 
-const genres: Array<UIGenre> = [
-    {
-        title: "Action",
-        value: "ACTION",
-        description: "",
-        cover: require("../assets/images/action.jpg")
-    },
-    {
+const novelGenresMap: Record<NovelGenre, {
+    title: string;
+    description?: string;
+    cover?: ImageSourcePropType;
+}> = {
+    ADVENTURE: {
         title: "Aventure",
-        value: "ADVENTURE",
         description: "",
-        cover: require("../assets/images/adventure.jpg")
+        cover: require(`${baseGenreCoverUrl}/adventure.jpg`)
     },
-    {
+    ACTION: {
+        title: "Action",
+        description: "",
+        cover: require(`${baseGenreCoverUrl}/action.jpg`)
+    },
+    FANTASY: {
         title: "Fantasy",
-        value: "FANTASY",
         description: "",
-        cover: require("../assets/images/fantasy.jpg")
+        cover: require(`${baseGenreCoverUrl}/fantasy.jpg`)
     },
-    {
+    ROMANCE: {
         title: "Romance",
-        value: "ROMANCE",
         description: "",
-        cover: require("../assets/images/romance.jpg")
+        cover: require(`${baseGenreCoverUrl}/romance.jpg`)
     },
-    {
+    TRADITIONAL: {
         title: "Traditionnel",
-        value: "TRADITIONAL",
         description: "",
-        cover: require("../assets/images/traditional.jpg")
+        cover: require(`${baseGenreCoverUrl}/traditional.jpg`)
     },
-]
+    HISTORICAL: {
+        title: "Historique",
+        description: "",
+        cover: require(`${baseGenreCoverUrl}/historical.jpg`)
+    },
+    HORROR: {
+        title: "Horreur",
+        description: "",
+        cover: require(`${baseGenreCoverUrl}/horror.jpg`)
+    },
+    SCIFI: {
+        title: "Sci-Fi",
+        description: "",
+        cover: require(`${baseGenreCoverUrl}/scifi.jpg`)
+    },
+    MYSTERY: {
+        title: "Mystère",
+        description: "",
+        cover: require(`${baseGenreCoverUrl}/mystery.jpg`)
+    },
+    DRAMA: {
+        title: "Drama",
+        description: "",
+        cover: require(`${baseGenreCoverUrl}/drama.jpg`)
+    }
+}
+
+const genreSelectOptions = Object.keys(novelGenresMap).map((key) => ({
+    cover: novelGenresMap[key]?.cover,
+    description: novelGenresMap[key]?.description,
+    selected: false,
+    title: novelGenresMap[key]?.title,
+    value: key,
+}))
 
 const wrapperHorizontalPadding = 40;
 
@@ -55,8 +83,8 @@ const defaultIdGenerator = {
 
 export const config = {
     genderOptions,
-    genres,
-    genreTitleMap,
+    novelGenresMap,
+    genreSelectOptions,
     wrapperHorizontalPadding,
     defaultIdGenerator,
 };
