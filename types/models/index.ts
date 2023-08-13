@@ -2,7 +2,7 @@ import { ImageSourcePropType } from "react-native";
 import { UserProfile } from "../auth";
 
 export interface BaseModel {
-    id: string;
+    id: number;
     createdAt: string;
     updatedAt: string;
 }
@@ -68,7 +68,7 @@ export interface Library
     extends
     BaseModel,
     HasOwner {
-    novels: Array<Novel>;
+    novels: Array<LibraryNovel>;
 }
 
 export type BaseEntityStatus = "PUBLISHED" | "DRAFT" | "ARCHIVED" | "BANNED";
@@ -77,7 +77,10 @@ export type ChapterStatus = BaseEntityStatus;
 
 export type NovelStatus = BaseEntityStatus;
 
-export type NovelGenre = "adventure" | "action" | "fantasy" | "romance" | "traditional" | "historical" | "horror" | "fantastic";
+export type NovelGenre =
+    "ADVENTURE" | "ACTION" | "FANTASY" |
+    "ROMANCE" | "TRADITIONAL" | "HISTORICAL" |
+    "HORROR" | "SCIFI" | "MYSTERY" | "DRAMA";
 
 export type NovelGenreIllustration = {
     title: string;
@@ -110,6 +113,5 @@ export interface WorkshopNovel
 }
 
 export interface LibraryNovel
-    extends Novel, ReaderNovel {
-    chapters: Array<Chapter>;
+    extends ReaderNovel {
 }

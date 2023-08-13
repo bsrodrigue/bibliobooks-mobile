@@ -2,16 +2,16 @@ import { Formik } from "formik";
 import { useState } from "react";
 import { View } from "react-native";
 import * as Yup from "yup";
+import { SetupAccountInput } from "../../../api/auth";
 import { Button, DateTimePicker, RadioInputGroup, TextInput } from "../../../components";
 import { config } from "../../../config";
 import { notify } from "../../../lib";
-import { SetupAccountInput } from "../../../api/auth";
 
 const informationSchema = Yup.object().shape({
     firstName: Yup.string().required("Champ requis"),
     lastName: Yup.string().required("Champ requis"),
     gender: Yup.string().optional(),
-    birthdate: Yup.date().optional(),
+    birthdate: Yup.string().optional(),
 });
 
 type InformationsStepProps = {
@@ -29,10 +29,12 @@ export default function InformationsStep({ onNext, formValues }: InformationsSte
                 firstName: formValues?.firstName || "",
                 lastName: formValues?.lastName || "",
                 gender: formValues?.gender || "MALE",
-                birthdate: new Date(),
+                birthdate: new Date().toISOString(),
             }}
             onSubmit={(values) => {
-                onNext?.({ ...values, birthdate: values.birthdate.toISOString() })
+                const birthdate = new Date(values.birthdate);
+                delete values.birthdate;
+                onNext?.({ ...values, birthdate })
             }}
         >
             {({ handleChange, handleSubmit, values, errors }) => (
@@ -63,10 +65,10 @@ export default function InformationsStep({ onNext, formValues }: InformationsSte
                                     return;
                                 }
                                 setBirthdate(value);
-                                return handleChange("birthdate");
+                                handleChange("birthdate")(value.toISOString());
                             }} />
                     </View>
-                    <Button onPress={() => handleSubmit()} title="Suivant" />
+                    <Button onPress={handleSubmit} title="Suivant" />
                 </View>
             )}
         </Formik>

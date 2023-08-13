@@ -41,7 +41,6 @@ export default function HomeScreen({ navigation }: HomeScreenProps) {
                     // navigation.navigate("NovelDetails", {  });
                 }}
             />
-            <RecommendationCarousel title="Les histoires les plus populaires" novels={ } />
 
             <StoryRecommendation
                 title="Les totems des anciens"

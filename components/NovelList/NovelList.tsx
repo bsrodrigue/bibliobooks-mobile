@@ -1,6 +1,7 @@
-import { Card } from "@rneui/base";
+import { Badge, Card } from "@rneui/base";
 import { FlatList, Image, RefreshControl, Text, TouchableOpacity, View } from "react-native";
 import { ReaderNovel } from "../../types/models";
+import { config } from "../../config";
 
 type NovelListProps = {
     novels: Array<ReaderNovel>;
@@ -26,8 +27,18 @@ export default function NovelList({ novels, onPressItem, refreshing, onRefresh }
                         <View style={{ flexDirection: "row", gap: 10 }}>
                             <Image resizeMode="cover" style={{ width: 70, height: 100, borderRadius: 5 }} source={{ uri: item?.coverUrl }} />
                             <View>
-                                <Text numberOfLines={1} style={{ fontFamily: "Quicksand-700" }}>{item.title}</Text>
-                                <Text style={{ fontFamily: "Quicksand-300", opacity: 0.5, fontStyle: "italic" }}>{item.chapters.length}{" "}chapitres</Text>
+                                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                                    <Text numberOfLines={1} style={{ fontFamily: "Quicksand-700" }}>{item.title}</Text>
+                                    {
+                                        item?.isMature && (
+                                            <Badge status="error" value="Mature" />
+                                        )
+                                    }
+                                </View>
+                                <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                    <Text style={{ fontFamily: "Quicksand-300", opacity: 0.5, fontStyle: "italic" }}>{item.chapters.length}{" "}chapitres</Text>
+                                    <Text style={{ fontFamily: "Quicksand-700", opacity: 0.8 }}>{config.novelGenresMap[item.genre].title}</Text>
+                                </View>
                                 <Text numberOfLines={4} style={{ width: 200, textAlign: "justify", fontSize: 12 }}>{item.description}</Text>
                             </View>
                         </View>

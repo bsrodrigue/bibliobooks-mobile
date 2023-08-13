@@ -1,89 +1,62 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { BottomSheet, Card, FAB, Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FlatList, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { RichEditor } from "react-native-pell-rich-editor";
-import { createRead, getLikeByUser, like } from "../../api/novels";
-import useCall from "../../api/useCall";
 import initialCSSText from "../../config/richtext";
-import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 
 type ReaderScreenProps = NativeStackScreenProps<RootStackParamList, 'Reader'>;
 
-export default function ReaderScreen({ navigation, route: { params: { novel, chapter } } }: ReaderScreenProps) {
-    const { session: { userProfile: { userId } } } = useSession();
-    const { theme: { colors: { primary } } } = useTheme();
-    const [currentChapter, setCurrentChapter] = useState(chapter);
-    const [chapters] = useState(novel.chapters);
+export default function ReaderScreen({ navigation, route: { params: { novel } } }: ReaderScreenProps) {
+    const { theme: { colors: { black } } } = useTheme();
+    const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
     const [chapterListIsVisible, setChapterListIsVisible] = useState(false);
-    const [currentChapterIndex, setCurrentChapterIndex] = useState(novel.chapters.indexOf(currentChapter));
-    const [liked, setLiked] = useState(false);
+    const [lightMode, setLightMode] = useState(true);
+    const chapter = novel.chapters[currentChapterIndex];
     const readerRef = useRef(null);
-    const { call: getUserLike, isLoading: isGetUserLikeLoading } = useCall(getLikeByUser, {
-        onSuccess(result) {
-            setLiked(Boolean(result));
-        },
-    });
-    const { call: toggleLike, isLoading: isToggleLikeLoading } = useCall(like, {
-        onSuccess(result) {
-            setLiked(result);
-        },
-    });
+    const content = `<h1>${chapter.title}</h1>${chapter.body}`;
 
-    const isLikeButtonLoading = isGetUserLikeLoading || isToggleLikeLoading;
-    const content = `<h1>${currentChapter.title}</h1>${currentChapter.body}`;
-
-    const isLast = currentChapterIndex + 1 >= chapters.length;
-    const isFirst = currentChapterIndex === 0;
-
-    const onNext = () => {
-        if (isLast) {
-            return;
-        }
-        setCurrentChapterIndex(currentChapterIndex + 1)
-        setCurrentChapter(chapters[currentChapterIndex + 1]);
-    }
-
-    const onPrevious = () => {
-        if (isFirst) {
-            return;
-        }
-        setCurrentChapterIndex(currentChapterIndex - 1)
-        setCurrentChapter(chapters[currentChapterIndex - 1]);
-    }
-
-    useEffect(() => {
-        setCurrentChapterIndex(chapters.indexOf(currentChapter));
-        readerRef.current?.setContentHTML(content);
-    }, [currentChapter, chapters]);
-
-    useEffect(() => {
-        getUserLike({ chapterId: currentChapter.id, userId });
-        createRead({ userId, chapterId: currentChapter.id });
-    }, [currentChapter]);
 
     return (
-        <View style={{ flex: 1, backgroundColor: "white", paddingHorizontal: 25, paddingVertical: 5 }}>
+        <View style={{ flex: 1, backgroundColor: lightMode ? "white" : black, paddingHorizontal: 25, paddingVertical: 5 }}>
             <View style={{ flexDirection: "row", paddingVertical: 10, justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }}>
-                <Text style={{ fontFamily: "Quicksand-700", fontSize: 20 }}>{currentChapter.title}</Text>
-                <Text style={{ fontFamily: "Quicksand-500", fontSize: 15, opacity: 0.5 }}>{novel.title}</Text>
+                <Text style={{ color: lightMode ? black : "white", fontFamily: "Quicksand-700", fontSize: 20 }}>{chapter.title}</Text>
+                <Text style={{ color: lightMode ? black : "white", fontFamily: "Quicksand-500", fontSize: 15, opacity: 0.5 }}>{novel.title}</Text>
             </View>
-            <ScrollView contentContainerStyle={{ flex: 1 }} style={{ flex: 1 }}>
+
+            <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, opacity: 0.5 }}>
+                <View style={{ width: 75, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 5 }}>
+                    <Icon color={lightMode ? black : "white"} name="eye" solid type="font-awesome-5" size={15} />
+                    <Text style={{ fontFamily: "Quicksand-700", fontSize: 12, color: lightMode ? black : "white" }}>{chapter.reads?.length || 0}</Text>
+                </View>
+                <View style={{ width: 75, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 5 }}>
+                    <Icon color={lightMode ? black : "white"} name="star" solid type="font-awesome-5" size={15} />
+                    <Text style={{ fontFamily: "Quicksand-700", fontSize: 12, color: lightMode ? black : "white" }}>{chapter.likes?.length || 0}</Text>
+                </View>
+                <View style={{ width: 75, alignItems: "center", flexDirection: "row", justifyContent: "center", gap: 5 }}>
+                    <Icon color={lightMode ? black : "white"} name="comments" solid type="font-awesome-5" size={15} />
+                    <Text style={{ fontFamily: "Quicksand-700", fontSize: 12, color: lightMode ? black : "white" }}>{chapter.comments?.length || 0}</Text>
+                </View>
+            </View>
+
+            <ScrollView
+                contentContainerStyle={{ flex: 1 }}
+                style={{ flex: 1 }}>
                 <RichEditor
                     disabled
                     useContainer
                     scrollEnabled
                     style={{ flex: 1 }}
                     ref={readerRef}
-                    editorStyle={initialCSSText}
+                    editorStyle={initialCSSText(lightMode)}
                     androidLayerType="hardware"
                     contentMode="mobile"
                     initialContentHTML={content}
                 />
             </ScrollView>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 10 }}>
+            {/* <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 10 }}>
                 {
                     !isFirst && (
                         <TouchableOpacity onPress={onPrevious}>
@@ -101,25 +74,20 @@ export default function ReaderScreen({ navigation, route: { params: { novel, cha
                         </TouchableOpacity>
                     )
                 }
-            </View>
-            <FAB
-                loading={isLikeButtonLoading}
-                disabled={isLikeButtonLoading}
-                style={{
-                    bottom: 75
-                }}
-                placement="right"
-                color={primary}
-                onPress={() => toggleLike({ chapterId: currentChapter.id, userId })}
-                icon={<Icon color="white" solid={liked} name="heart" type="font-awesome-5" />} />
+            </View> */}
+            <FAB placement="right"
+                onPress={() => setLightMode(!lightMode)}
+                color={lightMode ? black : "white"}
+                icon={<Icon size={18} color={lightMode ? "white" : black}
+                    solid name={lightMode ? "moon" : "sun"} type="font-awesome-5" />} />
             <BottomSheet onBackdropPress={() => setChapterListIsVisible(false)} isVisible={chapterListIsVisible}>
                 <Card containerStyle={{ margin: 0, borderTopStartRadius: 25, borderTopEndRadius: 25, flex: 1, paddingHorizontal: 40, }}>
                     <FlatList
-                        ListHeaderComponent={<Text style={{ fontFamily: "Quicksand-700", fontSize: 18, marginVertical: 15 }}>{chapters.length}{" "}chapitres</Text>}
-                        showsVerticalScrollIndicator={false} style={{ height: 300 }} data={chapters} renderItem={({ index, item }) => (
+                        ListHeaderComponent={<Text style={{ fontFamily: "Quicksand-700", fontSize: 18, marginVertical: 15 }}>{novel.chapters.length}{" "}chapitres</Text>}
+                        showsVerticalScrollIndicator={false} style={{ height: 300 }} data={novel.chapters} renderItem={({ index, item }) => (
                             <TouchableOpacity
                                 onPress={() => {
-                                    setCurrentChapter(item);
+                                    setCurrentChapterIndex(item);
                                 }}
                                 key={item.id} style={{ paddingVertical: 12 }}>
                                 <Text style={{ fontFamily: "Quicksand-600" }}>{item.title}</Text>

@@ -59,6 +59,7 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                     isMature,
                 }} onSubmit={async (values: CreateNovelInput) => {
                     let coverImg = null;
+                    values.isMature = Boolean(values.isMature);
                     if (imgUri) {
                         const response = await fetch(imgUri);
                         coverImg = await response.blob();
@@ -95,7 +96,7 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                 <Wrapper horizontalPadding={30}>
                                     <TextInput errorMessage={errors.description} value={values.description} onChangeText={handleChange("description")} name="description" label="Resumé de l'histoire" placeholder="Veuillez donner le resumé de l'histoire..." multiline numberOfLines={8} />
                                     <TouchableOpacity onPress={() => setGenreSheetIsVisible(true)}>
-                                        <TextInput errorMessage={errors.genre} value={config.genreTitleMap[selectedGenre]} name="genre" label="Genre de l'histoire" placeholder="Veuillez choisir le genre de l'histoire" disabled />
+                                        <TextInput errorMessage={errors.genre} value={config.novelGenresMap[selectedGenre].title} name="genre" label="Genre de l'histoire" placeholder="Veuillez choisir le genre de l'histoire" disabled />
                                     </TouchableOpacity>
                                 </Wrapper>
 

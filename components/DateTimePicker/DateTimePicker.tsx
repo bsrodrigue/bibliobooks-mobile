@@ -1,6 +1,7 @@
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { TouchableOpacity } from "react-native";
 import { TextInput } from "../Input";
+import { mom } from "../../lib/moment";
 
 type DateTimePickerProps = {
     date: Date;
@@ -28,7 +29,7 @@ export default function DateTimePicker({ date, mode, errorMessage, onChange }: D
                 disabled
                 placeholder="Veuillez choisir votre date de naissance"
                 errorMessage={errorMessage}
-                value={date.toDateString()}
+                value={mom(date).format("dddd DD MMMM y")}
             />
         </TouchableOpacity>
     )

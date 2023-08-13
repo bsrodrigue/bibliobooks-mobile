@@ -1,10 +1,10 @@
 import { ReactNode, useEffect, useState } from "react";
-import { getEntityById } from "../../api/base";
-import { getLibrary, getReaderNovelFromNovel } from "../../api/novels";
+import { getLibrary } from "../../api/novels";
 import { notify } from "../../lib";
-import { LibraryNovel, Novel } from "../../types/models";
-import SessionContext from "./LibraryContext";
 import { useAsyncStorage } from "../../lib/storage";
+import { Library, LibraryNovel } from "../../types/models";
+import SessionContext from "./LibraryContext";
+import * as Network from "expo-network";
 
 type LibraryProviderProps = {
     children?: ReactNode;
@@ -12,62 +12,52 @@ type LibraryProviderProps = {
 
 export default function LibraryProvider({ children }: LibraryProviderProps) {
     const [isLoading, setIsLoading] = useState(false);
-    const [library, setLibrary] = useState(null);
-    const { storeData } = useAsyncStorage();
-    const [novelIdentifiers, setNovelIdentifiers] = useState<Array<string>>([])
-    const [libraryNovels, setLibraryNovels] = useState<Array<LibraryNovel>>([]);
+    const [library, setLibrary] = useState<Library>(null);
+    const { storeData, getData } = useAsyncStorage();
 
     useEffect(() => {
-        storeData("library", library);
+        library && storeData("library", library);
     }, [library]);
 
     const fetchLibraryNovels = async () => {
+        const networkState = await Network.getNetworkStateAsync();
+        if (!networkState.isInternetReachable) {
+            const localLibrary = await getData("library");
+            setLibrary(JSON.parse(localLibrary));
+            return;
+        }
+
         try {
             setIsLoading(true);
             const library = await getLibrary();
-            setNovelIdentifiers(library.novels);
-
-            const fetchNovelsTasks: Array<Promise<Novel>> = [];
-
-            for (const novelId of library.novels) {
-                fetchNovelsTasks.push(
-                    getEntityById<Novel>(novelId, "novel")
-                );
-            }
-
-            const novels = await Promise.all(fetchNovelsTasks);
-
-            const fetchNovelChaptersTasks = [];
-            for (const novel of novels) {
-                fetchNovelChaptersTasks.push(getReaderNovelFromNovel(novel));
-            }
-            const result = await Promise.all(fetchNovelChaptersTasks);
-            setLibraryNovels(result)
+            setLibrary(library)
         } catch (error) {
+            const localLibrary = await getData("library");
+            setLibrary(JSON.parse(localLibrary));
             notify.error("Erreur survenue en chargeant vos histoires");
+            console.error(error);
         } finally {
             setIsLoading(false);
         }
     }
 
-    const addLibraryNovel = (workshopNovel: LibraryNovel) => {
-        setLibraryNovels((prev) => [...prev, workshopNovel]);
-        addNovelIdentifier(workshopNovel.id);
+    const addLibraryNovel = (novel: LibraryNovel) => {
+        setLibrary((prev) => {
+            prev.novels.push(novel);
+            return prev;
+        });
     }
-    const updateLibraryNovels = (workshopNovels: Array<LibraryNovel>) => {
-        setLibraryNovels(workshopNovels);
+    const updateLibraryNovels = (novels: Array<LibraryNovel>) => {
+        setLibrary((prev) => {
+            prev.novels = novels;
+            return prev;
+        });
     }
-    const removeLibraryNovel = (id: string) => {
-        setLibraryNovels((prev) => prev.filter((novel) => novel.id !== id));
-        removeNovelIdentifier(id);
-    }
-
-    const addNovelIdentifier = (id: string) => {
-        setNovelIdentifiers((prev) => [...prev, id]);
-    }
-
-    const removeNovelIdentifier = (id: string) => {
-        setNovelIdentifiers((prev) => prev.filter((identifier) => identifier !== id));
+    const removeLibraryNovel = (novelId: number) => {
+        setLibrary((prev) => {
+            prev.novels = prev.novels.filter((novel) => novel.id !== novelId);
+            return prev;
+        });
     }
 
     useEffect(() => {
@@ -77,15 +67,12 @@ export default function LibraryProvider({ children }: LibraryProviderProps) {
     return (
         <SessionContext.Provider
             value={{
-                libraryNovels,
+                library,
                 isLoading,
-                fetchLibraryNovels,
                 addLibraryNovel,
                 removeLibraryNovel,
                 updateLibraryNovels,
-                novelIdentifiers,
-                addNovelIdentifier,
-                removeNovelIdentifier
+                fetchLibraryNovels,
             }}>
             {children}
         </SessionContext.Provider>

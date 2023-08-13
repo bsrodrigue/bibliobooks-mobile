@@ -1,6 +1,7 @@
 import { Card } from "@rneui/base";
-import { useState } from "react";
-import { FlatList, Image, ImageSourcePropType, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ReactElement, useState } from "react";
+import { FlatList, Image, StyleProp, StyleSheet, Text, TouchableOpacity, View, ViewStyle } from "react-native";
+import { ReaderNovel } from "../../types/models";
 import { Button } from "../Button";
 
 const styles = StyleSheet.create({
@@ -47,19 +48,24 @@ const styles = StyleSheet.create({
 
 type RecommendationCarouselProps = {
     title: string;
-    novels: {
-        title: string;
-        description: string;
-        chapterCount: number;
-        imgSrc: ImageSourcePropType;
-    }[]
+    novels?: ReaderNovel[];
+    loading?: boolean;
+    ListEmptyComponent?: React.ComponentType<any> | ReactElement<any, string | React.JSXElementConstructor<any>>;
+    containerStyle?: StyleProp<ViewStyle>;
+    card?: boolean;
+    showDescription?: boolean;
 }
 
-export default function RecommendationCarousel({ title, novels }: RecommendationCarouselProps) {
+export default function RecommendationCarousel({
+    title, novels, loading,
+    ListEmptyComponent, containerStyle,
+    card, showDescription }: RecommendationCarouselProps) {
     const [selectedNovel, setSelectedNovel] = useState(0);
+    const Container = card ? Card : View;
 
     return (
-        <Card containerStyle={{ margin: 0, borderRadius: 10 }}>
+        <Container
+            containerStyle={[{ margin: 0, borderRadius: 10 }, containerStyle]}>
             <View style={styles.header}>
                 <Text style={styles.title}>{title}</Text>
             </View>
@@ -67,25 +73,31 @@ export default function RecommendationCarousel({ title, novels }: Recommendation
                 <FlatList
                     showsHorizontalScrollIndicator={false}
                     horizontal
+                    ListEmptyComponent={ListEmptyComponent}
                     contentContainerStyle={{
                         gap: 10
-                    }} data={novels} renderItem={({ item: { title, chapterCount, imgSrc }, index }) => (
+                    }} data={novels}
+                    renderItem={({ item: { title, chapters, coverUrl }, index }) => (
                         <TouchableOpacity
                             onPress={() => {
                                 setSelectedNovel(index);
                             }}
                             style={{ opacity: selectedNovel === index ? 1 : 0.5 }} key={index}>
-                            <Image resizeMode="cover" style={{ height: 100, width: 70, borderRadius: 5 }} source={imgSrc} />
+                            <Image resizeMode="cover" style={{ height: 100, width: 70, borderRadius: 5 }} source={{ uri: coverUrl }} />
                             <Text style={styles.novelTitle}>{title}</Text>
-                            <Text style={styles.chapterCount}>{chapterCount}{" "}chapitres</Text>
+                            <Text style={styles.chapterCount}>{chapters.length}{" "}chapitres</Text>
                         </TouchableOpacity>
                     )
                     } />
             </View>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                <Text numberOfLines={3} style={styles.novelDescription}>{novels[selectedNovel].description}</Text>
-                <Button size="sm" containerStyle={{ alignSelf: "flex-end" }} buttonStyle={styles.button}>Voir plus</Button>
-            </View>
-        </Card>
+            {
+                novels.length !== 0 && showDescription && (
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+                        <Text numberOfLines={3} style={styles.novelDescription}>{novels[selectedNovel].description}</Text>
+                        <Button size="sm" containerStyle={{ alignSelf: "flex-end" }} buttonStyle={styles.button}>Voir plus</Button>
+                    </View>
+                )
+            }
+        </Container>
     )
 }
