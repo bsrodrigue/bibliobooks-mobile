@@ -54,12 +54,13 @@ type RecommendationCarouselProps = {
     containerStyle?: StyleProp<ViewStyle>;
     card?: boolean;
     showDescription?: boolean;
+    onPress?: (novel: ReaderNovel) => void;
 }
 
 export default function RecommendationCarousel({
     title, novels, loading,
     ListEmptyComponent, containerStyle,
-    card, showDescription }: RecommendationCarouselProps) {
+    card, showDescription, onPress }: RecommendationCarouselProps) {
     const [selectedNovel, setSelectedNovel] = useState(0);
     const Container = card ? Card : View;
 
@@ -77,15 +78,19 @@ export default function RecommendationCarousel({
                     contentContainerStyle={{
                         gap: 10
                     }} data={novels}
-                    renderItem={({ item: { title, chapters, coverUrl }, index }) => (
+                    renderItem={({ item, index }) => (
                         <TouchableOpacity
                             onPress={() => {
+                                if (onPress) {
+                                    onPress?.(item)
+                                    return;
+                                }
                                 setSelectedNovel(index);
                             }}
                             style={{ opacity: selectedNovel === index ? 1 : 0.5 }} key={index}>
-                            <Image resizeMode="cover" style={{ height: 100, width: 70, borderRadius: 5 }} source={{ uri: coverUrl }} />
+                            <Image resizeMode="cover" style={{ height: 110, width: 70, borderRadius: 5, marginBottom: 5 }} source={{ uri: item?.coverUrl }} />
                             <Text style={styles.novelTitle}>{title}</Text>
-                            <Text style={styles.chapterCount}>{chapters.length}{" "}chapitres</Text>
+                            <Text style={styles.chapterCount}>{item?.chapters.length}{" "}chapitres</Text>
                         </TouchableOpacity>
                     )
                     } />

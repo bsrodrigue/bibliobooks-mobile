@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Avatar } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { Formik } from "formik";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as Yup from "yup";
@@ -44,6 +44,7 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
         },
         successMessage: "Votre histoire a étée modifiée avec succès!"
     });
+
     const [selectedGenre, setSelectedGenre] = useState<NovelGenre>(novel?.genre);
     const [isMature, setIsMature] = useState(Boolean(novel?.isMature));
     const { imgUri, pickImage } = useImagePicker();
@@ -96,7 +97,7 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                 <Wrapper horizontalPadding={30}>
                                     <TextInput errorMessage={errors.description} value={values.description} onChangeText={handleChange("description")} name="description" label="Resumé de l'histoire" placeholder="Veuillez donner le resumé de l'histoire..." multiline numberOfLines={8} />
                                     <TouchableOpacity onPress={() => setGenreSheetIsVisible(true)}>
-                                        <TextInput errorMessage={errors.genre} value={config.novelGenresMap[selectedGenre].title} name="genre" label="Genre de l'histoire" placeholder="Veuillez choisir le genre de l'histoire" disabled />
+                                        <TextInput errorMessage={errors.genre} value={config.novelGenresMap[selectedGenre]?.title} name="genre" label="Genre de l'histoire" placeholder="Veuillez choisir le genre de l'histoire" disabled />
                                     </TouchableOpacity>
                                 </Wrapper>
 
@@ -136,17 +137,16 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                             </View>
 
                             <CardBottomSheet isVisible={genreSheetIsVisible} onBackdropPress={() => setGenreSheetIsVisible(false)}>
-                                <View style={{ flex: 1 }}>
-                                    <FlatList data={config.genres} renderItem={({ index, item: { title, value } }) => (
-                                        <View key={index}>
-                                            <CheckBox checked={selectedGenre === value} title={title} onPress={() => {
+                                <FlatList
+                                    data={config.genreSelectOptions} renderItem={({ index, item: { title, value } }) => (
+                                        <CheckBox
+                                            key={index}
+                                            checked={selectedGenre === value} title={title} onPress={() => {
                                                 handleChange("genre")(value);
                                                 setSelectedGenre(value);
                                                 setGenreSheetIsVisible(false);
                                             }} />
-                                        </View>
                                     )} />
-                                </View>
                             </CardBottomSheet>
                         </View>
                     )

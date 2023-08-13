@@ -8,11 +8,12 @@ type BasicNovelProps = {
 };
 
 export default function BasicNovel({ novel: { title, coverUrl }, imageStyle, labelStyle }: BasicNovelProps) {
+    const source = coverUrl ? { uri: coverUrl } : require("../../assets/illustrations/placeholder.png");
     return (
         <>
             <Image
                 resizeMode="cover"
-                source={{ uri: coverUrl }}
+                source={source}
                 style={imageStyle}
             />
             <Text style={labelStyle}

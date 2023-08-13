@@ -41,7 +41,7 @@ export default function ChapterFormScreen({ navigation, route: { params: { mode,
                         placeholder="Commencez à écrire une belle histoire..."
                         androidLayerType="hardware"
                         initialContentHTML={content}
-                        editorStyle={initialCSSText}
+                        editorStyle={initialCSSText(true)}
                         ref={_editor}
                         style={{
                             flex: 1,

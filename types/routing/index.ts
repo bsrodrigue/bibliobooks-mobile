@@ -30,6 +30,14 @@ export type RootStackParamList = {
     Account: {
         novel?: ReaderNovel;
     };
+    ViewAccount: {
+        user: UserProfile & {
+            creations?: {
+                id: number;
+                title: string;
+            }[]
+        };
+    };
     NovelForm: {
         mode: "create" | "edit",
         novel?: Novel;
