@@ -8,14 +8,7 @@ export interface BaseModel {
 }
 
 export interface HasOwner {
-    ownerId: string;
-}
-
-export interface Like
-    extends
-    BaseModel,
-    HasOwner {
-    entityId: string;
+    ownerId: number;
 }
 
 export interface Read
@@ -55,6 +48,14 @@ export interface Chapter
     status: ChapterStatus;
     novelId: string;
     order: number;
+    likes?: Like[];
+}
+
+export interface Like
+    extends
+    BaseModel,
+    HasOwner {
+    chapterId: string;
 }
 
 export interface ReadingActivity

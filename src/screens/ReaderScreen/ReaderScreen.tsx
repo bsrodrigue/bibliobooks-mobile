@@ -1,8 +1,9 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { BottomSheet, Card, Icon, Tab } from "@rneui/base";
+import { BottomSheet, Card, Icon } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
-import { useRef, useState } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { FlatList, NativeSyntheticEvent, Text, TouchableOpacity, View } from "react-native";
+import PagerView from "react-native-pager-view";
 import { Richtext } from "../../components";
 import { useChapter } from "../../hooks/api/reader";
 import { useSession } from "../../providers";
@@ -42,50 +43,47 @@ export default function ReaderScreen({ navigation, route: { params: { novel } } 
     const { theme: { colors: { black } } } = useTheme();
     const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
     const [chapterListIsVisible, setChapterListIsVisible] = useState(false);
+    const [chapters, setChapters] = useState(novel.chapters);
     const { session: { profile: { id } } } = useSession();
     const [lightMode, setLightMode] = useState(true);
-    const chapter = novel.chapters[currentChapterIndex];
-    const readerRef = useRef(null);
-    const { like, unlike, isLoading } = useChapter(chapter);
+    const chapter = chapters[currentChapterIndex];
+    const _readerRef = useRef(null);
+    const { toggleLike, isLiked, likesCount } = useChapter(chapter, id, setChapters);
 
-    // const liked = chapter?.likes.length !== 0 && chapter.likes.find((like) => like?.owner?.id === id) !== undefined;
-    const content = `<h1>${chapter?.title}</h1>${chapter?.body}`;
+    function onPageSelected(event: NativeSyntheticEvent<Readonly<{ position: number; }>>) {
+        const position = event.nativeEvent.position;
+        setCurrentChapterIndex(position);
+    }
+
+    useEffect(() => {
+    }, [currentChapterIndex]);
 
     return (
         <View style={{ flex: 1, backgroundColor: lightMode ? "white" : black, paddingHorizontal: 25, paddingVertical: 5 }}>
             <View style={{ flexDirection: "row", paddingVertical: 10, justifyContent: "space-between", alignItems: "center", flexWrap: "wrap" }}>
-                <Text style={{ color: lightMode ? black : "white", fontFamily: "Quicksand-700", fontSize: 20 }}>Livre</Text>
-                <Text style={{ color: lightMode ? black : "white", fontFamily: "Quicksand-500", fontSize: 15, opacity: 0.5 }}>{novel.title}</Text>
+                <Text style={{ color: lightMode ? black : "white", fontFamily: "Quicksand-700", fontSize: 14 }}>{novel?.title}</Text>
+                <TouchableOpacity onPress={() => setLightMode(!lightMode)}>
+                    <Icon color={lightMode ? "black" : "white"} name={lightMode ? "sun" : "moon"} type="feather" />
+                </TouchableOpacity>
             </View>
 
             <ChapterStats
                 lightMode={lightMode}
-                likes={chapter?.likes?.length || 0}
+                likes={likesCount}
                 reads={chapter?.reads?.length || 0}
                 comments={chapter?.comments?.length || 0}
             />
 
-            <Richtext ref={readerRef} lightMode={lightMode} initialContentHTML={content} disabled />
+            <PagerView ref={_readerRef} style={{ flex: 1 }} onPageSelected={onPageSelected} initialPage={0}>
+                {
+                    chapters.map((chapter, index) => {
+                        const content = `<h1>${chapter?.title}</h1>${chapter?.body}`;
+                        return <Richtext key={index} lightMode={lightMode} initialContentHTML={content} disabled />
+                    })
+                }
+            </PagerView>
 
-            {/* <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 10 }}>
-                {
-                    !isFirst && (
-                        <TouchableOpacity onPress={onPrevious}>
-                            <Icon name="arrow-left" type="font-awesome-5" />
-                        </TouchableOpacity>
-                    )
-                }
-                <TouchableOpacity onPress={() => setChapterListIsVisible(true)}>
-                    <Icon name="list" type="font-awesome-5" />
-                </TouchableOpacity>
-                {
-                    !isLast && (
-                        <TouchableOpacity onPress={onNext}>
-                            <Icon name="arrow-right" type="font-awesome-5" />
-                        </TouchableOpacity>
-                    )
-                }
-            </View> */}
+
             <BottomSheet onBackdropPress={() => setChapterListIsVisible(false)} isVisible={chapterListIsVisible}>
                 <Card containerStyle={{ margin: 0, borderTopStartRadius: 25, borderTopEndRadius: 25, flex: 1, paddingHorizontal: 40, }}>
                     <FlatList
@@ -93,7 +91,9 @@ export default function ReaderScreen({ navigation, route: { params: { novel } } 
                         showsVerticalScrollIndicator={false} style={{ height: 300 }} data={novel.chapters} renderItem={({ index, item }) => (
                             <TouchableOpacity
                                 onPress={() => {
-                                    setCurrentChapterIndex(item);
+                                    setCurrentChapterIndex(index);
+                                    _readerRef.current?.setPage?.(index);
+                                    setChapterListIsVisible(false);
                                 }}
                                 key={item.id} style={{ paddingVertical: 12 }}>
                                 <Text style={{ fontFamily: "Quicksand-600" }}>{item.title}</Text>
@@ -102,33 +102,33 @@ export default function ReaderScreen({ navigation, route: { params: { novel } } 
                 </Card>
             </BottomSheet>
 
-            <Tab
-                containerStyle={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                    paddingVertical: 8,
-                }} disableIndicator>
-                <Tab.Item>
-                    <TouchableOpacity onPress={() => like()}>
-                        <Icon type="ionicon" name="star-outline" />
-                    </TouchableOpacity>
-                </Tab.Item>
-                <Tab.Item
-                    title="0"
-                    titleStyle={{ fontSize: 10, color: black }}
-                    icon={{ name: 'chatbox', type: 'ionicon' }}
-                />
-                <Tab.Item
-                    title="0"
-                    titleStyle={{ fontSize: 10, color: black }}
-                    icon={{ name: 'share-social', type: 'ionicon' }}
-                />
-                <Tab.Item>
-                    <TouchableOpacity onPress={() => setChapterListIsVisible(true)}>
-                        <Icon type="ionicon" name="list" />
-                    </TouchableOpacity>
-                </Tab.Item>
-            </Tab>
+            <View
+                style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 8, }} >
+                <TouchableOpacity style={{
+                    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5
+                }} onPress={() => toggleLike()}>
+                    <Icon color={lightMode ? "black" : "white"} type="ionicon" name={`star${isLiked ? "" : "-outline"}`} />
+                    <Text style={{ color: lightMode ? "black" : "white" }}>{likesCount}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{
+                    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5
+                }}>
+                    <Icon color={lightMode ? "black" : "white"} type="ionicon" name="chatbox" />
+                    <Text style={{ color: lightMode ? "black" : "white" }}></Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{
+                    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5
+                }}>
+                    <Icon color={lightMode ? "black" : "white"} type="ionicon" name="share-social" />
+                    <Text style={{ color: lightMode ? "black" : "white" }}></Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{
+                    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 5
+                }} onPress={() => setChapterListIsVisible(true)}>
+                    <Icon color={lightMode ? "black" : "white"} type="ionicon" name="list" />
+                    <Text style={{ color: lightMode ? "black" : "white" }}></Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }

@@ -19,7 +19,7 @@ export default function NovelList({ novels, onPressItem, refreshing, onRefresh }
                 <Card containerStyle={{ marginHorizontal: 0, borderRadius: 10 }}>
                     <TouchableOpacity key={index} onPress={() => onPressItem(item)}>
                         <View style={{ flexDirection: "row", gap: 10 }}>
-                            <Image resizeMode="cover" style={{ width: 70, height: 100, borderRadius: 5 }} source={{ uri: item?.coverUrl }} />
+                            <Image resizeMode="cover" style={{ width: 70, height: 100, borderRadius: 5 }} source={item?.coverUrl ? { uri: item?.coverUrl } : require("../../assets/illustrations/placeholder.png")} />
                             <View>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                                     <Text numberOfLines={1} style={{ fontFamily: "Quicksand-700" }}>{item.title}</Text>

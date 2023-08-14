@@ -25,7 +25,7 @@ export default function NoveltyScreen({ navigation }: NoveltyScreenProps) {
                 onRefresh={fetchLibraryNovels}
                 novels={library?.novels || []}
                 onNovelPress={(novel: LibraryNovel) => {
-                    navigation.navigate("Reader", { novel, chapter: novel.chapters[0] })
+                    navigation.navigate("Reader", { novel })
                 }}
                 onLastItemPress={() => {
                     navigation.navigate("Novelty");

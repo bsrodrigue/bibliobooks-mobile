@@ -38,7 +38,7 @@ export default function ViewAccountScreen({ navigation, route: { params: { user 
                     size={100}
                     rounded
                     containerStyle={{ backgroundColor: greyOutline, padding: 2 }}
-                    source={{ uri: avatarUrl }}
+                    source={avatarUrl ? { uri: avatarUrl } : require("../../assets/illustrations/placeholder.png")}
                 />
                 <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 5, gap: 5 }}>
                     <Text style={{ fontFamily: "Quicksand-700", fontSize: 25 }}>{firstName}</Text>
