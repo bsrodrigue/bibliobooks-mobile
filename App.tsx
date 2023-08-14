@@ -3,10 +3,10 @@ import { decode } from "base-64";
 import { KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Toast } from "react-native-toast-message/lib/src/Toast";
-import { useCachedResources } from "./hooks";
-import RootStackNavigator from "./navigator";
-import { SessionProvider } from "./providers";
-import { lightTheme } from "./themes";
+import { useCachedResources } from "./src/hooks";
+import RootStackNavigator from "./src/navigator";
+import { SessionProvider } from "./src/providers";
+import { lightTheme } from "./src/themes";
 
 if (typeof atob === 'undefined') {
   global.atob = decode;

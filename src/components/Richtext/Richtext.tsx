@@ -16,7 +16,8 @@ const Richtext = React.forwardRef((
     {
         initialContentHTML,
         onChange, placeholder,
-        lightMode, disabled }: RichtextProps, ref
+        lightMode, disabled
+    }: RichtextProps, ref: React.ForwardedRef<RichEditor>
 ) => (
 
     <ScrollView>
