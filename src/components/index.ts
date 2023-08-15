@@ -19,6 +19,7 @@ export { RecommendationCarousel } from "./RecommendationCarousel";
 export { Richtext } from "./Richtext";
 export { Searchbar } from "./Searchbar";
 export { StoryRecommendation } from "./StoryRecommendation";
+export { SuccessScreenComponent } from "./SuccessScreenComponent";
 export { WorkshopNovelGrid } from "./WorkshopNovelGrid";
 export { WorkshopTabs } from "./WorkshopTabs";
 export { Wrapper } from "./Wrapper";
