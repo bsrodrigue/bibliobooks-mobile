@@ -7,6 +7,7 @@ import { useCachedResources } from "./src/hooks";
 import RootStackNavigator from "./src/navigator";
 import { SessionProvider } from "./src/providers";
 import { lightTheme } from "./src/themes";
+import { StatusBar } from "expo-status-bar";
 
 if (typeof atob === 'undefined') {
   global.atob = decode;
@@ -25,6 +26,7 @@ export default function App() {
         <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios"
           ? "padding"
           : "height"}>
+          <StatusBar translucent />
           <SessionProvider initialSession={session}>
             <RootStackNavigator skipOnboarding={Boolean(onboarding)} />
           </SessionProvider>
