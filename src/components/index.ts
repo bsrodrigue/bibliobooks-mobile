@@ -1,3 +1,4 @@
+export { AccountView } from "./AccountView";
 export { ActionBottomSheet } from "./ActionBottomSheet";
 export { AddNovel } from "./AddNovel";
 export { AuthForm } from "./AuthForm";
@@ -24,3 +25,4 @@ export { WorkshopNovelGrid } from "./WorkshopNovelGrid";
 export { WorkshopTabs } from "./WorkshopTabs";
 export { Wrapper } from "./Wrapper";
 export { OnboardingItem } from "./onboarding/OnboardingItem";
+
