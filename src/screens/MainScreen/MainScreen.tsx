@@ -52,6 +52,9 @@ export default function MainScreen({ navigation, route }: MainScreenProps) {
     return (
         <View style={styles.container}>
             <Dialog
+                style={{
+                    backgroundColor: "white"
+                }}
                 onBackdropPress={() => setLogoutDialogIsVisible(false)}
                 isVisible={logoutDialogIsvisible}>
                 <Dialog.Title>

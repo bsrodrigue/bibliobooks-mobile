@@ -3,18 +3,18 @@ import { FAB, Icon } from "@rneui/base";
 import { Avatar, useTheme } from "@rneui/themed";
 import { Formik } from "formik";
 import { useState } from "react";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import * as Yup from "yup";
 import { updateUserProfile } from "../../api/auth";
 import useCall from "../../api/useCall";
-import { Button, RadioInputGroup, TextInput } from "../../components";
+import { AccountView, Button, RadioInputGroup, TextInput } from "../../components";
+import { config } from "../../config";
 import { useImagePicker } from "../../hooks";
 import { useSession } from "../../providers";
+import { useWorkshop } from "../../providers/WorkshopProvider";
 import { RootStackParamList } from "../../types";
 import { UserProfile } from "../../types/auth";
-import { config } from "../../config";
-import { useWorkshop } from "../../providers/WorkshopProvider";
 
 const accountSchema = Yup.object().shape({
     firstName: Yup.string().required("Champ requis"),
@@ -31,7 +31,9 @@ export default function AccountScreen({ navigation, route: { params } }: Account
     const [isEditMode, setIsEditMode] = useState(false);
     const { workshopNovels } = useWorkshop();
     const { session, updateSession } = useSession();
-    const { profile: { username, firstName, lastName, bio, avatarUrl, gender } } = session;
+    const { profile } = session;
+    profile.creations = workshopNovels;
+    const { username, firstName, lastName, bio, avatarUrl, gender } = profile;
     const { call, isLoading } = useCall(updateUserProfile, {
         onSuccess(profile: UserProfile) {
             updateSession({ profile });
@@ -52,67 +54,7 @@ export default function AccountScreen({ navigation, route: { params } }: Account
             }
             {
                 !isEditMode ? (
-                    <View style={{ position: "relative", flex: 1 }}>
-                        <View
-                            style={{
-                                alignItems: "center",
-                                borderBottomLeftRadius: 25,
-                                borderBottomRightRadius: 25,
-                                backgroundColor: "white",
-                                gap: 5, paddingBottom: 15
-                            }}>
-                            <Avatar
-                                size={120}
-                                rounded
-                                containerStyle={{ backgroundColor: greyOutline, padding: 2 }}
-                                source={{ uri: avatarUrl }}
-                            />
-                            <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 5, gap: 15 }}>
-                                <Text style={{ fontFamily: "Quicksand-700", fontSize: 25 }}>{firstName}</Text>
-                                <Text style={{ fontFamily: "Quicksand-700", fontSize: 25 }}>{lastName}</Text>
-                                <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-                                    <Icon type="font-awesome-5" name={gender === "MALE" ? "male" : "female"} />
-                                    <Text style={{ opacity: 0.5, fontStyle: "italic" }}>{gender === "MALE" ? "Homme" : "Femme"}</Text>
-                                </View>
-                            </View>
-                            <View style={{ alignItems: "center" }}>
-                                <Text style={{ fontFamily: "Quicksand-500", fontSize: 14 }}>{username}</Text>
-                            </View>
-                        </View>
-                        <View style={{ flex: 1 }}>
-                            <View style={{ flex: 0.3, marginVertical: 5, paddingHorizontal: 15 }}>
-                                <View style={{ flexDirection: "row", justifyContent: "space-around", paddingVertical: 10 }}>
-                                    <View style={{ alignItems: "center" }}>
-                                        <Text style={{ color: "white", fontFamily: "Quicksand-700", fontSize: 25 }}>{workshopNovels?.length || 0}</Text>
-                                        <Text style={{
-                                            color: "white", fontFamily: "Quicksand-600",
-                                            textTransform: "uppercase", fontSize: 15, opacity: 0.8
-                                        }}>Oeuvres</Text>
-                                    </View>
-                                    <View style={{ alignItems: "center" }}>
-                                        <Text style={{ color: "white", fontFamily: "Quicksand-700", fontSize: 25 }}>0</Text>
-                                        <Text style={{
-                                            color: "white", fontFamily: "Quicksand-600",
-                                            textTransform: "uppercase", fontSize: 15, opacity: 0.8
-                                        }}>Followers</Text>
-                                    </View>
-                                    <View style={{ alignItems: "center" }}>
-                                        <Text style={{ color: "white", fontFamily: "Quicksand-700", fontSize: 25 }}>0</Text>
-                                        <Text style={{
-                                            color: "white", fontFamily: "Quicksand-600",
-                                            textTransform: "uppercase", fontSize: 15, opacity: 0.8
-                                        }}>Follows</Text>
-                                    </View>
-                                </View>
-
-
-                            </View>
-                            <View style={{ flex: 0.7, backgroundColor: "white", paddingHorizontal: 15 }}>
-                                <Text style={{ marginVertical: 15, textAlign: "center", fontFamily: "Quicksand-500" }}>BIO</Text>
-                                <Text style={{ textAlign: "left", fontFamily: "Quicksand-500" }}>{bio}</Text>
-                            </View>
-                        </View>
-                    </View>
+                    <AccountView user={profile} />
                 ) : (
                     <View style={{ flex: 1, justifyContent: "space-between", backgroundColor: "white", paddingHorizontal: 15 }}>
                         <View style={{ alignItems: "center", position: "relative" }}>

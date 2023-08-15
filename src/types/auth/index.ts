@@ -10,6 +10,10 @@ export type UserProfile = {
     favouriteGenres?: Array<string>;
     gender: "MALE" | "FEMALE";
     isAccountSetup: boolean;
+    creations?: {
+        id: number;
+        title: string;
+    }[]
 };
 
 export type Session = {
