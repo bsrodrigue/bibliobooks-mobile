@@ -5,7 +5,10 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "API_URL": "http://192.168.1.69:3000/api"
+      }
     },
     "preview": {
       "distribution": "internal",
@@ -25,7 +28,11 @@
       "distribution": "store",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "API_URL": "https://fine-red-tick-coat.cyclic.cloud/api"
       }
+      
     }
   },
   "submit": {
