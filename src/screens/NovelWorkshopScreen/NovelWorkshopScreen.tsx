@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useState } from "react";
+import { TabView } from "@rneui/base";
+import { useRef, useState } from "react";
 import { View } from "react-native";
 import { deleteNovel, updateNovelStatus } from "../../api/novels";
 import useCall from "../../api/useCall";
@@ -26,6 +27,7 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
     const { workshopNovels, isLoading, fetchWorkshopNovels } = useWorkshop();
     const [novelToBeDeleted, setNovelToBeDeleted] = useState<Novel>(null)
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+    const _currentTabRef = useRef("Publications");
 
     const { call: callUpdateNovelStatus, isLoading: updateNovelIsLoading } = useCall(updateNovelStatus, {
         onSuccess() {
@@ -105,32 +107,47 @@ export default function NovelWorkshopScreen({ navigation }: NovelWorkshopScreenP
     return (
         <View style={{ flex: 1 }}>
             <WorkshopTabs items={tabs} selectedItem={selectedTab} onPressTab={(label) => setSelectedTab(label)} />
-            <View style={{ flexDirection: "row", justifyContent: "center", flex: 1, paddingHorizontal: 20 }}>
-                <View style={{ alignItems: "flex-start", flex: 1, }}>
-                    <WorkshopNovelGrid
-                        refreshing={loading}
-                        onRefresh={fetchWorkshopNovels}
-                        actions={[...actionFilters[selectedTab], ...commonActions]}
-                        novels={workshopNovels.filter((novel) => filters[selectedTab] === novel.status)}
-                        navigation={navigation}
-                        onLastItemPress={() => {
-                            navigation.navigate("NovelForm", { mode: "create" });
-                        }}
-                        onBackdropPress={() => {
-                            setNovelToBeDeleted(null);
-                            setIsConfirmationOpen(false)
-                        }
-                        }
-                        confirm={isConfirmationOpen}
-                        loading={loading}
-                        onConfirm={async () => {
-                            await callDeleteNovel({ novelId: novelToBeDeleted.id });
-                            fetchWorkshopNovels()
-                            setIsConfirmationOpen(false)
-                        }}
-                    />
-                </View>
-            </View>
+            <TabView
+                minSwipeRatio={0.5}
+                minSwipeSpeed={2.5}
+                value={tabs.findIndex((tab) => tab.label === selectedTab)}
+                onChange={(index) => {
+                    setSelectedTab(tabs[index].label);
+                }}>
+                {
+                    ["PUBLISHED", "DRAFT", "ARCHIVED"].map((status, index) => (
+                        <TabView.Item key={index}
+                            style={{ flexDirection: "row", justifyContent: "center", flex: 1, paddingHorizontal: 20 }}>
+                            <View style={{ alignItems: "flex-start", flex: 1, }}>
+                                <WorkshopNovelGrid
+                                    refreshing={loading}
+                                    onRefresh={fetchWorkshopNovels}
+                                    actions={[...actionFilters[selectedTab], ...commonActions]}
+                                    novels={workshopNovels.filter((novel) => status === novel.status)}
+                                    navigation={navigation}
+                                    onLastItemPress={() => {
+                                        navigation.navigate("NovelForm", { mode: "create" });
+                                    }}
+                                    onBackdropPress={() => {
+                                        setNovelToBeDeleted(null);
+                                        setIsConfirmationOpen(false)
+                                    }
+                                    }
+                                    confirm={isConfirmationOpen}
+                                    loading={loading}
+                                    onConfirm={async () => {
+                                        await callDeleteNovel({ novelId: novelToBeDeleted.id });
+                                        fetchWorkshopNovels()
+                                        setIsConfirmationOpen(false)
+                                    }}
+                                />
+                            </View>
+                        </TabView.Item>
+                    ))
+                }
+
+            </TabView>
+
         </View>
     )
 }
