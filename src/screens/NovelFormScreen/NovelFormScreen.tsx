@@ -1,14 +1,15 @@
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Avatar } from "@rneui/base";
+import { Avatar, FAB, Icon, LinearProgress } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { Formik } from "formik";
 import { useRef, useState } from "react";
 import { FlatList, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import PagerView from "react-native-pager-view";
 import * as Yup from "yup";
 import { CreateNovelInput, createNovel, editNovel } from "../../api/novels";
 import useCall from "../../api/useCall";
-import { Button, CardBottomSheet, CheckBox, TextInput, Wrapper } from "../../components";
+import { CardBottomSheet, CheckBox, TextInput, Wrapper } from "../../components";
 import { config } from "../../config";
 import { useImagePicker } from "../../hooks";
 import { useWorkshop } from "../../providers/WorkshopProvider";
@@ -25,7 +26,7 @@ const novelSchema = Yup.object().shape({
 type NovelFormScreenProps = NativeStackScreenProps<RootStackParamList, 'NovelForm'>;
 
 export default function NovelFormScreen({ navigation, route: { params: { mode, novel } } }: NovelFormScreenProps) {
-    const { theme: { colors: { error } } } = useTheme();
+    const { theme: { colors: { error, greyOutline, primary, black } } } = useTheme();
     const { addWorkshopNovel, updateWorkshopNovel } = useWorkshop();
     const [genreSheetIsVisible, setGenreSheetIsVisible] = useState(false);
     const { call, isLoading } = useCall(createNovel, {
@@ -48,9 +49,30 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
     const [selectedGenre, setSelectedGenre] = useState<NovelGenre>(novel?.genre);
     const [isMature, setIsMature] = useState(Boolean(novel?.isMature));
     const { imgUri, pickImage } = useImagePicker();
+    const [currentPage, setCurrentPage] = useState(0);
+
+    const _pagerRef = useRef(null);
+
+    const stepData = [
+        {
+            iconName: "image",
+            stepTitle: "Couverture",
+            iconSet: "font-awesome-5",
+        },
+        {
+            iconName: "book",
+            stepTitle: "Titre et description",
+            iconSet: "font-awesome-5",
+        },
+        {
+            iconName: "information-circle",
+            stepTitle: "Informations sur votre livre",
+            iconSet: "ionicon",
+        },
+    ]
 
     return (
-        <KeyboardAwareScrollView style={{ flex: 1, backgroundColor: "white" }}>
+        <KeyboardAwareScrollView contentContainerStyle={{ flex: 1 }} style={{ flex: 1, backgroundColor: "white" }}>
             <Formik
                 validationSchema={novelSchema}
                 initialValues={{
@@ -76,65 +98,85 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                 }}>
                 {
                     ({ handleSubmit, handleChange, values, errors }) => (
-                        <View style={{ flex: 1, justifyContent: "space-between", }}>
-                            <View>
-                                <View style={{ flexDirection: "column", justifyContent: "space-between", paddingHorizontal: 30, gap: 10, }}>
-                                    <View style={{ flex: 0.3 }}>
-                                        <TouchableOpacity onPress={() => pickImage([9, 16])}>
-                                            <Avatar
-                                                containerStyle={{ backgroundColor: "grey", height: 125, width: 100, borderRadius: 10 }}
-                                                avatarStyle={{ borderRadius: 10, resizeMode: "cover" }}
-                                                source={{ uri: novel?.coverUrl || imgUri }}
-                                            />
-                                        </TouchableOpacity>
-                                    </View>
+                        <View style={{ flex: 1, }}>
+                            <View style={{ paddingHorizontal: 35, }}>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, height: 40 }}>
+                                    <Icon type={stepData[currentPage].iconSet} name={stepData[currentPage].iconName} />
+                                    <LinearProgress style={{ borderRadius: 25, flex: 1 }} value={currentPage + 0.5 / 3} variant="determinate" color={primary} />
+                                </View>
+                                <Text style={{ fontFamily: "Quicksand-700", opacity: 0.5 }}>Etape: {stepData[currentPage].stepTitle}</Text>
+                            </View>
+                            <PagerView ref={_pagerRef} onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)} style={{ flex: 1 }} initialPage={0}>
+                                {/* Cover */}
+                                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                                    <TouchableOpacity style={{
+                                        height: "90%",
+                                        width: "80%"
+                                    }} onPress={() => pickImage([9, 16])}>
+                                        <Avatar
+                                            containerStyle={{ backgroundColor: "grey", borderRadius: 10, height: "100%", width: "100%" }}
+                                            avatarStyle={{ borderRadius: 10, resizeMode: "cover" }}
+                                            source={{ uri: novel?.coverUrl || imgUri }}
+                                        />
+                                    </TouchableOpacity>
 
-                                    <View style={{ flex: 0.7 }}>
-                                        <TextInput errorMessage={errors.title} value={values.title} onChangeText={handleChange("title")} label="Titre" placeholder="Veuillez saisir le titre du roman" />
-                                    </View>
                                 </View>
 
-                                <Wrapper horizontalPadding={30}>
-                                    <TextInput errorMessage={errors.description} value={values.description} onChangeText={handleChange("description")} name="description" label="Resumé de l'histoire" placeholder="Veuillez donner le resumé de l'histoire..." multiline numberOfLines={8} />
-                                    <TouchableOpacity onPress={() => setGenreSheetIsVisible(true)}>
-                                        <TextInput errorMessage={errors.genre} value={config.novelGenresMap[selectedGenre]?.title} name="genre" label="Genre de l'histoire" placeholder="Veuillez choisir le genre de l'histoire" disabled />
-                                    </TouchableOpacity>
-                                </Wrapper>
+                                {/* Descripion & Genre */}
+                                <View style={{ flex: 1, justifyContent: "center" }}>
+                                    <Wrapper horizontalPadding={30}>
+                                        <TextInput
+                                            maxLength={50}
+                                            errorMessage={errors.title}
+                                            value={values.title}
+                                            onChangeText={handleChange("title")}
+                                            placeholder="Titre" />
+                                        <TextInput maxLength={250} errorMessage={errors.description}
+                                            value={values.description} onChangeText={handleChange("description")}
+                                            name="description" label="Resumé de l'histoire"
+                                            placeholder="Veuillez donner le resumé de l'histoire..." multiline numberOfLines={8} />
+                                    </Wrapper>
+                                </View>
 
-                                <Wrapper horizontalPadding={30}>
-                                    <View style={{
-                                        flexDirection: "row",
-                                        justifyContent: "space-between",
-                                        alignItems: "center",
-                                        marginVertical: 10,
-                                        paddingVertical: 20,
-                                        paddingHorizontal: 20,
-                                        borderRadius: 15,
-                                        backgroundColor: 'rgba(233,46,56,0.1)'
+                                {/*  Informations */}
+                                <View style={{ flex: 1, justifyContent: "center" }}>
+                                    <Wrapper horizontalPadding={30}>
+                                        <TouchableOpacity onPress={() => setGenreSheetIsVisible(true)}>
+                                            <TextInput errorMessage={errors.genre}
+                                                value={config.novelGenresMap[selectedGenre]?.title}
+                                                name="genre" label="Genre de l'histoire"
+                                                placeholder="Veuillez choisir le genre de l'histoire" disabled />
+                                        </TouchableOpacity>
 
-                                    }}>
-                                        <CheckBox
-                                            onPress={() => {
-                                                setIsMature(!isMature);
-                                                handleChange("isMature")(JSON.stringify(!isMature));
-                                            }}
-                                            checked={isMature}
-                                            checkedColor={error}
-                                            uncheckedColor={error}
-                                            containerStyle={{ margin: 0, padding: 0, backgroundColor: "transparent" }} />
-                                        <View style={{ flex: 1 }}>
-                                            <Text style={{ color: error, fontFamily: "Quicksand-700", textAlign: "right" }}>Histoire mature</Text>
-                                            <Text style={{ color: error, fontFamily: "Quicksand-500", fontSize: 12, textAlign: "right" }
-                                            }>Cette histoire de ne sera pas visible pour les lecteurs qui n’ont pas au moins 18 ans. </Text>
+                                        <View style={{
+                                            flexDirection: "row",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            marginVertical: 10,
+                                            paddingVertical: 20,
+                                            paddingHorizontal: 20,
+                                            borderRadius: 15,
+                                            backgroundColor: 'rgba(233,46,56,0.1)'
+
+                                        }}>
+                                            <CheckBox
+                                                onPress={() => {
+                                                    setIsMature(!isMature);
+                                                    handleChange("isMature")(JSON.stringify(!isMature));
+                                                }}
+                                                checked={isMature}
+                                                checkedColor={error}
+                                                uncheckedColor={error}
+                                                containerStyle={{ margin: 0, padding: 0, backgroundColor: "transparent" }} />
+                                            <View style={{ flex: 1 }}>
+                                                <Text style={{ color: error, fontFamily: "Quicksand-700", textAlign: "right" }}>Histoire mature</Text>
+                                                <Text style={{ color: error, fontFamily: "Quicksand-500", fontSize: 12, textAlign: "right" }
+                                                }>Cette histoire de ne sera pas visible pour les lecteurs qui n’ont pas au moins 18 ans. </Text>
+                                            </View>
                                         </View>
-                                    </View>
-                                </Wrapper>
-
-                            </View>
-
-                            <View style={{ paddingHorizontal: 30 }}>
-                                <Button loading={isLoading || isEditNovelLoading} onPress={() => handleSubmit()} buttonStyle={{ backgroundColor: "black", borderRadius: 10 }}>Sauvegarder</Button>
-                            </View>
+                                    </Wrapper>
+                                </View>
+                            </PagerView>
 
                             <CardBottomSheet isVisible={genreSheetIsVisible} onBackdropPress={() => setGenreSheetIsVisible(false)}>
                                 <FlatList
@@ -148,10 +190,24 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                             }} />
                                     )} />
                             </CardBottomSheet>
+                            <FAB
+                                loading={isLoading || isEditNovelLoading}
+                                onPress={() => {
+                                    if (currentPage !== 2) {
+                                        _pagerRef?.current?.setPage(currentPage + 1);
+                                        return;
+                                    }
+                                    handleSubmit();
+                                }}
+                                icon={<Icon name={currentPage !== 2 ? "arrow-right" : "check"} type="font-awesome-5" color="white" />}
+                                color={black}
+                                placement="right" />
                         </View>
                     )
                 }
+
             </Formik>
+
         </KeyboardAwareScrollView>
     )
 }

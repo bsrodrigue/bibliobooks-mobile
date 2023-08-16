@@ -21,13 +21,13 @@ const accountSchema = Yup.object().shape({
     lastName: Yup.string().required("Champ requis"),
     username: Yup.string().required("Champ requis"),
     gender: Yup.string().required("Champ requis"),
-    bio: Yup.string().required("Champ requis"),
+    bio: Yup.string().optional(),
 });
 
 type AccountScreenProps = NativeStackScreenProps<RootStackParamList, 'Account'>;
 
 export default function AccountScreen({ navigation, route: { params } }: AccountScreenProps) {
-    const { theme: { colors: { greyOutline, black } } } = useTheme();
+    const { theme: { colors: { black } } } = useTheme();
     const [isEditMode, setIsEditMode] = useState(false);
     const { workshopNovels } = useWorkshop();
     const { session, updateSession } = useSession();
@@ -69,7 +69,7 @@ export default function AccountScreen({ navigation, route: { params } }: Account
                                 size={120}
                                 rounded
                                 containerStyle={{ backgroundColor: black, marginBottom: 10, padding: 2, }}
-                                source={{ uri: imgUri || avatarUrl }}
+                                source={(imgUri || avatarUrl) ? { uri: imgUri || avatarUrl } : null}
                             />
                         </View>
                         <KeyboardAwareScrollView>
