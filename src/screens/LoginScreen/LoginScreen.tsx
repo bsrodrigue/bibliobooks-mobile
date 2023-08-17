@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
     return (
         <AuthForm
             title="Connexion"
-            subtitle="Connectez-vous à votre compte">
+            subtitle="Veuillez saisir votre adresse email et votre mot de passe pour vous connecter à votre compte">
             <View style={{ flex: 1, justifyContent: "space-between", paddingVertical: 15 }}>
                 <Formik
                     initialValues={{

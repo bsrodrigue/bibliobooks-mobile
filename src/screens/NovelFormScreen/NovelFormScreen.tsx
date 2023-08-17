@@ -3,13 +3,13 @@ import { Avatar, FAB, Icon, LinearProgress } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { Formik } from "formik";
 import { useRef, useState } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import PagerView from "react-native-pager-view";
 import * as Yup from "yup";
 import { CreateNovelInput, createNovel, editNovel } from "../../api/novels";
 import useCall from "../../api/useCall";
-import { CardBottomSheet, CheckBox, TextInput, Wrapper } from "../../components";
+import { CheckBox, NovelGenreGrid, TextInput, Wrapper } from "../../components";
 import { config } from "../../config";
 import { useImagePicker } from "../../hooks";
 import { useWorkshop } from "../../providers/WorkshopProvider";
@@ -102,7 +102,7 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                             <View style={{ paddingHorizontal: 35, }}>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 10, height: 40 }}>
                                     <Icon type={stepData[currentPage].iconSet} name={stepData[currentPage].iconName} />
-                                    <LinearProgress style={{ borderRadius: 25, flex: 1 }} value={currentPage + 0.5 / 3} variant="determinate" color={primary} />
+                                    <LinearProgress style={{ borderRadius: 25, flex: 1 }} value={((currentPage + 1) * 33) / 100} variant="determinate" color={primary} />
                                 </View>
                                 <Text style={{ fontFamily: "Quicksand-700", opacity: 0.5 }}>Etape: {stepData[currentPage].stepTitle}</Text>
                             </View>
@@ -141,21 +141,17 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                 {/*  Informations */}
                                 <View style={{ flex: 1, justifyContent: "center" }}>
                                     <Wrapper horizontalPadding={30}>
-                                        <TouchableOpacity onPress={() => setGenreSheetIsVisible(true)}>
-                                            <TextInput errorMessage={errors.genre}
-                                                value={config.novelGenresMap[selectedGenre]?.title}
-                                                name="genre" label="Genre de l'histoire"
-                                                placeholder="Veuillez choisir le genre de l'histoire" disabled />
-                                        </TouchableOpacity>
-
+                                        <NovelGenreGrid onPressItem={(genre) => {
+                                            handleChange("genre")(genre);
+                                        }} />
                                         <View style={{
                                             flexDirection: "row",
                                             justifyContent: "space-between",
                                             alignItems: "center",
                                             marginVertical: 10,
-                                            paddingVertical: 20,
+                                            paddingVertical: 12,
                                             paddingHorizontal: 20,
-                                            borderRadius: 15,
+                                            borderRadius: 10,
                                             backgroundColor: 'rgba(233,46,56,0.1)'
 
                                         }}>
@@ -177,19 +173,6 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                     </Wrapper>
                                 </View>
                             </PagerView>
-
-                            <CardBottomSheet isVisible={genreSheetIsVisible} onBackdropPress={() => setGenreSheetIsVisible(false)}>
-                                <FlatList
-                                    data={config.genreSelectOptions} renderItem={({ index, item: { title, value } }) => (
-                                        <CheckBox
-                                            key={index}
-                                            checked={selectedGenre === value} title={title} onPress={() => {
-                                                handleChange("genre")(value);
-                                                setSelectedGenre(value);
-                                                setGenreSheetIsVisible(false);
-                                            }} />
-                                    )} />
-                            </CardBottomSheet>
                             <FAB
                                 loading={isLoading || isEditNovelLoading}
                                 onPress={() => {

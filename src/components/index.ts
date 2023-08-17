@@ -11,6 +11,7 @@ export { DateTimePicker } from "./DateTimePicker";
 export { Header } from "./Header";
 export { TextInput } from "./Input";
 export { LatestReadCard } from "./LatestReadCard/";
+export { NovelGenreGrid } from "./NovelGenreGrid";
 export { NovelGrid } from "./NovelGrid";
 export { NovelList } from "./NovelList";
 export { PasswordInput } from "./PasswordInput";

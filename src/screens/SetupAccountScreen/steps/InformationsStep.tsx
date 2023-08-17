@@ -38,7 +38,7 @@ export default function InformationsStep({ onNext, formValues }: InformationsSte
             }}
         >
             {({ handleChange, handleSubmit, values, errors }) => (
-                <View style={{ flex: 1, justifyContent: "space-between", paddingTop: 15 }}>
+                <View style={{ flex: 1, justifyContent: "space-between" }}>
                     <View>
                         <TextInput
                             errorMessage={errors.firstName}
