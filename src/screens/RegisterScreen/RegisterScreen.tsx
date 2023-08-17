@@ -33,7 +33,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
     return (
         <AuthForm
             title="Inscription"
-            subtitle="Rejoignez notre communauté de lecteurs">
+            subtitle="Rejoignez notre communauté de lecteurs! Remplissez ce formulaire pour créer un nouveau compte.">
             <View style={{ flex: 1, justifyContent: "space-between", paddingVertical: 15, paddingTop: 30 }}>
                 <Formik
                     initialValues={initialValues}
