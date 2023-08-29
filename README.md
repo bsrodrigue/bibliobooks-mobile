@@ -15,4 +15,5 @@ It is built with React Native and Expo
 - Download the Expo go application on your smartphone and scan the QR code on your computer.
 - Enjoy
 
-  
+# Download Release
+- [APK](https://github.com/bsrodrigue/bibliobooks-mobile/releases/tag/v0.0.1-beta)
