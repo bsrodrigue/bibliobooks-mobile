@@ -15,7 +15,7 @@ export interface Read
     extends
     BaseModel,
     HasOwner {
-    entityId: string;
+    chapterId: string;
 }
 
 export interface Comment
@@ -49,6 +49,7 @@ export interface Chapter
     novelId: string;
     order: number;
     likes?: Like[];
+    reads?: Read[];
 }
 
 export interface Like

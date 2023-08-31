@@ -22,6 +22,12 @@ export async function likeChapter({ chapterId }: { chapterId: number }) {
 export async function unlikeChapter({ chapterId }: { chapterId: number }) {
     await client.post("likes/unlike", { chapterId });
 }
+
+export async function readChapter(chapterId: number) {
+    const result = await client.post("reads/read", { chapterId });
+    return result.data;
+}
+
 export type EditChapterInput = {
     chapterId: number;
     title?: string;

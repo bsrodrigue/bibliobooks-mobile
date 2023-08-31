@@ -6,7 +6,6 @@ import { FlatList, NativeSyntheticEvent, Text, TouchableOpacity, View } from "re
 import PagerView from "react-native-pager-view";
 import { Richtext } from "../../components";
 import { useChapter } from "../../hooks/api/reader";
-import { useSession } from "../../providers";
 import { RootStackParamList } from "../../types";
 
 type ReaderScreenProps = NativeStackScreenProps<RootStackParamList, 'Reader'>;
@@ -44,11 +43,10 @@ export default function ReaderScreen({ navigation, route: { params: { novel } } 
     const [currentChapterIndex, setCurrentChapterIndex] = useState(0);
     const [chapterListIsVisible, setChapterListIsVisible] = useState(false);
     const [chapters, setChapters] = useState(novel.chapters);
-    const { session: { profile: { id } } } = useSession();
     const [lightMode, setLightMode] = useState(true);
     const chapter = chapters[currentChapterIndex];
     const _readerRef = useRef(null);
-    const { toggleLike, isLiked, likesCount } = useChapter(chapter, id, setChapters);
+    const { toggleLike, isLiked, likesCount, readsCount } = useChapter(chapter, setChapters);
 
     function onPageSelected(event: NativeSyntheticEvent<Readonly<{ position: number; }>>) {
         const position = event.nativeEvent.position;
@@ -70,7 +68,7 @@ export default function ReaderScreen({ navigation, route: { params: { novel } } 
             <ChapterStats
                 lightMode={lightMode}
                 likes={likesCount}
-                reads={chapter?.reads?.length || 0}
+                reads={readsCount}
                 comments={chapter?.comments?.length || 0}
             />
 
