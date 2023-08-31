@@ -1,3 +1,4 @@
+import { randomUUID } from "expo-crypto";
 import { UserProfile } from "../../types/auth";
 import { uploadFile } from "../base";
 import client from "../client";
@@ -35,9 +36,8 @@ export type SetupAccountInput = {
 export async function setupAccount({ avatarImg, ...payload }: SetupAccountInput): Promise<any> {
     let avatarUrl = "";
     if (avatarImg) {
-        avatarUrl = await uploadFile(avatarImg);
+        avatarUrl = await uploadFile(avatarImg, `${randomUUID()}/avatar.jpeg`);
     }
-
     const result = await client.post("users/me/setupAccount", { avatarUrl, ...payload });
     return result.data.user;
 }
@@ -50,7 +50,7 @@ export type UpdateUserProfile = {
 export async function updateUserProfile({ profile, avatarImg }: UpdateUserProfile) {
     let avatarUrl = "";
     if (avatarImg) {
-        avatarUrl = await uploadFile(avatarImg);
+        avatarUrl = await uploadFile(avatarImg, `${randomUUID()}/avatar.jpeg`);
     }
 
     const result = await client.post("users/me/updateUserProfile", { avatarUrl, ...profile });

@@ -30,7 +30,7 @@ export default function NovelGenreGrid({ onPressItem, data, multi }: NovelGenreG
                 >
                     <ImageBackground
                         borderRadius={10}
-                        style={{ flex: 1, height: 60, alignItems: "center", justifyContent: "flex-end" }}
+                        style={{ flex: 1, height: 50, alignItems: "center", justifyContent: "flex-end" }}
                         resizeMode="cover"
                         source={cover}>
                         <View style={{

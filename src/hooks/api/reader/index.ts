@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { likeChapter, unlikeChapter } from "../../../api/chapters";
+import { likeChapter, readChapter, unlikeChapter } from "../../../api/chapters";
 import { getPublicNovels } from "../../../api/novels";
 import { notify } from "../../../lib";
+import { useSession } from "../../../providers";
 import { Chapter, ReaderNovel } from "../../../types/models";
 
 export function useLatestNovels() {
@@ -29,18 +30,35 @@ function chapterIsLikedByUser(chapter: Chapter, userId: number) {
     return chapter?.likes?.some((like) => like.ownerId === userId);
 }
 
-export function useChapter(chapter: Chapter, userId: number, setChapters: React.Dispatch<React.SetStateAction<(Chapter & {
-    reads: any[];
+//TODO: This is a terrible approach, it seems you'll need to reconsider your state management strategy, maybe try zustand
+export function useChapter(chapter: Chapter, setChapters: React.Dispatch<React.SetStateAction<(Chapter & {
     likes: any[];
     comments: any[];
 })[]>>) {
+    const { session: { profile: { id: userId } } } = useSession();
     const [isLoading, setIsLoading] = useState(false);
-    const [isLiked, setIsLiked] = useState(chapterIsLikedByUser(chapter, userId));
-    const [likesCount, setLikesCount] = useState(chapter?.likes?.length || 0);
+    const [isLiked, setIsLiked] = useState(false);
+    const [likesCount, setLikesCount] = useState(0);
+    const [readsCount, setReadsCount] = useState(0);
+
+    //TODO: Caching to avoid checking read status each time
+    const read = async () => {
+        try {
+            const result = await readChapter(chapter.id);
+            if (result.status === "new_read") {
+                setReadsCount(readsCount + 1);
+            } else {
+                setReadsCount(chapter?.reads?.length ?? 0);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     useEffect(() => {
         setIsLiked(chapterIsLikedByUser(chapter, userId));
-        setLikesCount(chapter?.likes?.length || 0);
+        setLikesCount(chapter?.likes?.length ?? 0);
+        read();
     }, [chapter]);
 
     const action = async (id: number, call: any) => {
@@ -93,5 +111,5 @@ export function useChapter(chapter: Chapter, userId: number, setChapters: React.
     }
 
 
-    return { toggleLike, isLoading, isLiked, likesCount };
+    return { toggleLike, isLoading, isLiked, likesCount, readsCount };
 }

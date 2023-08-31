@@ -3,18 +3,18 @@ import { Avatar, FAB, Icon, LinearProgress } from "@rneui/base";
 import { useTheme } from "@rneui/themed";
 import { Formik } from "formik";
 import { useRef, useState } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Text, TouchableOpacity, View } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import PagerView from "react-native-pager-view";
+import Animated, { diffClamp, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import * as Yup from "yup";
 import { CreateNovelInput, createNovel, editNovel } from "../../api/novels";
 import useCall from "../../api/useCall";
 import { CheckBox, NovelGenreGrid, TextInput, Wrapper } from "../../components";
-import { config } from "../../config";
 import { useImagePicker } from "../../hooks";
 import { useWorkshop } from "../../providers/WorkshopProvider";
 import { RootStackParamList } from "../../types";
-import { Novel, NovelGenre } from "../../types/models";
+import { Novel } from "../../types/models";
 
 const novelSchema = Yup.object().shape({
     title: Yup.string().required("Champ requis"),
@@ -26,9 +26,8 @@ const novelSchema = Yup.object().shape({
 type NovelFormScreenProps = NativeStackScreenProps<RootStackParamList, 'NovelForm'>;
 
 export default function NovelFormScreen({ navigation, route: { params: { mode, novel } } }: NovelFormScreenProps) {
-    const { theme: { colors: { error, greyOutline, primary, black } } } = useTheme();
+    const { theme: { colors: { error, primary, black } } } = useTheme();
     const { addWorkshopNovel, updateWorkshopNovel } = useWorkshop();
-    const [genreSheetIsVisible, setGenreSheetIsVisible] = useState(false);
     const { call, isLoading } = useCall(createNovel, {
         onSuccess(result) {
             const payload = result as Novel;
@@ -46,10 +45,12 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
         successMessage: "Votre histoire a étée modifiée avec succès!"
     });
 
-    const [selectedGenre, setSelectedGenre] = useState<NovelGenre>(novel?.genre);
     const [isMature, setIsMature] = useState(Boolean(novel?.isMature));
     const { imgUri, pickImage } = useImagePicker();
     const [currentPage, setCurrentPage] = useState(0);
+    const scale = useSharedValue(1);
+
+    const style = useAnimatedStyle(() => ({ transform: [{ scale: scale.value }] }))
 
     const _pagerRef = useRef(null);
 
@@ -106,9 +107,17 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                 </View>
                                 <Text style={{ fontFamily: "Quicksand-700", opacity: 0.5 }}>Etape: {stepData[currentPage].stepTitle}</Text>
                             </View>
-                            <PagerView ref={_pagerRef} onPageSelected={(e) => setCurrentPage(e.nativeEvent.position)} style={{ flex: 1 }} initialPage={0}>
+                            <PagerView
+                                ref={_pagerRef}
+                                onPageScroll={(e) => {
+                                }}
+                                onPageSelected={(e) => {
+                                    setCurrentPage(e.nativeEvent.position);
+                                }
+                                } style={{ flex: 1 }} initialPage={0}>
                                 {/* Cover */}
-                                <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                                <Animated.View
+                                    style={[{ flex: 1, alignItems: "center", justifyContent: "center" }, style]}>
                                     <TouchableOpacity style={{
                                         height: "90%",
                                         width: "80%"
@@ -119,11 +128,10 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                             source={{ uri: novel?.coverUrl || imgUri }}
                                         />
                                     </TouchableOpacity>
-
-                                </View>
+                                </Animated.View>
 
                                 {/* Descripion & Genre */}
-                                <View style={{ flex: 1, justifyContent: "center" }}>
+                                <Animated.View style={[{ flex: 1, justifyContent: "center" }, style]}>
                                     <Wrapper horizontalPadding={30}>
                                         <TextInput
                                             maxLength={50}
@@ -136,10 +144,10 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                             name="description" label="Resumé de l'histoire"
                                             placeholder="Veuillez donner le resumé de l'histoire..." multiline numberOfLines={8} />
                                     </Wrapper>
-                                </View>
+                                </Animated.View>
 
                                 {/*  Informations */}
-                                <View style={{ flex: 1, justifyContent: "center" }}>
+                                <Animated.View style={[{ flex: 1, justifyContent: "center" }, style]}>
                                     <Wrapper horizontalPadding={30}>
                                         <NovelGenreGrid onPressItem={(genre) => {
                                             handleChange("genre")(genre);
@@ -153,7 +161,6 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                             paddingHorizontal: 20,
                                             borderRadius: 10,
                                             backgroundColor: 'rgba(233,46,56,0.1)'
-
                                         }}>
                                             <CheckBox
                                                 onPress={() => {
@@ -171,7 +178,7 @@ export default function NovelFormScreen({ navigation, route: { params: { mode, n
                                             </View>
                                         </View>
                                     </Wrapper>
-                                </View>
+                                </Animated.View>
                             </PagerView>
                             <FAB
                                 loading={isLoading || isEditNovelLoading}

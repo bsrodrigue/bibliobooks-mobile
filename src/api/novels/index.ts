@@ -165,14 +165,3 @@ export type LikeInput = {
     userId: string;
     chapterId: string;
 }
-
-export async function like({ userId, chapterId }: LikeInput) {
-    const existingLike = await getLikeByUser({ userId, chapterId });
-    if (existingLike) {
-        await deleteEntityById(existingLike.id, "like");
-        return false;
-    }
-
-    await createOwnedEntity(userId, { entityId: chapterId }, "like");
-    return true;
-}
